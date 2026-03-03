@@ -7,7 +7,11 @@ import type { AnalysisContext, ReportSection, LLMProvider } from '@filinglens/sh
 import type { AnalysisInsights } from './analyzer.js';
 import { buildNarrativePrompt, buildComparisonNarrativePrompt } from './prompts/narrative.js';
 
-const SYSTEM_PROMPT = `You are a senior financial analyst at a top-tier investment bank. You write precise, data-driven analysis. You never use vague qualifiers. Every statement is backed by a specific number.`;
+const TONE_PROFILES: Record<string, string> = {
+  professional: `You are a senior financial analyst at a top-tier investment bank producing an institutional-grade research report. Write in a neutral, authoritative third-person voice. Use precise quantitative language. Never use superlatives, hedging words, or promotional tone. Every assertion must cite a specific figure from the data. Structure your analysis as you would a sell-side equity research note.`,
+};
+
+const DEFAULT_TONE = 'professional';
 
 /**
  * Generate narrative report sections using a single LLM call.
@@ -17,12 +21,14 @@ export async function generateNarrative(
   context: AnalysisContext,
   insights: Record<string, AnalysisInsights>,
   llm: LLMProvider,
+  tone?: string,
 ): Promise<{ sections: ReportSection[]; llmCallCount: number }> {
   const prompt = context.type === 'comparison'
     ? buildComparisonNarrativePrompt(context, insights)
     : buildNarrativePrompt(context, insights);
 
-  const response = await llm.generate(prompt, SYSTEM_PROMPT);
+  const systemPrompt = TONE_PROFILES[tone || DEFAULT_TONE] || TONE_PROFILES[DEFAULT_TONE]!;
+  const response = await llm.generate(prompt, systemPrompt);
 
   // Parse the Markdown response into sections
   const sections = parseMarkdownSections(response.content);

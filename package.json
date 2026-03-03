@@ -7,7 +7,11 @@
     "dev": "pnpm --filter web dev",
     "build": "pnpm -r build",
     "bootup": "pnpm --filter bootup start",
-    "analyze": "pnpm --filter agent start"
+    "analyze": "pnpm --filter agent start",
+    "start": "pnpm --filter agent start"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["puppeteer"]
   },
   "engines": {
     "node": ">=20.0.0"

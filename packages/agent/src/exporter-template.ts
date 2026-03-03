@@ -1,0 +1,244 @@
+/**
+ * HTML template and CSS for professional PDF report generation.
+ */
+
+import type { Report } from '@filinglens/shared';
+
+const CSS = `
+  @page {
+    margin: 1in 0.75in;
+    @bottom-center {
+      content: counter(page) " of " counter(pages);
+      font-size: 9px;
+      color: #999;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+
+  .report-header {
+    border-bottom: 3px solid #1a365d;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+
+  .report-header .logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a365d;
+    letter-spacing: -0.5px;
+  }
+
+  .report-header .subtitle {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .report-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .report-meta .ticker {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .report-meta .date {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    color: #718096;
+  }
+
+  .section {
+    page-break-inside: avoid;
+    margin-bottom: 28px;
+  }
+
+  .section:not(:first-of-type) {
+    page-break-before: auto;
+  }
+
+  h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16pt;
+    font-weight: 600;
+    color: #1a365d;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+
+  h3 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  p {
+    margin-bottom: 10px;
+    text-align: justify;
+  }
+
+  ul, ol {
+    margin-bottom: 10px;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 16px;
+    font-size: 10pt;
+    font-family: 'Courier New', monospace;
+  }
+
+  thead th {
+    background: #1a365d;
+    color: #fff;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    text-align: left;
+    border: 1px solid #1a365d;
+  }
+
+  tbody td {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f7fafc;
+  }
+
+  tbody tr:hover {
+    background: #edf2f7;
+  }
+
+  /* Right-align numeric columns (2nd column onwards in financial tables) */
+  td:not(:first-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th:not(:first-child) {
+    text-align: right;
+  }
+
+  /* Color coding for positive/negative values */
+  .positive { color: #276749; }
+  .negative { color: #c53030; }
+
+  strong {
+    font-weight: 700;
+  }
+
+  em {
+    font-style: italic;
+    color: #4a5568;
+  }
+
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    background: #f7fafc;
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+
+  blockquote {
+    border-left: 3px solid #1a365d;
+    padding-left: 16px;
+    margin: 12px 0;
+    color: #4a5568;
+    font-style: italic;
+  }
+
+  a {
+    color: #2b6cb0;
+    text-decoration: none;
+  }
+
+  .report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 2px solid #1a365d;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 8pt;
+    color: #a0aec0;
+    text-align: center;
+    line-height: 1.8;
+  }
+`;
+
+export function buildReportHTML(report: Report, bodyHTML: string): string {
+  const tickerStr = report.tickers.join(', ');
+  const dateStr = new Date(report.generated_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const typeLabel = report.type === 'comparison' ? 'Comparative Analysis' : 'Equity Research Note';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FilingLens — ${tickerStr} Analysis</title>
+  <style>${CSS}</style>
+</head>
+<body>
+  <div class="report-header">
+    <div class="logo">FilingLens</div>
+    <div class="subtitle">${typeLabel}</div>
+    <div class="report-meta">
+      <span class="ticker">${tickerStr}</span>
+      <span class="date">${dateStr}</span>
+    </div>
+  </div>
+
+  ${bodyHTML}
+
+  <div class="report-footer">
+    <div>Data sourced exclusively from SEC EDGAR public filings.</div>
+    <div>This report is generated by FilingLens and is not financial advice.</div>
+    <div>LLM calls: ${report.metadata.llm_calls} | Data points: ${report.metadata.data_points_used} | Generated in ${(report.metadata.total_duration_ms / 1000).toFixed(1)}s</div>
+  </div>
+</body>
+</html>`;
+}

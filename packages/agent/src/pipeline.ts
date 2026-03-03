@@ -53,7 +53,7 @@ export async function runPipeline(
 
     // ── Step 4: NARRATE (single LLM call) ─────────────────────
     callbacks?.onStep?.('Generating narrative report', 'running');
-    let { sections, llmCallCount } = await generateNarrative(context, insights, llm);
+    let { sections, llmCallCount } = await generateNarrative(context, insights, llm, config.tone);
     totalLLMCalls += llmCallCount;
     callbacks?.onStep?.('Generating narrative report', 'complete');
 
@@ -107,7 +107,7 @@ export async function runPipeline(
       },
     };
 
-    callbacks?.onComplete?.(report);
+    await callbacks?.onComplete?.(report);
 
     return {
       report,

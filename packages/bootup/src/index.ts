@@ -109,9 +109,15 @@ export async function runBootup(): Promise<void> {
   cleanup();
 }
 
-// Run if executed directly
-runBootup().catch((err) => {
-  cleanup();
-  console.error('Bootup animation failed:', err);
-  process.exit(1);
-});
+// Run if executed directly (not when imported as a module)
+const isDirectRun = process.argv[1] &&
+  (import.meta.url === `file://${process.argv[1]}` ||
+   import.meta.url === `file://${process.argv[1].replace(/\.ts$/, '.js')}`);
+
+if (isDirectRun) {
+  runBootup().catch((err) => {
+    cleanup();
+    console.error('Bootup animation failed:', err);
+    process.exit(1);
+  });
+}

@@ -19,18 +19,26 @@
       "types": "./dist/*"
     }
   },
+  "bin": {
+    "filinglens": "./dist/cli.js"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "tsx src/index.ts",
-    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/cli.ts",
+    "start:headless": "tsx src/index.ts",
+    "dev": "tsx watch src/cli.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@filinglens/shared": "workspace:*",
+    "@filinglens/bootup": "workspace:*",
     "@filinglens/mcp-sec-server": "workspace:*",
     "@filinglens/mcp-financials-server": "workspace:*",
+    "@inquirer/prompts": "^7.0.0",
+    "dotenv": "^16.4.0",
+    "marked": "^15.0.0",
     "openai": "^4.80.0",
-    "dotenv": "^16.4.0"
+    "puppeteer": "^24.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

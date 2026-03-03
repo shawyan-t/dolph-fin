@@ -9,12 +9,14 @@ export interface PipelineConfig {
   type: 'single' | 'comparison';
   maxRetries: number;
   maxValidationLoops: number;
+  tone?: string;
+  outputFormat?: 'terminal' | 'pdf' | 'both';
 }
 
 export interface PipelineCallbacks {
   onStep?: (step: string, status: 'running' | 'complete' | 'error', detail?: string) => void;
   onPartialReport?: (sectionId: string, content: string) => void;
-  onComplete?: (report: Report) => void;
+  onComplete?: (report: Report) => void | Promise<void>;
   onError?: (error: string) => void;
 }
 
