@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.env
+.env.local
+*.tsbuildinfo
+
+# Cache
+.filinglens/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Next.js
+.next/
+out/
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*
