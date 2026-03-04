@@ -3,7 +3,7 @@
  * All deterministic computation, no LLM.
  */
 
-import type { CompanyFacts, TrendData, Period } from '@filinglens/shared';
+import type { CompanyFacts, TrendData, Period } from '@dolph/shared';
 import { getMetricTimeSeries } from '../xbrl/normalizer.js';
 
 /**
@@ -35,7 +35,7 @@ function detectAnomalies(
   if (growths.length < 3) return []; // Not enough data
 
   const mean = growths.reduce((s, g) => s + g, 0) / growths.length;
-  const variance = growths.reduce((s, g) => s + (g - mean) ** 2, 0) / growths.length;
+  const variance = growths.reduce((s, g) => s + (g - mean) ** 2, 0) / (growths.length - 1);
   const stdDev = Math.sqrt(variance);
 
   if (stdDev === 0) return [];

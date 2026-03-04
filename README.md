@@ -1,4 +1,4 @@
-# FilingLens
+# Dolph
 
 AI-powered SEC filing analyzer. Takes a stock ticker, retrieves real SEC filings from EDGAR, computes financial metrics, and generates a professional analysis report.
 
@@ -52,7 +52,7 @@ graph TB
 ## Project Structure
 
 ```
-filinglens/
+dolph/
 ├── packages/
 │   ├── bootup/                  # Terminal splash animation
 │   ├── shared/                  # Types, XBRL mappings, constants
@@ -69,8 +69,8 @@ filinglens/
 
 ```bash
 # Clone and install
-git clone <repo-url> filinglens
-cd filinglens
+git clone <repo-url> dolph
+cd dolph
 pnpm install
 
 # Configure
@@ -94,13 +94,13 @@ pnpm dev
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `FILINGLENS_LLM_PROVIDER` | No | `openai` | `openai`, `gemini`, or `groq` |
-| `FILINGLENS_LLM_MODEL` | No | `gpt-4o-mini` | Model ID for chosen provider |
-| `FILINGLENS_OPENAI_API_KEY` | If using OpenAI | — | OpenAI API key |
-| `FILINGLENS_GEMINI_API_KEY` | If using Gemini | — | Google AI API key |
-| `FILINGLENS_GROQ_API_KEY` | If using Groq | — | Groq API key |
-| `FILINGLENS_SEC_USER_AGENT` | Yes | — | SEC requires `"Name email@example.com"` |
-| `FILINGLENS_CACHE_DIR` | No | `~/.filinglens/cache` | Cache directory |
+| `DOLPH_LLM_PROVIDER` | No | `openai` | `openai`, `gemini`, or `groq` |
+| `DOLPH_LLM_MODEL` | No | `gpt-4o-mini` | Model ID for chosen provider |
+| `DOLPH_OPENAI_API_KEY` | If using OpenAI | — | OpenAI API key |
+| `DOLPH_GEMINI_API_KEY` | If using Gemini | — | Google AI API key |
+| `DOLPH_GROQ_API_KEY` | If using Groq | — | Groq API key |
+| `DOLPH_SEC_USER_AGENT` | Yes | — | SEC requires `"Name email@example.com"` |
+| `DOLPH_CACHE_DIR` | No | `~/.dolph/cache` | Cache directory |
 
 ## Cost
 

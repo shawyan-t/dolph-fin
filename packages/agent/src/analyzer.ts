@@ -3,8 +3,8 @@
  * No LLM calls. Pure code.
  */
 
-import type { AnalysisContext, TrendData, Ratio } from '@filinglens/shared';
-import { getMappingByName } from '@filinglens/shared';
+import type { AnalysisContext, TrendData, Ratio } from '@dolph/shared';
+import { getMappingByName } from '@dolph/shared';
 
 export interface AnalysisInsights {
   topTrends: Array<{
@@ -35,6 +35,21 @@ export interface AnalysisInsights {
 /**
  * Analyze gathered data and compute insights deterministically.
  */
+/** Correct unit for each ratio — avoids naive string-matching */
+const RATIO_UNITS: Record<string, string> = {
+  eps: 'USD/shares',
+  bvps: 'USD/shares',
+  de: 'x',
+  roe: '%',
+  roa: '%',
+  current_ratio: 'x',
+  quick_ratio: 'x',
+  gross_margin: '%',
+  operating_margin: '%',
+  net_margin: '%',
+  fcf: 'USD',
+};
+
 export function analyzeData(context: AnalysisContext): Record<string, AnalysisInsights> {
   const results: Record<string, AnalysisInsights> = {};
 
@@ -88,7 +103,7 @@ function identifyRedFlags(ratios: Ratio[], trends: TrendData[]): AnalysisInsight
 
   // Check debt-to-equity ratio
   const deRatio = ratios.find(r => r.name === 'de');
-  if (deRatio && deRatio.value > 2) {
+  if (deRatio && isFinite(deRatio.value) && deRatio.value > 2) {
     flags.push({
       flag: 'High leverage',
       severity: deRatio.value > 5 ? 'high' : 'medium',
@@ -98,7 +113,7 @@ function identifyRedFlags(ratios: Ratio[], trends: TrendData[]): AnalysisInsight
 
   // Check negative net margin
   const netMargin = ratios.find(r => r.name === 'net_margin');
-  if (netMargin && netMargin.value < 0) {
+  if (netMargin && isFinite(netMargin.value) && netMargin.value < 0) {
     flags.push({
       flag: 'Negative profitability',
       severity: 'high',
@@ -108,7 +123,7 @@ function identifyRedFlags(ratios: Ratio[], trends: TrendData[]): AnalysisInsight
 
   // Check declining revenue trend
   const revenueTrend = trends.find(t => t.metric === 'revenue');
-  if (revenueTrend && revenueTrend.cagr !== null && revenueTrend.cagr < -0.05) {
+  if (revenueTrend && revenueTrend.cagr !== null && isFinite(revenueTrend.cagr) && revenueTrend.cagr < -0.05) {
     flags.push({
       flag: 'Declining revenue',
       severity: 'high',
@@ -120,7 +135,7 @@ function identifyRedFlags(ratios: Ratio[], trends: TrendData[]): AnalysisInsight
   const ocfTrend = trends.find(t => t.metric === 'operating_cash_flow');
   if (ocfTrend) {
     const latest = ocfTrend.values[ocfTrend.values.length - 1];
-    if (latest && latest.value < 0) {
+    if (latest && isFinite(latest.value) && latest.value < 0) {
       flags.push({
         flag: 'Negative operating cash flow',
         severity: 'high',
@@ -131,7 +146,7 @@ function identifyRedFlags(ratios: Ratio[], trends: TrendData[]): AnalysisInsight
 
   // Check current ratio below 1
   const currentRatio = ratios.find(r => r.name === 'current_ratio');
-  if (currentRatio && currentRatio.value < 1) {
+  if (currentRatio && isFinite(currentRatio.value) && currentRatio.value < 1) {
     flags.push({
       flag: 'Low liquidity',
       severity: 'medium',
@@ -158,7 +173,7 @@ function identifyStrengths(ratios: Ratio[], trends: TrendData[]): AnalysisInsigh
   const strengths: AnalysisInsights['strengths'] = [];
 
   const grossMargin = ratios.find(r => r.name === 'gross_margin');
-  if (grossMargin && grossMargin.value > 0.5) {
+  if (grossMargin && isFinite(grossMargin.value) && grossMargin.value > 0.5) {
     strengths.push({
       metric: 'gross_margin',
       detail: `Gross margin of ${(grossMargin.value * 100).toFixed(1)}% indicates strong pricing power`,
@@ -166,7 +181,7 @@ function identifyStrengths(ratios: Ratio[], trends: TrendData[]): AnalysisInsigh
   }
 
   const roe = ratios.find(r => r.name === 'roe');
-  if (roe && roe.value > 0.15) {
+  if (roe && isFinite(roe.value) && roe.value > 0.15) {
     strengths.push({
       metric: 'roe',
       detail: `ROE of ${(roe.value * 100).toFixed(1)}% indicates efficient use of shareholder capital`,
@@ -174,7 +189,7 @@ function identifyStrengths(ratios: Ratio[], trends: TrendData[]): AnalysisInsigh
   }
 
   const revenueTrend = trends.find(t => t.metric === 'revenue');
-  if (revenueTrend && revenueTrend.cagr !== null && revenueTrend.cagr > 0.1) {
+  if (revenueTrend && revenueTrend.cagr !== null && isFinite(revenueTrend.cagr) && revenueTrend.cagr > 0.1) {
     strengths.push({
       metric: 'revenue_growth',
       detail: `Revenue growing at ${(revenueTrend.cagr * 100).toFixed(1)}% CAGR — strong top-line growth`,
@@ -182,7 +197,7 @@ function identifyStrengths(ratios: Ratio[], trends: TrendData[]): AnalysisInsigh
   }
 
   const currentRatio = ratios.find(r => r.name === 'current_ratio');
-  if (currentRatio && currentRatio.value > 1.5) {
+  if (currentRatio && isFinite(currentRatio.value) && currentRatio.value > 1.5) {
     strengths.push({
       metric: 'current_ratio',
       detail: `Current ratio of ${currentRatio.value.toFixed(2)} indicates solid liquidity`,
@@ -204,7 +219,7 @@ function buildKeyMetrics(
       current: ratio.value,
       prior: null,
       change: null,
-      unit: ratio.name.includes('margin') || ratio.name === 'roe' || ratio.name === 'roa' ? '%' : 'x',
+      unit: RATIO_UNITS[ratio.name] || 'x',
     };
   }
 

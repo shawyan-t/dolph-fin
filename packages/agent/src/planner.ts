@@ -3,15 +3,24 @@
  *
  * The tools required for each analysis type are always the same.
  * This is a lookup table, not a creative decision.
+ *
+ * Note: We request annual filings without specifying 10-K or 20-F,
+ * allowing the executor to handle both domestic and foreign filers.
  */
 
-import type { AgentPlan, AgentStep } from '@filinglens/shared';
+import type { AgentPlan, AgentStep } from '@dolph/shared';
 
 const DEFAULT_TREND_METRICS = [
   'revenue', 'net_income', 'operating_income', 'gross_profit',
   'total_assets', 'total_liabilities', 'stockholders_equity',
   'operating_cash_flow', 'capex',
 ];
+
+/**
+ * Annual filing types — domestic companies file 10-K, foreign filers file 20-F or 40-F.
+ * We try them in order of most common.
+ */
+export const ANNUAL_FILING_TYPES = ['10-K', '20-F', '40-F'] as const;
 
 /**
  * Generate a deterministic execution plan based on analysis type.
@@ -31,8 +40,9 @@ function createSinglePlan(ticker: string): AgentPlan {
   const steps: AgentStep[] = [
     {
       tool: 'get_company_filings',
-      params: { ticker, filing_type: '10-K', limit: 5 },
-      purpose: `Get recent 10-K filings for ${ticker}`,
+      // Don't specify filing_type — let the executor find annual filings (10-K or 20-F)
+      params: { ticker, limit: 10 },
+      purpose: `Get recent annual filings for ${ticker}`,
     },
     {
       tool: 'get_company_facts',
@@ -42,7 +52,7 @@ function createSinglePlan(ticker: string): AgentPlan {
     {
       tool: 'get_filing_content',
       params: { ticker }, // accession_number and document_url filled at runtime
-      purpose: `Parse most recent 10-K for ${ticker}`,
+      purpose: `Parse most recent annual filing for ${ticker}`,
     },
     {
       tool: 'get_financial_statements',
@@ -81,13 +91,33 @@ function createSinglePlan(ticker: string): AgentPlan {
 function createComparisonPlan(tickers: string[]): AgentPlan {
   const steps: AgentStep[] = [];
 
-  // Get facts and ratios for each ticker
+  // Get filings, facts, statements, ratios, and trends for each ticker
   for (const ticker of tickers) {
     steps.push(
+      {
+        tool: 'get_company_filings',
+        params: { ticker, limit: 5 },
+        purpose: `Get recent annual filings for ${ticker}`,
+      },
       {
         tool: 'get_company_facts',
         params: { ticker },
         purpose: `Get XBRL financial facts for ${ticker}`,
+      },
+      {
+        tool: 'get_financial_statements',
+        params: { ticker, statement: 'income', period: 'annual', limit: 3 },
+        purpose: `Get income statement for ${ticker}`,
+      },
+      {
+        tool: 'get_financial_statements',
+        params: { ticker, statement: 'balance_sheet', period: 'annual', limit: 3 },
+        purpose: `Get balance sheet for ${ticker}`,
+      },
+      {
+        tool: 'get_financial_statements',
+        params: { ticker, statement: 'cash_flow', period: 'annual', limit: 3 },
+        purpose: `Get cash flow statement for ${ticker}`,
       },
       {
         tool: 'calculate_ratios',

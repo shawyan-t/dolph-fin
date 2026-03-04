@@ -1,16 +1,16 @@
 /**
  * File-based caching for EDGAR API responses.
- * Cache directory: ~/.filinglens/cache/{namespace}/{hash}.json
+ * Cache directory: ~/.dolph/cache/{namespace}/{hash}.json
  */
 
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { DEFAULT_CACHE_DIR } from '@filinglens/shared';
+import { DEFAULT_CACHE_DIR } from '@dolph/shared';
 
 function resolveCacheDir(): string {
-  const dir = process.env['FILINGLENS_CACHE_DIR'] || DEFAULT_CACHE_DIR;
+  const dir = process.env['DOLPH_CACHE_DIR'] || DEFAULT_CACHE_DIR;
   return dir.replace(/^~/, homedir());
 }
 

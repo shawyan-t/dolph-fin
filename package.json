@@ -1,5 +1,5 @@
 {
-  "name": "filinglens",
+  "name": "dolph",
   "version": "0.1.0",
   "private": true,
   "description": "AI-powered SEC filing analyzer",
@@ -8,7 +8,8 @@
     "build": "pnpm -r build",
     "bootup": "pnpm --filter bootup start",
     "analyze": "pnpm --filter agent start",
-    "start": "pnpm --filter agent start"
+    "start": "pnpm --filter agent start",
+    "test": "pnpm -r --if-present test"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["puppeteer"]

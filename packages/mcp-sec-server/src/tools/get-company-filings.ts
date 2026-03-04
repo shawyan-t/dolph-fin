@@ -4,20 +4,20 @@
  */
 
 import { z } from 'zod';
-import type { Filing, FilingType } from '@filinglens/shared';
+import type { Filing, FilingType } from '@dolph/shared';
 import {
   SEC_SUBMISSIONS_URL,
   SEC_EDGAR_ARCHIVES_URL,
   CACHE_TTL_FILINGS_LIST,
   DEFAULT_FILINGS_LIMIT,
-} from '@filinglens/shared';
+} from '@dolph/shared';
 import { resolveCik } from '../edgar/cik-lookup.js';
 import { edgarFetchJson } from '../edgar/client.js';
 import { fileCache } from '../cache/file-cache.js';
 
 export const GetCompanyFilingsInput = z.object({
   ticker: z.string().min(1).max(10),
-  filing_type: z.enum(['10-K', '10-Q', '8-K', 'DEF 14A']).optional(),
+  filing_type: z.enum(['10-K', '10-Q', '8-K', 'DEF 14A', '20-F', '6-K', '40-F']).optional(),
   limit: z.number().min(1).max(50).optional(),
 });
 
@@ -75,8 +75,8 @@ export async function getCompanyFilings(params: GetCompanyFilingsParams): Promis
     // Filter by filing type if specified
     if (filing_type && form !== filing_type) continue;
 
-    // Only include filing types we care about
-    if (!['10-K', '10-Q', '8-K', 'DEF 14A'].includes(form)) continue;
+    // Only include filing types we care about (domestic + foreign filer equivalents)
+    if (!['10-K', '10-Q', '8-K', 'DEF 14A', '20-F', '6-K', '40-F'].includes(form)) continue;
 
     const accessionRaw = recent.accessionNumber[i] || '';
     const accessionClean = accessionRaw.replace(/-/g, '');

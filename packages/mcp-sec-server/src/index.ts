@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * FilingLens MCP SEC Server
+ * Dolph MCP SEC Server
  *
  * Provides LLMs with structured access to SEC EDGAR data.
  * Tools: get_company_filings, get_filing_content, get_company_facts, search_filings
@@ -16,14 +16,14 @@ import { GetCompanyFactsInput, getCompanyFacts } from './tools/get-company-facts
 import { SearchFilingsInput, searchFilings } from './tools/search-filings.js';
 
 const server = new McpServer({
-  name: 'filinglens-sec-server',
+  name: 'dolph-sec-server',
   version: '0.1.0',
 });
 
 // ── Tool: get_company_filings ──────────────────────────────────
 server.tool(
   'get_company_filings',
-  'Retrieve recent SEC filings (10-K, 10-Q, 8-K, DEF 14A) for a given stock ticker. Returns filing metadata with links to full documents.',
+  'Retrieve recent SEC filings (10-K, 10-Q, 8-K, DEF 14A, 20-F, 6-K, 40-F) for a given stock ticker. Supports both domestic and foreign filers.',
   GetCompanyFilingsInput.shape,
   async (params) => {
     try {

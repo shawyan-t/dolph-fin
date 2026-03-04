@@ -2,7 +2,7 @@
 // Filing Types
 // ============================================================
 
-export type FilingType = '10-K' | '10-Q' | '8-K' | 'DEF 14A';
+export type FilingType = '10-K' | '10-Q' | '8-K' | 'DEF 14A' | '20-F' | '6-K' | '40-F';
 
 export interface Filing {
   filing_type: FilingType;
@@ -39,6 +39,20 @@ export interface FilingSearchResult {
 export type StatementType = 'income' | 'balance_sheet' | 'cash_flow';
 export type Period = 'annual' | 'quarterly';
 
+/** Provenance receipt for a single data point — traces back to exact SEC source */
+export interface ProvenanceReceipt {
+  /** XBRL tag name used (e.g., "RevenueFromContractWithCustomerExcludingAssessedTax") */
+  xbrl_tag: string;
+  /** XBRL namespace (e.g., "us-gaap", "ifrs-full") */
+  namespace: string;
+  /** SEC accession number (unique filing identifier) */
+  accession_number: string;
+  /** Filing URL on EDGAR */
+  filing_url: string;
+  /** Timestamp when this data was extracted */
+  extracted_at: string;
+}
+
 export interface FinancialFact {
   metric: string;
   periods: Array<{
@@ -47,6 +61,8 @@ export interface FinancialFact {
     unit: string;
     form: string;        // e.g., "10-K", "10-Q"
     filed: string;       // filing date
+    /** Provenance tracking — traces this value to its SEC source */
+    provenance?: ProvenanceReceipt;
   }>;
 }
 
@@ -55,6 +71,8 @@ export interface CompanyFacts {
   cik: string;
   company_name: string;
   facts: FinancialFact[];
+  /** FX conversion note if values were converted from a foreign currency to USD */
+  fx_note?: string;
 }
 
 export interface FinancialStatement {
@@ -69,8 +87,8 @@ export interface FinancialStatement {
 }
 
 export type RatioName =
-  | 'pe'
-  | 'pb'
+  | 'eps'
+  | 'bvps'
   | 'de'
   | 'roe'
   | 'roa'
@@ -79,7 +97,7 @@ export type RatioName =
   | 'gross_margin'
   | 'operating_margin'
   | 'net_margin'
-  | 'fcf_yield';
+  | 'fcf';
 
 export interface Ratio {
   name: RatioName | string;
@@ -88,6 +106,8 @@ export interface Ratio {
   formula: string;
   components: Record<string, number>;
   period: string;
+  /** Provenance: maps component metric name → its provenance receipt */
+  provenance?: Record<string, ProvenanceReceipt>;
 }
 
 export interface TrendData {
@@ -180,6 +200,7 @@ export type ReportSectionId =
   | 'executive_summary'
   | 'key_metrics'
   | 'trend_analysis'
+  | 'relative_strengths'
   | 'risk_factors'
   | 'financial_statements'
   | 'analyst_notes'
@@ -207,14 +228,18 @@ export interface Report {
     llm_calls: number;
     total_duration_ms: number;
     data_points_used: number;
+    /** Snapshot ID for reproducibility (set if snapshot_date was provided) */
+    snapshot_id?: string;
   };
+  /** Provenance manifest: maps "ticker:metric:period" → provenance receipt */
+  provenance?: Record<string, ProvenanceReceipt>;
 }
 
 // ============================================================
 // SSE Event Types (for frontend streaming)
 // ============================================================
 
-export type SSEEventType = 'step' | 'partial_report' | 'final_report' | 'error';
+export type SSEEventType = 'step' | 'partial_report' | 'charts' | 'final_report' | 'error';
 
 export interface SSEStepEvent {
   type: 'step';
@@ -246,9 +271,21 @@ export interface SSEErrorEvent {
   };
 }
 
+export interface SSEChartsEvent {
+  type: 'charts';
+  data: {
+    revenueMarginChart: string | null;
+    fcfBridgeChart: string | null;
+    peerScorecardChart: string | null;
+    returnLeverageChart: string | null;
+    growthDurabilityChart: string | null;
+  };
+}
+
 export type SSEEvent =
   | SSEStepEvent
   | SSEPartialReportEvent
+  | SSEChartsEvent
   | SSEFinalReportEvent
   | SSEErrorEvent;
 
@@ -275,5 +312,5 @@ export interface LLMResponse {
 
 export interface LLMProvider {
   name: LLMProviderName;
-  generate(prompt: string, systemPrompt?: string): Promise<LLMResponse>;
+  generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse>;
 }

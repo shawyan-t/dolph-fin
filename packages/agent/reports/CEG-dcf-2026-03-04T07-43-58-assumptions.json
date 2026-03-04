@@ -1,0 +1,23 @@
+{
+  "ticker": "CEG",
+  "company_name": "CONSTELLATION ENERGY CORPORATION",
+  "as_of_date": "2026-03-04",
+  "projection_years": 5,
+  "discount_rate": 0.1,
+  "terminal_growth_rate": 0.025,
+  "revenue_growth_rates": [
+    0.071,
+    0.06,
+    0.05,
+    0.04,
+    0.03
+  ],
+  "operating_margin": 0.136,
+  "tax_rate": 0.21,
+  "capex_as_pct_revenue": 0.13,
+  "depreciation_as_pct_revenue": 0.104,
+  "nwc_as_pct_revenue": 0.05,
+  "base_revenue": 22663000000,
+  "base_fcf": 1288000000,
+  "shares_outstanding": 312000000
+}

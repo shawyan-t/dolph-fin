@@ -1,15 +1,27 @@
 /**
- * Corrector — re-generates failing sections using LLM.
- * Only called if code-based validation fails (rare).
+ * Corrector — re-generates failing NARRATIVE sections using LLM.
+ * Only called if code-based validation detects errors (rare with structured output).
+ *
+ * Key design choices:
+ * - Uses the SAME system prompt as narrator for tone consistency
+ * - Uses EXACT section ID matching (not .includes())
+ * - Never corrects deterministic sections (those are rebuilt by code)
+ * - LLM returns only prose content — no headings
  */
 
-import type { ReportSection, ValidationIssue, LLMProvider, AnalysisContext } from '@filinglens/shared';
-import { buildCorrectionPrompt } from './prompts/correction.js';
+import type { ReportSection, ValidationIssue, LLMProvider, AnalysisContext } from '@dolph/shared';
+import { DETERMINISTIC_SECTION_IDS } from '@dolph/shared';
 import type { AnalysisInsights } from './analyzer.js';
+import { buildDataBlock } from './prompts/narrative.js';
+
+/** Same system prompt as narrator for tone consistency */
+const SYSTEM_PROMPT = `You are a senior financial analyst at a top-tier investment bank producing an institutional-grade research report. Write in a neutral, authoritative third-person voice. Use precise quantitative language. Never use superlatives, hedging words, or promotional tone. Every assertion must cite a specific figure from the data. Do NOT output any section titles, headings, or markdown structure — output ONLY the prose content requested.`;
+
+/** Deterministic sections that should never be sent to the LLM for correction */
+const DETERMINISTIC_SECTIONS = new Set<string>(DETERMINISTIC_SECTION_IDS);
 
 /**
  * Fix sections that failed validation by regenerating them with the LLM.
- * Returns corrected sections and the number of LLM calls made.
  */
 export async function correctSections(
   sections: ReportSection[],
@@ -20,64 +32,54 @@ export async function correctSections(
 ): Promise<{ correctedSections: ReportSection[]; llmCallCount: number }> {
   let llmCallCount = 0;
 
-  // Group issues by section
+  // Group errors by section (exact ID)
   const issuesBySection = new Map<string, ValidationIssue[]>();
   for (const issue of issues) {
-    if (issue.severity !== 'error') continue; // Only fix errors, not warnings
+    if (issue.severity !== 'error') continue;
+    // Skip deterministic sections — those can't be fixed by LLM
+    if (DETERMINISTIC_SECTIONS.has(issue.section)) continue;
+
     const existing = issuesBySection.get(issue.section) || [];
     existing.push(issue);
     issuesBySection.set(issue.section, existing);
   }
 
-  // No errors to fix
   if (issuesBySection.size === 0) {
     return { correctedSections: sections, llmCallCount: 0 };
   }
 
-  // Build source data summary for correction context
-  const sourceData = buildSourceDataSummary(context, insights);
-
-  // Correct each failing section
+  const dataBlock = buildDataBlock(context, insights);
   const correctedSections = [...sections];
 
   for (const [sectionId, sectionIssues] of issuesBySection) {
-    const sectionIdx = correctedSections.findIndex(
-      s => s.id === sectionId || s.id.includes(sectionId),
-    );
+    // Exact match — no .includes() fuzzy matching
+    const sectionIdx = correctedSections.findIndex(s => s.id === sectionId);
+
+    const issueList = sectionIssues
+      .map((issue, i) => `${i + 1}. ${issue.issue}`)
+      .join('\n');
 
     if (sectionIdx === -1) {
-      // Section is missing — need to generate it fresh
-      const prompt = buildCorrectionPrompt(
-        sectionId,
-        '', // no existing content
-        sectionIssues,
-        sourceData,
-      );
-
-      const response = await llm.generate(prompt);
+      // Missing section — generate fresh
+      const prompt = buildCorrectionPrompt(sectionId, '', issueList, dataBlock);
+      const response = await llm.generate(prompt, SYSTEM_PROMPT);
       llmCallCount++;
 
       correctedSections.push({
         id: sectionId,
-        title: sectionId.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-        content: response.content,
+        title: sectionIdToTitle(sectionId),
+        content: response.content.trim(),
       });
     } else {
-      // Section exists but has issues — regenerate
+      // Existing section with issues — regenerate
       const existing = correctedSections[sectionIdx]!;
-      const prompt = buildCorrectionPrompt(
-        existing.title,
-        existing.content,
-        sectionIssues,
-        sourceData,
-      );
-
-      const response = await llm.generate(prompt);
+      const prompt = buildCorrectionPrompt(existing.title, existing.content, issueList, dataBlock);
+      const response = await llm.generate(prompt, SYSTEM_PROMPT);
       llmCallCount++;
 
       correctedSections[sectionIdx] = {
         ...existing,
-        content: response.content,
+        content: response.content.trim(),
       };
     }
   }
@@ -85,23 +87,38 @@ export async function correctSections(
   return { correctedSections, llmCallCount };
 }
 
-function buildSourceDataSummary(
-  context: AnalysisContext,
-  insights: Record<string, AnalysisInsights>,
+function buildCorrectionPrompt(
+  sectionTitle: string,
+  existingContent: string,
+  issueList: string,
+  dataBlock: string,
 ): string {
-  const lines: string[] = [];
+  const existingBlock = existingContent
+    ? `\nCURRENT CONTENT:\n${existingContent}\n`
+    : '';
 
-  for (const ticker of context.tickers) {
-    const tickerInsights = insights[ticker];
-    if (!tickerInsights) continue;
+  return `Fix the "${sectionTitle}" section of a financial report.
+${existingBlock}
+ISSUES TO FIX:
+${issueList}
 
-    lines.push(`# ${ticker} Key Data`);
+SOURCE DATA:
+${dataBlock}
 
-    for (const [name, data] of Object.entries(tickerInsights.keyMetrics)) {
-      lines.push(`${name}: ${data.current} (${data.unit})`);
-    }
-    lines.push('');
-  }
+INSTRUCTIONS:
+- Rewrite this section to fix all listed issues
+- Replace any vague language with specific numbers from the source data
+- Every claim must be backed by a specific data point
+- Do NOT output any headings or section titles — only the corrected prose content
+- Do NOT hallucinate any numbers not present in the source data
+- Format large numbers as $X.XB (billions) or $X.XM (millions)
 
-  return lines.join('\n');
+Output ONLY the corrected section content.`;
+}
+
+function sectionIdToTitle(id: string): string {
+  return id
+    .split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
 }

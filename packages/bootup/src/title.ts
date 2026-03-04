@@ -27,7 +27,7 @@ export async function renderTitleReveal(
   process.stdout.write(CLEAR_SCREEN + CURSOR_HOME);
 
   // Generate figlet banner
-  const bannerText = figlet.textSync('FilingLens', {
+  const bannerText = figlet.textSync('Dolph', {
     font: 'ANSI Shadow',
     horizontalLayout: 'default',
   });

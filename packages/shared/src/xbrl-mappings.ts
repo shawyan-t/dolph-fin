@@ -4,14 +4,20 @@
  * SEC filings use different XBRL tags for similar concepts across companies.
  * This map normalizes them to consistent names.
  *
+ * Supports both US-GAAP tags (domestic filers: 10-K) and IFRS tags
+ * (foreign private issuers: 20-F, Canadian: 40-F).
+ *
  * Format: standardized name → array of possible XBRL tag names
- * Tags are searched in order; first match wins.
+ * Tags are searched in order across all namespaces; first match wins.
  */
 
 export interface XBRLMapping {
   standardName: string;
   displayName: string;
+  /** US-GAAP XBRL tag names, searched in order */
   xbrlTags: string[];
+  /** IFRS XBRL tag names for foreign filers, searched in order */
+  ifrsTags: string[];
   statement: 'income' | 'balance_sheet' | 'cash_flow';
   unit: 'USD' | 'USD/shares' | 'shares' | 'pure';
   higherIsBetter: boolean;
@@ -31,8 +37,12 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'RevenueFromContractWithCustomerIncludingAssessedTax',
       'SalesRevenueGoodsNet',
       'SalesRevenueServicesNet',
-      'InterestAndDividendIncomeOperating', // banks
+      'InterestAndDividendIncomeOperating',
       'TotalRevenuesAndOtherIncome',
+    ],
+    ifrsTags: [
+      'Revenue',
+      'RevenueFromContractsWithCustomers',
     ],
     statement: 'income',
     unit: 'USD',
@@ -47,6 +57,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'CostOfGoodsSold',
       'CostOfServices',
     ],
+    ifrsTags: [
+      'CostOfSales',
+    ],
     statement: 'income',
     unit: 'USD',
     higherIsBetter: false,
@@ -55,6 +68,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     standardName: 'gross_profit',
     displayName: 'Gross Profit',
     xbrlTags: [
+      'GrossProfit',
+    ],
+    ifrsTags: [
       'GrossProfit',
     ],
     statement: 'income',
@@ -68,6 +84,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'OperatingExpenses',
       'CostsAndExpenses',
     ],
+    ifrsTags: [
+      'SellingGeneralAndAdministrativeExpense',
+      'AdministrativeExpense',
+    ],
     statement: 'income',
     unit: 'USD',
     higherIsBetter: false,
@@ -77,6 +97,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Operating Income',
     xbrlTags: [
       'OperatingIncomeLoss',
+    ],
+    ifrsTags: [
+      'ProfitLossFromOperatingActivities',
+      'OperatingProfit',
     ],
     statement: 'income',
     unit: 'USD',
@@ -90,6 +114,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'ProfitLoss',
       'NetIncomeLossAvailableToCommonStockholdersBasic',
     ],
+    ifrsTags: [
+      'ProfitLoss',
+      'ProfitLossAttributableToOwnersOfParent',
+    ],
     statement: 'income',
     unit: 'USD',
     higherIsBetter: true,
@@ -100,6 +128,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'EarningsPerShareBasic',
     ],
+    ifrsTags: [
+      'BasicEarningsLossPerShare',
+    ],
     statement: 'income',
     unit: 'USD/shares',
     higherIsBetter: true,
@@ -109,6 +140,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'EPS (Diluted)',
     xbrlTags: [
       'EarningsPerShareDiluted',
+    ],
+    ifrsTags: [
+      'DilutedEarningsLossPerShare',
     ],
     statement: 'income',
     unit: 'USD/shares',
@@ -123,7 +157,12 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'WeightedAverageNumberOfDilutedSharesOutstanding',
       'EntityCommonStockSharesOutstanding',
     ],
-    statement: 'income',
+    ifrsTags: [
+      'AdjustedWeightedAverageShares',
+      'WeightedAverageShares',
+      'IssuedCapitalShares',
+    ],
+    statement: 'balance_sheet',
     unit: 'shares',
     higherIsBetter: false,
   },
@@ -133,15 +172,22 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'ResearchAndDevelopmentExpense',
     ],
+    ifrsTags: [
+      'ResearchAndDevelopmentExpense',
+    ],
     statement: 'income',
     unit: 'USD',
-    higherIsBetter: false, // context-dependent
+    higherIsBetter: false,
   },
   {
     standardName: 'sga_expenses',
     displayName: 'SG&A Expenses',
     xbrlTags: [
       'SellingGeneralAndAdministrativeExpense',
+    ],
+    ifrsTags: [
+      'SellingGeneralAndAdministrativeExpense',
+      'SellingExpense',
     ],
     statement: 'income',
     unit: 'USD',
@@ -157,6 +203,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'Assets',
     ],
+    ifrsTags: [
+      'Assets',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
     higherIsBetter: true,
@@ -166,7 +215,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Total Liabilities',
     xbrlTags: [
       'Liabilities',
-      'LiabilitiesAndStockholdersEquity', // fallback: need to subtract equity
+    ],
+    ifrsTags: [
+      'Liabilities',
     ],
     statement: 'balance_sheet',
     unit: 'USD',
@@ -179,6 +230,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'StockholdersEquity',
       'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest',
     ],
+    ifrsTags: [
+      'Equity',
+      'EquityAttributableToOwnersOfParent',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
     higherIsBetter: true,
@@ -189,6 +244,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'AssetsCurrent',
     ],
+    ifrsTags: [
+      'CurrentAssets',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
     higherIsBetter: true,
@@ -198,6 +256,9 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Current Liabilities',
     xbrlTags: [
       'LiabilitiesCurrent',
+    ],
+    ifrsTags: [
+      'CurrentLiabilities',
     ],
     statement: 'balance_sheet',
     unit: 'USD',
@@ -211,6 +272,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'CashCashEquivalentsAndShortTermInvestments',
       'Cash',
     ],
+    ifrsTags: [
+      'CashAndCashEquivalents',
+      'Cash',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
     higherIsBetter: true,
@@ -219,10 +284,32 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     standardName: 'total_debt',
     displayName: 'Total Debt',
     xbrlTags: [
+      'DebtAndCapitalLeaseObligations',
+      'DebtAndFinanceLeaseLiabilities',
+      'Debt',
+      'DebtInstrumentCarryingAmount',
+    ],
+    ifrsTags: [
+      'Borrowings',
+      'LoansAndBorrowings',
+      'TotalBorrowings',
+    ],
+    statement: 'balance_sheet',
+    unit: 'USD',
+    higherIsBetter: false,
+  },
+  {
+    standardName: 'long_term_debt',
+    displayName: 'Long-Term Debt',
+    xbrlTags: [
       'LongTermDebt',
       'LongTermDebtNoncurrent',
-      'DebtInstrumentCarryingAmount',
       'LongTermDebtAndCapitalLeaseObligations',
+    ],
+    ifrsTags: [
+      'NoncurrentPortionOfNoncurrentBorrowings',
+      'BorrowingsNoncurrent',
+      'NoncurrentFinancialLiabilities',
     ],
     statement: 'balance_sheet',
     unit: 'USD',
@@ -236,6 +323,11 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'LongTermDebtCurrent',
       'DebtCurrent',
     ],
+    ifrsTags: [
+      'CurrentPortionOfNoncurrentBorrowings',
+      'ShorttermBorrowings',
+      'CurrentBorrowings',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
     higherIsBetter: false,
@@ -247,9 +339,13 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'InventoryNet',
       'InventoryGross',
     ],
+    ifrsTags: [
+      'Inventories',
+      'CurrentInventories',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
-    higherIsBetter: true, // context-dependent
+    higherIsBetter: true,
   },
   {
     standardName: 'accounts_receivable',
@@ -259,9 +355,13 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'AccountsReceivableNet',
       'ReceivablesNetCurrent',
     ],
+    ifrsTags: [
+      'TradeAndOtherCurrentReceivables',
+      'CurrentTradeReceivables',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
-    higherIsBetter: true, // context-dependent
+    higherIsBetter: true,
   },
   {
     standardName: 'goodwill',
@@ -269,9 +369,12 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'Goodwill',
     ],
+    ifrsTags: [
+      'Goodwill',
+    ],
     statement: 'balance_sheet',
     unit: 'USD',
-    higherIsBetter: true, // context-dependent
+    higherIsBetter: true,
   },
 
   // ──────────────────────────────────────────────
@@ -283,6 +386,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'NetCashProvidedByUsedInOperatingActivities',
       'NetCashProvidedByOperatingActivities',
+    ],
+    ifrsTags: [
+      'CashFlowsFromUsedInOperatingActivities',
+      'CashFlowsFromUsedInOperations',
     ],
     statement: 'cash_flow',
     unit: 'USD',
@@ -296,6 +403,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'PaymentsToAcquireProductiveAssets',
       'CapitalExpendituresIncurredButNotYetPaid',
     ],
+    ifrsTags: [
+      'PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities',
+      'AcquisitionsOfPropertyPlantAndEquipment',
+    ],
     statement: 'cash_flow',
     unit: 'USD',
     higherIsBetter: false,
@@ -306,9 +417,12 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'NetCashProvidedByUsedInInvestingActivities',
     ],
+    ifrsTags: [
+      'CashFlowsFromUsedInInvestingActivities',
+    ],
     statement: 'cash_flow',
     unit: 'USD',
-    higherIsBetter: true, // context-dependent
+    higherIsBetter: true,
   },
   {
     standardName: 'financing_cash_flow',
@@ -316,9 +430,12 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'NetCashProvidedByUsedInFinancingActivities',
     ],
+    ifrsTags: [
+      'CashFlowsFromUsedInFinancingActivities',
+    ],
     statement: 'cash_flow',
     unit: 'USD',
-    higherIsBetter: true, // context-dependent
+    higherIsBetter: true,
   },
   {
     standardName: 'dividends_paid',
@@ -327,9 +444,13 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'PaymentsOfDividends',
       'PaymentsOfDividendsCommonStock',
     ],
+    ifrsTags: [
+      'DividendsPaidClassifiedAsFinancingActivities',
+      'DividendsPaid',
+    ],
     statement: 'cash_flow',
     unit: 'USD',
-    higherIsBetter: false, // higher payout = returning more to shareholders
+    higherIsBetter: false,
   },
   {
     standardName: 'share_repurchases',
@@ -338,22 +459,26 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
       'PaymentsForRepurchaseOfCommonStock',
       'PaymentsForRepurchaseOfEquity',
     ],
+    ifrsTags: [
+      'PurchaseOfTreasuryShares',
+    ],
     statement: 'cash_flow',
     unit: 'USD',
-    higherIsBetter: false, // context-dependent
+    higherIsBetter: false,
   },
 ];
 
 /**
- * Build a reverse lookup: xbrlTag → standardName
+ * Build a reverse lookup: xbrlTag → standardName (covers both US-GAAP and IFRS)
  */
 export function buildTagToStandardMap(): Map<string, string> {
   const map = new Map<string, string>();
   for (const mapping of XBRL_MAPPINGS) {
     for (const tag of mapping.xbrlTags) {
-      if (!map.has(tag)) {
-        map.set(tag, mapping.standardName);
-      }
+      if (!map.has(tag)) map.set(tag, mapping.standardName);
+    }
+    for (const tag of mapping.ifrsTags) {
+      if (!map.has(tag)) map.set(tag, mapping.standardName);
     }
   }
   return map;

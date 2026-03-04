@@ -24,12 +24,13 @@ export const CACHE_TTL_FILING_CONTENT = 7 * 24 * 60 * 60 * 1000; // 7 days
 export const CACHE_TTL_COMPANY_FACTS = 24 * 60 * 60 * 1000;     // 24 hours
 export const CACHE_TTL_SEARCH = 6 * 60 * 60 * 1000;             // 6 hours
 export const CACHE_TTL_TICKERS = 30 * 24 * 60 * 60 * 1000;      // 30 days
+export const CACHE_TTL_FX_RATES = 24 * 60 * 60 * 1000;          // 24 hours
 
 // ============================================================
 // Default Configuration
 // ============================================================
 
-export const DEFAULT_CACHE_DIR = '~/.filinglens/cache';
+export const DEFAULT_CACHE_DIR = '~/.dolph/cache';
 export const DEFAULT_MAX_RETRIES = 2;
 export const DEFAULT_MAX_VALIDATION_LOOPS = 2;
 export const DEFAULT_FILINGS_LIMIT = 10;
@@ -65,7 +66,8 @@ export const FILING_10K_SECTIONS: Record<string, string> = {
 // Report Required Sections
 // ============================================================
 
-export const REQUIRED_REPORT_SECTIONS = [
+/** Required sections for single-company reports */
+export const REQUIRED_SINGLE_SECTIONS = [
   'executive_summary',
   'key_metrics',
   'trend_analysis',
@@ -74,6 +76,44 @@ export const REQUIRED_REPORT_SECTIONS = [
   'analyst_notes',
   'data_sources',
 ] as const;
+
+/** Required sections for comparison reports */
+export const REQUIRED_COMPARISON_SECTIONS = [
+  'executive_summary',
+  'key_metrics',
+  'relative_strengths',
+  'risk_factors',
+  'financial_statements',
+  'analyst_notes',
+  'data_sources',
+] as const;
+
+/**
+ * @deprecated Use REQUIRED_SINGLE_SECTIONS or REQUIRED_COMPARISON_SECTIONS instead.
+ * Kept for backwards compatibility.
+ */
+export const REQUIRED_REPORT_SECTIONS = REQUIRED_SINGLE_SECTIONS;
+
+/** Sections generated deterministically in code (never by LLM) */
+export const DETERMINISTIC_SECTION_IDS = [
+  'key_metrics',
+  'financial_statements',
+  'data_sources',
+] as const;
+
+/** Filing forms used by search and listing flows */
+export const SUPPORTED_FILING_FORMS = [
+  '10-K',
+  '10-Q',
+  '8-K',
+  'DEF 14A',
+  '20-F',
+  '6-K',
+  '40-F',
+] as const;
+
+/** Comma-separated value for SEC full-text search `forms` query param */
+export const SUPPORTED_FILING_FORMS_CSV = SUPPORTED_FILING_FORMS.join(',');
 
 // ============================================================
 // Validation: Filler Phrases to Flag

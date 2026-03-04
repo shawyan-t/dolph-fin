@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * FilingLens MCP Financials Server
+ * Dolph MCP Financials Server
  *
  * Provides LLMs with computed financial metrics and ratios.
  * Tools: get_financial_statements, calculate_ratios, get_trend_analysis, compare_companies
@@ -16,7 +16,7 @@ import { GetTrendAnalysisInput, getTrendAnalysis } from './tools/get-trend-analy
 import { CompareCompaniesInput, compareCompanies } from './tools/compare-companies.js';
 
 const server = new McpServer({
-  name: 'filinglens-financials-server',
+  name: 'dolph-financials-server',
   version: '0.1.0',
 });
 

@@ -1,5 +1,5 @@
 {
-  "name": "@filinglens/mcp-sec-server",
+  "name": "@dolph/mcp-sec-server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,6 +9,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./resolver": {
+      "import": "./dist/resolver.js",
+      "types": "./dist/resolver.d.ts"
     },
     "./tools/*": {
       "import": "./dist/tools/*",
@@ -20,7 +24,7 @@
     }
   },
   "bin": {
-    "filinglens-sec-server": "./dist/index.js"
+    "dolph-sec-server": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -29,7 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@filinglens/shared": "workspace:*",
+    "@dolph/shared": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.1",
     "cheerio": "^1.0.0",
     "zod": "^3.24.0"

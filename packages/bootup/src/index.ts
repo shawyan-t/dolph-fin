@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * FilingLens Terminal Bootup Animation
+ * Dolph Terminal Bootup Animation
  *
  * A ~5 second splash screen featuring:
  * 1. 3D spinning diamond (octahedron) with gradient colors

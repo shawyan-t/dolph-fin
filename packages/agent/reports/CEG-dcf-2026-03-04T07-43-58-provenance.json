@@ -1,0 +1,44 @@
+{
+  "ticker": "CEG",
+  "model": "dcf",
+  "generated_at": "2026-03-04T07:43:58.158Z",
+  "implied_share_price": 88.48,
+  "enterprise_value": 27604506257,
+  "sources": {
+    "revenue": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001868275-26-000032",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+      "extracted_at": "2026-03-04T07:43:41.567Z"
+    },
+    "operating_income": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001868275-26-000032",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+      "extracted_at": "2026-03-04T07:43:41.579Z"
+    },
+    "operating_cash_flow": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001868275-26-000032",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+      "extracted_at": "2026-03-04T07:43:41.579Z"
+    },
+    "capex": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001868275-26-000032",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+      "extracted_at": "2026-03-04T07:43:41.579Z"
+    },
+    "shares_outstanding": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001868275-26-000032",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+      "extracted_at": "2026-03-04T07:43:41.579Z"
+    }
+  }
+}

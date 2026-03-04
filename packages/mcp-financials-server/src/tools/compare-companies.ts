@@ -4,9 +4,16 @@
  */
 
 import { z } from 'zod';
-import type { CompanyComparison } from '@filinglens/shared';
-import { getCompanyFacts } from '@filinglens/mcp-sec-server/tools/get-company-facts.js';
+import type { CompanyComparison, RatioName } from '@dolph/shared';
+import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
 import { getLatestValue } from '../xbrl/normalizer.js';
+import { calculateRatios } from '../math/ratios.js';
+
+/** Known ratio names that can be computed from raw facts */
+const KNOWN_RATIO_NAMES = new Set<string>([
+  'eps', 'bvps', 'de', 'roe', 'roa', 'current_ratio', 'quick_ratio',
+  'gross_margin', 'operating_margin', 'net_margin', 'fcf',
+]);
 
 export const CompareCompaniesInput = z.object({
   tickers: z.array(z.string()).min(2).max(10),
@@ -52,7 +59,21 @@ export async function compareCompanies(
         continue;
       }
 
-      const val = getLatestValue(facts, metric, '10-K');
+      let val: number | null = null;
+
+      // If the metric is a known ratio name, compute it from component facts
+      if (KNOWN_RATIO_NAMES.has(metric)) {
+        const computed = calculateRatios(facts, [metric as RatioName]);
+        if (computed.length > 0 && computed[0]!.value !== null) {
+          val = computed[0]!.value;
+        }
+      }
+
+      // Fall back to raw fact lookup
+      if (val === null) {
+        val = getLatestValue(facts, metric, '10-K');
+      }
+
       values[key] = val;
 
       if (val !== null) {
@@ -64,8 +85,8 @@ export async function compareCompanies(
     // For metrics where lower is better (like debt ratios), flip the sort
     const lowerIsBetter = [
       'total_liabilities', 'current_liabilities', 'total_debt',
-      'short_term_debt', 'operating_expenses', 'cost_of_revenue',
-      'sga_expenses', 'capex',
+      'long_term_debt', 'short_term_debt', 'operating_expenses', 'cost_of_revenue',
+      'sga_expenses', 'capex', 'de',
     ].includes(metric);
 
     numericValues.sort((a, b) =>

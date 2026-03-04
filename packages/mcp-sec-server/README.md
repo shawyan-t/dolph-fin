@@ -1,4 +1,4 @@
-# FilingLens SEC Server (MCP)
+# Dolph SEC Server (MCP)
 
 An MCP server that gives any LLM structured access to SEC EDGAR data — filings, financial facts, and full-text search.
 
@@ -52,11 +52,11 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "filinglens-sec": {
+    "dolph-sec": {
       "command": "node",
-      "args": ["/path/to/filinglens/packages/mcp-sec-server/dist/index.js"],
+      "args": ["/path/to/dolph/packages/mcp-sec-server/dist/index.js"],
       "env": {
-        "FILINGLENS_SEC_USER_AGENT": "YourName your@email.com"
+        "DOLPH_SEC_USER_AGENT": "YourName your@email.com"
       }
     }
   }
@@ -66,5 +66,5 @@ Add to your `claude_desktop_config.json`:
 ## Notes
 
 - **Rate limiting:** Max 10 requests/second to SEC EDGAR (enforced automatically)
-- **Caching:** Responses cached in `~/.filinglens/cache/` (24h for listings, 7d for content)
-- **User-Agent:** SEC requires identifying User-Agent header — set via `FILINGLENS_SEC_USER_AGENT`
+- **Caching:** Responses cached in `~/.dolph/cache/` (24h for listings, 7d for content)
+- **User-Agent:** SEC requires identifying User-Agent header — set via `DOLPH_SEC_USER_AGENT`

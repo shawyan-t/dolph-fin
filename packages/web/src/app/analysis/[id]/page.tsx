@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnalysisTimeline } from "@/components/AnalysisTimeline";
 import { ReportView } from "@/components/ReportView";
 import { ExportButtons } from "@/components/ExportButtons";
+import { ChartDisplay } from "@/components/ChartDisplay";
 import Link from "next/link";
 
 interface TimelineStep {
@@ -19,16 +20,25 @@ interface ReportSection {
   content: string;
 }
 
-export default function AnalysisPage() {
+function AnalysisPageContent() {
   const searchParams = useSearchParams();
   const tickers = (searchParams.get("tickers") || "").split(",").filter(Boolean);
   const type = (searchParams.get("type") || "single") as "single" | "comparison";
+  const snapshotDate = searchParams.get("snapshot_date") || undefined;
 
   const [steps, setSteps] = useState<TimelineStep[]>([]);
   const [sections, setSections] = useState<ReportSection[]>([]);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string>("");
+  const [retryToken, setRetryToken] = useState(0);
+  const [charts, setCharts] = useState<{
+    revenueMarginChart: string | null;
+    fcfBridgeChart: string | null;
+    peerScorecardChart: string | null;
+    returnLeverageChart: string | null;
+    growthDurabilityChart: string | null;
+  } | null>(null);
   const started = useRef(false);
 
   const startAnalysis = useCallback(async () => {
@@ -39,11 +49,12 @@ export default function AnalysisPage() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tickers, type }),
+        body: JSON.stringify({ tickers, type, snapshot_date: snapshotDate }),
       });
 
       if (!response.ok || !response.body) {
         setError("Failed to start analysis");
+        started.current = false;
         return;
       }
 
@@ -97,6 +108,10 @@ export default function AnalysisPage() {
                 });
                 break;
 
+              case "charts":
+                setCharts(event.data);
+                break;
+
               case "final_report":
                 if (event.data.sections) {
                   setSections(event.data.sections);
@@ -109,6 +124,7 @@ export default function AnalysisPage() {
 
               case "error":
                 setError(event.data.message);
+                started.current = false;
                 break;
             }
           } catch {
@@ -120,12 +136,24 @@ export default function AnalysisPage() {
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Connection failed");
+      started.current = false;
     }
-  }, [tickers, type]);
+  }, [tickers, type, snapshotDate]);
+
+  const handleRetry = useCallback(() => {
+    started.current = false;
+    setError(null);
+    setDone(false);
+    setGeneratedAt("");
+    setCharts(null);
+    setSteps([]);
+    setSections([]);
+    setRetryToken((v) => v + 1);
+  }, []);
 
   useEffect(() => {
     startAnalysis();
-  }, [startAnalysis]);
+  }, [startAnalysis, retryToken]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -136,7 +164,7 @@ export default function AnalysisPage() {
             href="/"
             className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent"
           >
-            FilingLens
+            Dolph
           </Link>
           <span className="text-neutral-600">|</span>
           <span className="text-sm text-neutral-400 font-mono">
@@ -168,16 +196,36 @@ export default function AnalysisPage() {
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
               <p className="text-red-400 text-sm font-medium">Analysis Error</p>
               <p className="text-red-300/70 text-sm mt-1">{error}</p>
-              <Link href="/" className="inline-block mt-3 text-sm text-cyan-400 hover:underline">
-                &larr; Try again
-              </Link>
+              <div className="mt-3 flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  className="text-sm text-cyan-400 hover:underline"
+                >
+                  Retry
+                </button>
+                <Link href="/" className="text-sm text-neutral-400 hover:underline">
+                  &larr; Back
+                </Link>
+              </div>
             </div>
           ) : (
-            <ReportView
-              sections={sections}
-              tickers={tickers}
-              generatedAt={generatedAt}
-            />
+            <>
+              <ReportView
+                sections={sections}
+                tickers={tickers}
+                generatedAt={generatedAt}
+              />
+              {charts && (
+                <ChartDisplay
+                  revenueMarginChart={charts.revenueMarginChart}
+                  fcfBridgeChart={charts.fcfBridgeChart}
+                  peerScorecardChart={charts.peerScorecardChart}
+                  returnLeverageChart={charts.returnLeverageChart}
+                  growthDurabilityChart={charts.growthDurabilityChart}
+                />
+              )}
+            </>
           )}
         </main>
       </div>
@@ -187,5 +235,13 @@ export default function AnalysisPage() {
         Data sourced from SEC EDGAR. This analysis is generated from public SEC filings and is not financial advice.
       </footer>
     </div>
+  );
+}
+
+export default function AnalysisPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-neutral-400">Loading analysis...</div>}>
+      <AnalysisPageContent />
+    </Suspense>
   );
 }

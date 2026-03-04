@@ -1,5 +1,5 @@
 {
-  "name": "@filinglens/agent",
+  "name": "@dolph/agent",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,28 +14,34 @@
       "import": "./dist/pipeline.js",
       "types": "./dist/pipeline.d.ts"
     },
+    "./llm/provider": {
+      "import": "./dist/llm/provider.js",
+      "types": "./dist/llm/provider.d.ts"
+    },
     "./dist/*": {
       "import": "./dist/*",
       "types": "./dist/*"
     }
   },
   "bin": {
-    "filinglens": "./dist/cli.js"
+    "dolph": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
     "start": "tsx src/cli.ts",
     "start:headless": "tsx src/index.ts",
     "dev": "tsx watch src/cli.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/validator.test.ts src/dcf-builder.test.ts"
   },
   "dependencies": {
-    "@filinglens/shared": "workspace:*",
-    "@filinglens/bootup": "workspace:*",
-    "@filinglens/mcp-sec-server": "workspace:*",
-    "@filinglens/mcp-financials-server": "workspace:*",
+    "@dolph/bootup": "workspace:*",
+    "@dolph/mcp-financials-server": "workspace:*",
+    "@dolph/mcp-sec-server": "workspace:*",
+    "@dolph/shared": "workspace:*",
     "@inquirer/prompts": "^7.0.0",
     "dotenv": "^16.4.0",
+    "exceljs": "^4.4.0",
     "marked": "^15.0.0",
     "openai": "^4.80.0",
     "puppeteer": "^24.0.0"

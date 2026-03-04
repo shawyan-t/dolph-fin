@@ -8,6 +8,7 @@ export default function Home() {
   const router = useRouter();
   const [tickers, setTickers] = useState<string[]>([]);
   const [analysisType, setAnalysisType] = useState<"single" | "comparison">("single");
+  const [snapshotDate, setSnapshotDate] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAnalyze = useCallback(async () => {
@@ -19,15 +20,18 @@ export default function Home() {
       tickers: tickers.join(","),
       type: analysisType,
     });
+    if (snapshotDate) {
+      params.set("snapshot_date", snapshotDate);
+    }
 
     router.push(`/analysis/${id}?${params.toString()}`);
-  }, [tickers, analysisType, router]);
+  }, [tickers, analysisType, snapshotDate, router]);
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent mb-3">
-          FilingLens
+          Dolph
         </h1>
         <p className="text-lg text-neutral-400">
           AI-powered SEC filing analysis
@@ -66,6 +70,16 @@ export default function Home() {
           setTickers={setTickers}
           maxTickers={analysisType === "comparison" ? 5 : 1}
         />
+
+        <div className="mt-4">
+          <label className="block text-xs text-neutral-400 mb-1">Snapshot Date (optional)</label>
+          <input
+            type="date"
+            value={snapshotDate}
+            onChange={(e) => setSnapshotDate(e.target.value)}
+            className="w-full bg-[#0a0a0a] border border-[#262626] rounded-md px-3 py-2 text-sm text-neutral-200"
+          />
+        </div>
 
         <button
           onClick={handleAnalyze}

@@ -1,9 +1,15 @@
 /**
  * LLM Provider abstraction — factory pattern supporting
  * OpenAI (default), Gemini, and Groq.
+ *
+ * All providers have a hard timeout (default 60s) to prevent
+ * infinite hangs under provider outage.
  */
 
-import type { LLMProvider, LLMProviderName, LLMConfig, LLMResponse } from '@filinglens/shared';
+import type { LLMProvider, LLMProviderName, LLMConfig, LLMResponse } from '@dolph/shared';
+
+/** Hard timeout for any single LLM call (60 seconds) */
+const LLM_TIMEOUT_MS = 60_000;
 
 export function createLLMProvider(config: LLMConfig): LLMProvider {
   switch (config.provider) {
@@ -22,26 +28,26 @@ export function createLLMProvider(config: LLMConfig): LLMProvider {
  * Get LLM config from environment variables.
  */
 export function getLLMConfig(): LLMConfig {
-  const provider = (process.env['FILINGLENS_LLM_PROVIDER'] || 'openai') as LLMProviderName;
-  const model = process.env['FILINGLENS_LLM_MODEL'] || getDefaultModel(provider);
+  const provider = (process.env['DOLPH_LLM_PROVIDER'] || 'openai') as LLMProviderName;
+  const model = process.env['DOLPH_LLM_MODEL'] || getDefaultModel(provider);
 
   let apiKey = '';
   switch (provider) {
     case 'openai':
-      apiKey = process.env['FILINGLENS_OPENAI_API_KEY'] || process.env['OPENAI_API_KEY'] || '';
+      apiKey = process.env['DOLPH_OPENAI_API_KEY'] || process.env['OPENAI_API_KEY'] || '';
       break;
     case 'gemini':
-      apiKey = process.env['FILINGLENS_GEMINI_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
+      apiKey = process.env['DOLPH_GEMINI_API_KEY'] || process.env['GEMINI_API_KEY'] || '';
       break;
     case 'groq':
-      apiKey = process.env['FILINGLENS_GROQ_API_KEY'] || process.env['GROQ_API_KEY'] || '';
+      apiKey = process.env['DOLPH_GROQ_API_KEY'] || process.env['GROQ_API_KEY'] || '';
       break;
   }
 
   if (!apiKey) {
     throw new Error(
       `No API key found for provider "${provider}". ` +
-      `Set FILINGLENS_${provider.toUpperCase()}_API_KEY in your .env file.`,
+      `Set DOLPH_${provider.toUpperCase()}_API_KEY in your .env file.`,
     );
   }
 
@@ -56,6 +62,16 @@ function getDefaultModel(provider: LLMProviderName): string {
   }
 }
 
+/** Wrap a promise with a hard timeout */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    promise
+      .then(result => { clearTimeout(timer); resolve(result); })
+      .catch(err => { clearTimeout(timer); reject(err); });
+  });
+}
+
 // ── OpenAI Provider ────────────────────────────────────────────
 
 class OpenAIProvider implements LLMProvider {
@@ -66,10 +82,9 @@ class OpenAIProvider implements LLMProvider {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string): Promise<LLMResponse> {
-    // Dynamic import to avoid loading if not used
+  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
     const { default: OpenAI } = await import('openai');
-    const client = new OpenAI({ apiKey: this.config.apiKey });
+    const client = new OpenAI({ apiKey: this.config.apiKey, timeout: LLM_TIMEOUT_MS });
 
     const messages: Array<{ role: 'system' | 'user'; content: string }> = [];
     if (systemPrompt) {
@@ -77,12 +92,16 @@ class OpenAIProvider implements LLMProvider {
     }
     messages.push({ role: 'user', content: prompt });
 
-    const response = await client.chat.completions.create({
-      model: this.config.model,
-      messages,
-      temperature: 0.3,
-      max_tokens: 4096,
-    });
+    const response = await withTimeout(
+      client.chat.completions.create({
+        model: this.config.model,
+        messages,
+        temperature: options?.temperature ?? 0.3,
+        max_tokens: 4096,
+      }),
+      LLM_TIMEOUT_MS,
+      'OpenAI API call',
+    );
 
     const choice = response.choices[0];
     return {
@@ -101,43 +120,75 @@ class OpenAIProvider implements LLMProvider {
 class GeminiProvider implements LLMProvider {
   name: LLMProviderName = 'gemini';
   private config: LLMConfig;
+  private maxRetries = 3;
 
   constructor(config: LLMConfig) {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string): Promise<LLMResponse> {
-    // Use the REST API directly to avoid additional dependency
+  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
     const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: fullPrompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 4096 },
-      }),
+    const body = JSON.stringify({
+      contents: [{ parts: [{ text: fullPrompt }] }],
+      generationConfig: { temperature: options?.temperature ?? 0.3, maxOutputTokens: 4096 },
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Gemini API error: ${response.status} ${errorText}`);
+    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), LLM_TIMEOUT_MS);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timer);
+        const responseText = await response.text();
+
+        if (response.ok) {
+          const data = JSON.parse(responseText) as {
+            candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
+            usageMetadata?: { promptTokenCount: number; candidatesTokenCount: number };
+          };
+
+          return {
+            content: data.candidates?.[0]?.content?.parts?.[0]?.text || '',
+            usage: {
+              input_tokens: data.usageMetadata?.promptTokenCount || 0,
+              output_tokens: data.usageMetadata?.candidatesTokenCount || 0,
+            },
+            model: this.config.model,
+          };
+        }
+
+        if (response.status === 429 && attempt < this.maxRetries) {
+          const retryMatch = responseText.match(/"retryDelay"\s*:\s*"(\d+)/);
+          const waitSec = retryMatch ? parseInt(retryMatch[1]!, 10) : 30 * (attempt + 1);
+          const waitMs = (waitSec + 2) * 1000;
+
+          process.stderr.write(
+            `\x1B[33m  ⏳ Rate limited — waiting ${waitSec + 2}s before retry (${attempt + 1}/${this.maxRetries})...\x1B[0m\n`,
+          );
+          await new Promise(r => setTimeout(r, waitMs));
+          continue;
+        }
+
+        throw new Error(`Gemini API error: ${response.status} ${responseText}`);
+      } catch (err) {
+        clearTimeout(timer);
+        if (err instanceof Error && err.name === 'AbortError') {
+          if (attempt < this.maxRetries) continue;
+          throw new Error(`Gemini API timed out after ${LLM_TIMEOUT_MS}ms`);
+        }
+        throw err;
+      }
     }
 
-    const data = await response.json() as {
-      candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
-      usageMetadata?: { promptTokenCount: number; candidatesTokenCount: number };
-    };
-
-    return {
-      content: data.candidates?.[0]?.content?.parts?.[0]?.text || '',
-      usage: {
-        input_tokens: data.usageMetadata?.promptTokenCount || 0,
-        output_tokens: data.usageMetadata?.candidatesTokenCount || 0,
-      },
-      model: this.config.model,
-    };
+    throw new Error('Gemini API: max retries exceeded');
   }
 }
 
@@ -151,8 +202,7 @@ class GroqProvider implements LLMProvider {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string): Promise<LLMResponse> {
-    // Use OpenAI-compatible API (Groq uses the same format)
+  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
     const url = 'https://api.groq.com/openai/v1/chat/completions';
 
     const messages: Array<{ role: string; content: string }> = [];
@@ -161,38 +211,52 @@ class GroqProvider implements LLMProvider {
     }
     messages.push({ role: 'user', content: prompt });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.config.model,
-        messages,
-        temperature: 0.3,
-        max_tokens: 4096,
-      }),
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), LLM_TIMEOUT_MS);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Groq API error: ${response.status} ${errorText}`);
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.config.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: this.config.model,
+          messages,
+          temperature: options?.temperature ?? 0.3,
+          max_tokens: 4096,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timer);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Groq API error: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json() as {
+        choices: Array<{ message: { content: string } }>;
+        usage: { prompt_tokens: number; completion_tokens: number };
+        model: string;
+      };
+
+      return {
+        content: data.choices?.[0]?.message?.content || '',
+        usage: {
+          input_tokens: data.usage?.prompt_tokens || 0,
+          output_tokens: data.usage?.completion_tokens || 0,
+        },
+        model: data.model || this.config.model,
+      };
+    } catch (err) {
+      clearTimeout(timer);
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw new Error(`Groq API timed out after ${LLM_TIMEOUT_MS}ms`);
+      }
+      throw err;
     }
-
-    const data = await response.json() as {
-      choices: Array<{ message: { content: string } }>;
-      usage: { prompt_tokens: number; completion_tokens: number };
-      model: string;
-    };
-
-    return {
-      content: data.choices?.[0]?.message?.content || '',
-      usage: {
-        input_tokens: data.usage?.prompt_tokens || 0,
-        output_tokens: data.usage?.completion_tokens || 0,
-      },
-      model: data.model || this.config.model,
-    };
   }
 }

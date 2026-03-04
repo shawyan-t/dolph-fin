@@ -2,10 +2,10 @@
 const nextConfig = {
   // Allow importing from monorepo packages
   transpilePackages: [
-    "@filinglens/shared",
-    "@filinglens/agent",
-    "@filinglens/mcp-sec-server",
-    "@filinglens/mcp-financials-server",
+    "@dolph/shared",
+    "@dolph/agent",
+    "@dolph/mcp-sec-server",
+    "@dolph/mcp-financials-server",
   ],
   // Enable server actions for SSE streaming
   experimental: {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FilingLens — AI-powered SEC Filing Analysis",
+  title: "Dolph — AI-powered SEC Filing Analysis",
   description: "Analyze SEC filings with AI. Get professional financial reports from public EDGAR data.",
 };
 

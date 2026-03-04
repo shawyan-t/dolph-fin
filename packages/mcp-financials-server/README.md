@@ -1,4 +1,4 @@
-# FilingLens Financials Server (MCP)
+# Dolph Financials Server (MCP)
 
 An MCP server that provides computed financial metrics, ratios, trend analysis, and company comparisons from SEC XBRL data.
 
@@ -59,11 +59,11 @@ pnpm build
 ```json
 {
   "mcpServers": {
-    "filinglens-financials": {
+    "dolph-financials": {
       "command": "node",
-      "args": ["/path/to/filinglens/packages/mcp-financials-server/dist/index.js"],
+      "args": ["/path/to/dolph/packages/mcp-financials-server/dist/index.js"],
       "env": {
-        "FILINGLENS_SEC_USER_AGENT": "YourName your@email.com"
+        "DOLPH_SEC_USER_AGENT": "YourName your@email.com"
       }
     }
   }

@@ -14,19 +14,34 @@ import type {
   Ratio,
   TrendData,
   CompanyComparison,
-} from '@filinglens/shared';
+} from '@dolph/shared';
 
 // Direct imports of tool implementations (no MCP protocol overhead)
-import { getCompanyFilings } from '@filinglens/mcp-sec-server/tools/get-company-filings.js';
-import { getCompanyFacts } from '@filinglens/mcp-sec-server/tools/get-company-facts.js';
-import { getFilingContent } from '@filinglens/mcp-sec-server/tools/get-filing-content.js';
-import { searchFilings } from '@filinglens/mcp-sec-server/tools/search-filings.js';
-import { getFinancialStatements } from '@filinglens/mcp-financials-server/tools/get-financial-statements.js';
-import { calculateRatiosTool } from '@filinglens/mcp-financials-server/tools/calculate-ratios.js';
-import { getTrendAnalysis } from '@filinglens/mcp-financials-server/tools/get-trend-analysis.js';
-import { compareCompanies } from '@filinglens/mcp-financials-server/tools/compare-companies.js';
+import { getCompanyFilings } from '@dolph/mcp-sec-server/tools/get-company-filings.js';
+import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
+import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
+import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
+import { getFinancialStatements } from '@dolph/mcp-financials-server/tools/get-financial-statements.js';
+import { calculateRatiosTool } from '@dolph/mcp-financials-server/tools/calculate-ratios.js';
+import { getTrendAnalysis } from '@dolph/mcp-financials-server/tools/get-trend-analysis.js';
+import { compareCompanies } from '@dolph/mcp-financials-server/tools/compare-companies.js';
 
 import type { PipelineCallbacks } from './types.js';
+
+/** Hard timeout per tool call (45 seconds) */
+const TOOL_TIMEOUT_MS = 45_000;
+
+function withToolTimeout<T>(promise: Promise<T>, toolName: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`Tool "${toolName}" timed out after ${TOOL_TIMEOUT_MS}ms`)),
+      TOOL_TIMEOUT_MS,
+    );
+    promise
+      .then(result => { clearTimeout(timer); resolve(result); })
+      .catch(err => { clearTimeout(timer); reject(err); });
+  });
+}
 
 const TOOL_MAP: Record<string, (params: Record<string, unknown>) => Promise<unknown>> = {
   get_company_filings: (p) => getCompanyFilings(p as Parameters<typeof getCompanyFilings>[0]),
@@ -104,7 +119,7 @@ export async function executePlan(
 
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-          data = await toolFn(params);
+          data = await withToolTimeout(toolFn(params), step.tool);
           lastError = undefined;
           break;
         } catch (err) {
@@ -162,9 +177,15 @@ function aggregateResult(
   const ticker = (step.params['ticker'] as string || '').toUpperCase();
 
   switch (step.tool) {
-    case 'get_company_filings':
-      context.filings[ticker] = data as Filing[];
+    case 'get_company_filings': {
+      const allFilings = data as Filing[];
+      // Prioritize annual filings (10-K for domestic, 20-F/40-F for foreign filers)
+      const annualTypes = new Set(['10-K', '20-F', '40-F']);
+      const annualFilings = allFilings.filter(f => annualTypes.has(f.filing_type));
+      // Use annual filings if available, otherwise keep all
+      context.filings[ticker] = annualFilings.length > 0 ? annualFilings : allFilings;
       break;
+    }
 
     case 'get_company_facts':
       context.facts[ticker] = data as CompanyFacts;

@@ -1,10 +1,41 @@
 /**
  * XBRL data normalizer — transforms raw XBRL company facts
  * into standardized financial statement data.
+ *
+ * Supports both domestic filers (10-K/10-Q) and foreign filers (20-F/6-K/40-F).
  */
 
-import type { CompanyFacts, FinancialStatement, StatementType, Period } from '@filinglens/shared';
-import { XBRL_MAPPINGS, getMappingsForStatement } from '@filinglens/shared';
+import type { CompanyFacts, FinancialStatement, StatementType, Period } from '@dolph/shared';
+import { getMappingsForStatement } from '@dolph/shared';
+
+/**
+ * Annual filing form types in priority order.
+ * Domestic: 10-K, Foreign private issuers: 20-F, Canadian: 40-F
+ */
+const ANNUAL_FORMS = ['10-K', '20-F', '40-F'];
+const QUARTERLY_FORMS = ['10-Q', '6-K'];
+
+/**
+ * Detect which annual form type a company uses by checking their filing data.
+ */
+function detectAnnualForm(facts: CompanyFacts): string[] {
+  const formCounts: Record<string, number> = {};
+
+  for (const fact of facts.facts) {
+    for (const period of fact.periods) {
+      if (ANNUAL_FORMS.includes(period.form)) {
+        formCounts[period.form] = (formCounts[period.form] || 0) + 1;
+      }
+    }
+  }
+
+  // Return forms sorted by frequency (most data first), falling back to all annual forms
+  const detected = Object.entries(formCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([form]) => form);
+
+  return detected.length > 0 ? detected : ANNUAL_FORMS;
+}
 
 /**
  * Normalize raw XBRL facts into structured financial statements.
@@ -16,7 +47,9 @@ export function normalizeToStatements(
   limit: number = 5,
 ): FinancialStatement {
   const mappings = getMappingsForStatement(statementType);
-  const formFilter = periodType === 'annual' ? '10-K' : '10-Q';
+  const formFilters = periodType === 'annual'
+    ? detectAnnualForm(facts)
+    : QUARTERLY_FORMS;
 
   // Collect all periods across all metrics
   const periodSet = new Set<string>();
@@ -29,7 +62,7 @@ export function normalizeToStatements(
     const periodMap = new Map<string, { value: number; filed: string }>();
 
     for (const period of fact.periods) {
-      if (period.form !== formFilter) continue;
+      if (!formFilters.includes(period.form)) continue;
       periodSet.add(period.period);
       periodMap.set(period.period, { value: period.value, filed: period.filed });
     }
@@ -70,7 +103,8 @@ export function normalizeToStatements(
 
 /**
  * Get the latest value for a specific metric from company facts.
- * Prefers annual (10-K) data.
+ * Tries annual form types in order: 10-K → 20-F → 40-F.
+ * If no form specified, returns the most recent value regardless of form.
  */
 export function getLatestValue(
   facts: CompanyFacts,
@@ -81,8 +115,16 @@ export function getLatestValue(
   if (!fact || fact.periods.length === 0) return null;
 
   if (form) {
-    const filtered = fact.periods.find(p => p.form === form);
-    return filtered?.value ?? null;
+    // If specific form requested, also try foreign equivalents
+    const formsToTry = form === '10-K' ? ANNUAL_FORMS
+      : form === '10-Q' ? QUARTERLY_FORMS
+        : [form];
+
+    for (const f of formsToTry) {
+      const match = fact.periods.find(p => p.form === f);
+      if (match) return match.value;
+    }
+    return null;
   }
 
   return fact.periods[0]?.value ?? null;
@@ -90,6 +132,7 @@ export function getLatestValue(
 
 /**
  * Get values for a metric across N periods.
+ * Supports both domestic (10-K/10-Q) and foreign (20-F/6-K) filers.
  */
 export function getMetricTimeSeries(
   facts: CompanyFacts,
@@ -100,10 +143,12 @@ export function getMetricTimeSeries(
   const fact = facts.facts.find(f => f.metric === metricName);
   if (!fact) return [];
 
-  const formFilter = periodType === 'annual' ? '10-K' : '10-Q';
+  const formFilters = periodType === 'annual'
+    ? detectAnnualForm(facts)
+    : QUARTERLY_FORMS;
 
   return fact.periods
-    .filter(p => p.form === formFilter)
+    .filter(p => formFilters.includes(p.form))
     .slice(0, limit)
     .map(p => ({ period: p.period, value: p.value }));
 }
