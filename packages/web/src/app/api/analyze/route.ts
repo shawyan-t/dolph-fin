@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { loadAnalysisRecord, saveAnalysisRecord, type StoredCharts } from "@/lib/history-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,12 +42,14 @@ function unauthorized(message: string): Response {
 
 /** Request body schema — validated before pipeline runs */
 const AnalyzeRequestSchema = z.object({
+  analysis_id: z.string().regex(/^[A-Za-z0-9_-]{3,80}$/).optional(),
   tickers: z
     .array(z.string().min(1).max(10).regex(/^[A-Za-z0-9][A-Za-z0-9.\-]{0,9}$/))
     .min(1)
     .max(5),
   type: z.enum(["single", "comparison"]),
   snapshot_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  narrative_mode: z.enum(["llm", "deterministic"]).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -98,7 +101,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { tickers: rawTickers, type, snapshot_date } = parsed.data;
+  const {
+    analysis_id,
+    tickers: rawTickers,
+    type,
+    snapshot_date,
+    narrative_mode,
+  } = parsed.data;
   const { resolveTickerWithConfidence } = await import(
     "@dolph/mcp-sec-server/resolver"
   );
@@ -127,13 +136,22 @@ export async function POST(request: NextRequest) {
     tickers.push(resolved.ticker);
   }
 
+  const existingRecord = analysis_id ? await loadAnalysisRecord(analysis_id) : null;
+  const matchesExisting = existingRecord
+    && existingRecord.type === type
+    && existingRecord.snapshot_date === snapshot_date
+    && existingRecord.tickers.length === tickers.length
+    && existingRecord.tickers.every((t, i) => t === tickers[i]);
+
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
     async start(controller) {
       let disconnected = false;
+      const pipelineAbortController = new AbortController();
       request.signal.addEventListener("abort", () => {
         disconnected = true;
+        pipelineAbortController.abort();
       });
 
       const ensureConnected = () => {
@@ -153,13 +171,43 @@ export async function POST(request: NextRequest) {
       };
 
       try {
+        if (matchesExisting && existingRecord) {
+          send("step", {
+            step: "Loading analysis history",
+            status: "complete",
+            detail: "Loaded saved analysis",
+          });
+          if (existingRecord.charts) {
+            send("charts", existingRecord.charts);
+          }
+          send("final_report", existingRecord.report);
+          return;
+        }
+
         const { runPipeline } = await import("@dolph/agent/pipeline");
         const { createLLMProvider, getLLMConfig } = await import(
           "@dolph/agent/llm/provider"
         );
 
-        const llmConfig = getLLMConfig();
-        const llm = createLLMProvider(llmConfig);
+        const selectedNarrativeMode = narrative_mode ?? "deterministic";
+        let effectiveNarrativeMode: "llm" | "deterministic" = selectedNarrativeMode;
+        let llm: ReturnType<typeof createLLMProvider> | undefined;
+
+        if (selectedNarrativeMode === "llm") {
+          try {
+            const llmConfig = getLLMConfig();
+            llm = createLLMProvider(llmConfig);
+          } catch {
+            effectiveNarrativeMode = "deterministic";
+            send("step", {
+              step: "LLM provider",
+              status: "error",
+              detail: "Unavailable; falling back to deterministic narrative mode",
+            });
+          }
+        }
+
+        let chartsForHistory: StoredCharts | undefined;
 
         await runPipeline(
           {
@@ -168,6 +216,8 @@ export async function POST(request: NextRequest) {
             maxRetries: 2,
             maxValidationLoops: 2,
             snapshotDate: snapshot_date,
+            narrativeMode: effectiveNarrativeMode,
+            abortSignal: pipelineAbortController.signal,
           },
           llm,
           {
@@ -186,19 +236,37 @@ export async function POST(request: NextRequest) {
                 try {
                   const { generateCharts } = await import("@dolph/agent/dist/charts.js");
                   const charts = generateCharts(context);
-                  send("charts", {
+                  chartsForHistory = {
                     revenueMarginChart: charts.revenueMarginChart,
                     fcfBridgeChart: charts.fcfBridgeChart,
                     peerScorecardChart: charts.peerScorecardChart,
                     returnLeverageChart: charts.returnLeverageChart,
                     growthDurabilityChart: charts.growthDurabilityChart,
-                  });
+                  };
+                  send("charts", chartsForHistory);
                 } catch {
                   // Chart generation failure is non-fatal
                 }
               }
               ensureConnected();
               send("final_report", report);
+
+              if (analysis_id) {
+                try {
+                  await saveAnalysisRecord({
+                    id: analysis_id,
+                    created_at: existingRecord?.created_at || new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    tickers,
+                    type,
+                    snapshot_date,
+                    report,
+                    charts: chartsForHistory,
+                  });
+                } catch {
+                  // Persistence failure should not block delivering analysis.
+                }
+              }
             },
             onError(error) {
               if (disconnected) return;

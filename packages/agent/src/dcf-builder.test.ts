@@ -102,6 +102,34 @@ describe('buildDCFAssumptions', () => {
     const assumptions = buildDCFAssumptions(ctx, 'TEST');
     assert.equal(assumptions.discount_rate, 0.12); // D/E > 2 → 12%
   });
+
+  it('treats non-positive equity as highest leverage bucket', () => {
+    const ctx = makeContext('TEST', {
+      revenue: 1_000_000,
+      operating_income: 200_000,
+      shares_outstanding: 10_000,
+      long_term_debt: 200_000,
+      stockholders_equity: -50_000,
+    });
+
+    const assumptions = buildDCFAssumptions(ctx, 'TEST');
+    assert.equal(assumptions.discount_rate, 0.12);
+  });
+
+  it('throws when both operating cash flow and operating income are missing/zero', () => {
+    const ctx = makeContext('TEST', {
+      revenue: 1_000_000,
+      shares_outstanding: 10_000,
+      capex: -50_000,
+      operating_income: 0,
+      operating_cash_flow: 0,
+    });
+
+    assert.throws(
+      () => buildDCFAssumptions(ctx, 'TEST'),
+      /requires operating cash flow or operating income/i,
+    );
+  });
 });
 
 describe('runDCFModel', () => {

@@ -72,6 +72,26 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   });
 }
 
+function sleepWithSignal(ms: number, signal?: AbortSignal): Promise<void> {
+  if (!signal) return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(new Error('LLM call aborted'));
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(new Error('LLM call aborted'));
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
 // ── OpenAI Provider ────────────────────────────────────────────
 
 class OpenAIProvider implements LLMProvider {
@@ -82,7 +102,15 @@ class OpenAIProvider implements LLMProvider {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
+  async generate(
+    prompt: string,
+    systemPrompt?: string,
+    options?: { temperature?: number; signal?: AbortSignal },
+  ): Promise<LLMResponse> {
+    if (options?.signal?.aborted) {
+      throw new Error('OpenAI API call aborted');
+    }
+
     const { default: OpenAI } = await import('openai');
     const client = new OpenAI({ apiKey: this.config.apiKey, timeout: LLM_TIMEOUT_MS });
 
@@ -93,12 +121,15 @@ class OpenAIProvider implements LLMProvider {
     messages.push({ role: 'user', content: prompt });
 
     const response = await withTimeout(
-      client.chat.completions.create({
-        model: this.config.model,
-        messages,
-        temperature: options?.temperature ?? 0.3,
-        max_tokens: 4096,
-      }),
+      client.chat.completions.create(
+        {
+          model: this.config.model,
+          messages,
+          temperature: options?.temperature ?? 0.3,
+          max_tokens: 4096,
+        },
+        { signal: options?.signal } as { signal?: AbortSignal },
+      ),
       LLM_TIMEOUT_MS,
       'OpenAI API call',
     );
@@ -126,7 +157,11 @@ class GeminiProvider implements LLMProvider {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
+  async generate(
+    prompt: string,
+    systemPrompt?: string,
+    options?: { temperature?: number; signal?: AbortSignal },
+  ): Promise<LLMResponse> {
     const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
     const body = JSON.stringify({
@@ -135,8 +170,13 @@ class GeminiProvider implements LLMProvider {
     });
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      if (options?.signal?.aborted) {
+        throw new Error('Gemini API call aborted');
+      }
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), LLM_TIMEOUT_MS);
+      const onExternalAbort = () => controller.abort();
+      options?.signal?.addEventListener('abort', onExternalAbort, { once: true });
 
       try {
         const response = await fetch(url, {
@@ -173,18 +213,24 @@ class GeminiProvider implements LLMProvider {
           process.stderr.write(
             `\x1B[33m  ⏳ Rate limited — waiting ${waitSec + 2}s before retry (${attempt + 1}/${this.maxRetries})...\x1B[0m\n`,
           );
-          await new Promise(r => setTimeout(r, waitMs));
+          await sleepWithSignal(waitMs, options?.signal);
           continue;
         }
 
         throw new Error(`Gemini API error: ${response.status} ${responseText}`);
       } catch (err) {
         clearTimeout(timer);
+        options?.signal?.removeEventListener('abort', onExternalAbort);
+        if (options?.signal?.aborted) {
+          throw new Error('Gemini API call aborted');
+        }
         if (err instanceof Error && err.name === 'AbortError') {
           if (attempt < this.maxRetries) continue;
           throw new Error(`Gemini API timed out after ${LLM_TIMEOUT_MS}ms`);
         }
         throw err;
+      } finally {
+        options?.signal?.removeEventListener('abort', onExternalAbort);
       }
     }
 
@@ -202,7 +248,15 @@ class GroqProvider implements LLMProvider {
     this.config = config;
   }
 
-  async generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse> {
+  async generate(
+    prompt: string,
+    systemPrompt?: string,
+    options?: { temperature?: number; signal?: AbortSignal },
+  ): Promise<LLMResponse> {
+    if (options?.signal?.aborted) {
+      throw new Error('Groq API call aborted');
+    }
+
     const url = 'https://api.groq.com/openai/v1/chat/completions';
 
     const messages: Array<{ role: string; content: string }> = [];
@@ -213,6 +267,8 @@ class GroqProvider implements LLMProvider {
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), LLM_TIMEOUT_MS);
+    const onExternalAbort = () => controller.abort();
+    options?.signal?.addEventListener('abort', onExternalAbort, { once: true });
 
     try {
       const response = await fetch(url, {
@@ -253,10 +309,16 @@ class GroqProvider implements LLMProvider {
       };
     } catch (err) {
       clearTimeout(timer);
+      options?.signal?.removeEventListener('abort', onExternalAbort);
+      if (options?.signal?.aborted) {
+        throw new Error('Groq API call aborted');
+      }
       if (err instanceof Error && err.name === 'AbortError') {
         throw new Error(`Groq API timed out after ${LLM_TIMEOUT_MS}ms`);
       }
       throw err;
+    } finally {
+      options?.signal?.removeEventListener('abort', onExternalAbort);
     }
   }
 }

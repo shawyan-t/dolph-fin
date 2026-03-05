@@ -7,7 +7,12 @@
  */
 
 import type { AnalysisContext, ReportSection, FinancialStatement } from '@dolph/shared';
-import { getMappingByName, formatCompactCurrency, formatCompactShares } from '@dolph/shared';
+import {
+  getMappingByName,
+  getMappingsForStatement,
+  formatCompactCurrency,
+  formatCompactShares,
+} from '@dolph/shared';
 
 /**
  * Build the Financial Statements section deterministically from pipeline data.
@@ -20,10 +25,13 @@ export function buildFinancialStatementsSection(context: AnalysisContext): Repor
   for (const ticker of context.tickers) {
     const statements = context.statements[ticker] || [];
     const facts = context.facts[ticker];
+    const appendixLetter = String.fromCharCode(65 + Math.min(25, context.tickers.indexOf(ticker)));
 
-    // Add ticker header in comparison mode
     if (context.tickers.length > 1) {
-      parts.push(`### ${ticker}`);
+      parts.push(`### Appendix ${appendixLetter} — ${ticker} Financial Statements`);
+      parts.push('');
+    } else {
+      parts.push('### Appendix A — Financial Statements');
       parts.push('');
     }
 
@@ -34,7 +42,7 @@ export function buildFinancialStatementsSection(context: AnalysisContext): Repor
     let hasData = false;
 
     if (incomeStmt && incomeStmt.periods.length > 0) {
-      parts.push(context.tickers.length > 1 ? '#### Income Statement' : '### Income Statement');
+      parts.push('#### Income Statement');
       parts.push('');
       parts.push(buildStatementTable(incomeStmt));
       parts.push('');
@@ -42,7 +50,7 @@ export function buildFinancialStatementsSection(context: AnalysisContext): Repor
     }
 
     if (balanceStmt && balanceStmt.periods.length > 0) {
-      parts.push(context.tickers.length > 1 ? '#### Balance Sheet' : '### Balance Sheet');
+      parts.push('#### Balance Sheet');
       parts.push('');
       parts.push(buildStatementTable(balanceStmt));
       parts.push('');
@@ -50,7 +58,7 @@ export function buildFinancialStatementsSection(context: AnalysisContext): Repor
     }
 
     if (cashFlowStmt && cashFlowStmt.periods.length > 0) {
-      parts.push(context.tickers.length > 1 ? '#### Cash Flow Statement' : '### Cash Flow Statement');
+      parts.push('#### Cash Flow Statement');
       parts.push('');
       parts.push(buildStatementTable(cashFlowStmt));
       parts.push('');
@@ -72,6 +80,11 @@ export function buildFinancialStatementsSection(context: AnalysisContext): Repor
     // Add FX note if applicable
     if (facts?.fx_note) {
       parts.push(`*Note: ${facts.fx_note}. All values converted to USD.*`);
+      parts.push('');
+    }
+
+    if (context.tickers.length > 1) {
+      parts.push('---');
       parts.push('');
     }
   }
@@ -111,22 +124,44 @@ function buildStatementTable(statement: FinancialStatement): string {
   const header = `| Metric | ${periodLabels.join(' | ')} |`;
   const separator = `|:---|${periodLabels.map(() => '---:').join('|')}|`;
 
+  const mappingOrder = new Map(
+    getMappingsForStatement(statement.statement_type)
+      .map((m, idx) => [m.standardName, idx] as const),
+  );
+  const orderedMetrics = Array.from(allMetrics).sort((a, b) => {
+    const aIdx = mappingOrder.has(a) ? mappingOrder.get(a)! : 999;
+    const bIdx = mappingOrder.has(b) ? mappingOrder.get(b)! : 999;
+    if (aIdx !== bIdx) return aIdx - bIdx;
+    return a.localeCompare(b);
+  });
+
   // Build data rows
   const rows: string[] = [];
-  for (const metric of allMetrics) {
+  for (const metric of orderedMetrics) {
     const mapping = getMappingByName(metric);
     const displayName = mapping?.displayName || formatMetricName(metric);
 
     const values = periods.map(p => {
       const val = p.data[metric];
-      if (val === undefined || val === null) return '—';
+      if (val === undefined || val === null) return 'N/A';
       return formatByUnit(val, mapping?.unit);
     });
 
     rows.push(`| ${displayName} | ${values.join(' | ')} |`);
   }
 
-  return [header, separator, ...rows].join('\n');
+  const chunks = chunk(rows, 14);
+  if (chunks.length === 1) {
+    return [header, separator, ...rows].join('\n');
+  }
+
+  const tables: string[] = [];
+  for (let i = 0; i < chunks.length; i++) {
+    if (i > 0) tables.push(`*Table continuation (${i + 1}/${chunks.length})*`, '');
+    tables.push([header, separator, ...chunks[i]!].join('\n'));
+    tables.push('');
+  }
+  return tables.join('\n').trim();
 }
 
 /**
@@ -160,7 +195,7 @@ function buildFactsSummaryTable(facts: import('@dolph/shared').CompanyFacts): st
 
     const values = periods.map(period => {
       const match = fact.periods.find(p => p.period === period);
-      if (!match) return '—';
+      if (!match) return 'N/A';
       return formatByUnit(match.value, mapping?.unit);
     });
 
@@ -184,11 +219,10 @@ function formatPeriodLabel(period: string): string {
   const year = date.getUTCFullYear();
   const month = date.getUTCMonth() + 1; // 1-indexed
 
-  // Most fiscal years end in December or close to it
+  // Most fiscal years end in Q4 (Oct-Nov-Dec)
   if (month >= 10) return `FY${year}`;
-  if (month >= 7) return `FY${year} (Sep)`;
-  if (month >= 4) return `FY${year} (Jun)`;
-  return `FY${year} (Mar)`;
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+  return `FY${year} (${monthNames[month - 1]})`;
 }
 
 /**
@@ -214,4 +248,12 @@ function formatByUnit(n: number, unit?: string): string {
     case 'USD':
     default: return formatCompactCurrency(n, { smallDecimals: 0, compactDecimals: 1 });
   }
+}
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    out.push(arr.slice(i, i + size));
+  }
+  return out;
 }

@@ -40,7 +40,7 @@ export async function generateNarrative(
   insights: Record<string, AnalysisInsights>,
   llm: LLMProvider,
   tone?: string,
-  options?: { temperature?: number },
+  options?: { temperature?: number; signal?: AbortSignal },
 ): Promise<{ sections: ReportSection[]; llmCallCount: number }> {
   const sectionDefs = context.type === 'comparison'
     ? COMPARISON_REPORT_SECTIONS

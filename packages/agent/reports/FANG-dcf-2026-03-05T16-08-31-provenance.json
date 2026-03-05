@@ -1,0 +1,58 @@
+{
+  "ticker": "FANG",
+  "model": "dcf",
+  "generated_at": "2026-03-05T16:08:31.914Z",
+  "implied_share_price": 53.03,
+  "enterprise_value": 21628125784,
+  "sources": {
+    "revenue": {
+      "xbrl_tag": "Revenues",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.455Z"
+    },
+    "operating_income": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.455Z"
+    },
+    "operating_cash_flow": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.459Z"
+    },
+    "capex": {
+      "xbrl_tag": "CapitalExpendituresIncurredButNotYetPaid",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.459Z"
+    },
+    "shares_outstanding": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.457Z"
+    },
+    "total_debt": {
+      "xbrl_tag": "DebtInstrumentCarryingAmount",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-24-000019",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983824000019/0001539838-24-000019-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.458Z"
+    },
+    "cash_and_equivalents": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001539838-26-000010",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000010/0001539838-26-000010-index.htm",
+      "extracted_at": "2026-03-05T16:08:31.458Z"
+    }
+  }
+}

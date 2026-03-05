@@ -18,11 +18,24 @@ function makeFacts(metrics: Record<string, number>, period = '2024-12-31'): Comp
 
 describe('calculateRatios', () => {
   it('computes debt-to-equity', () => {
-    const facts = makeFacts({ total_liabilities: 500_000, stockholders_equity: 250_000 });
+    const facts = makeFacts({ long_term_debt: 200_000, short_term_debt: 50_000, stockholders_equity: 250_000 });
     const ratios = calculateRatios(facts, ['de']);
     assert.equal(ratios.length, 1);
     assert.equal(ratios[0]!.name, 'de');
+    assert.equal(ratios[0]!.value, 1);
+  });
+
+  it('prefers total_debt over debt components when both are available', () => {
+    const facts = makeFacts({
+      total_debt: 500_000,
+      long_term_debt: 200_000,
+      short_term_debt: 50_000,
+      stockholders_equity: 250_000,
+    });
+    const ratios = calculateRatios(facts, ['de']);
+    assert.equal(ratios.length, 1);
     assert.equal(ratios[0]!.value, 2);
+    assert.equal(ratios[0]!.formula, 'total_debt / stockholders_equity');
   });
 
   it('computes gross margin', () => {
@@ -48,7 +61,7 @@ describe('calculateRatios', () => {
   });
 
   it('returns null (skips) for zero denominator', () => {
-    const facts = makeFacts({ total_liabilities: 500_000, stockholders_equity: 0 });
+    const facts = makeFacts({ long_term_debt: 500_000, stockholders_equity: 0 });
     const ratios = calculateRatios(facts, ['de']);
     assert.equal(ratios.length, 0);
   });
@@ -60,7 +73,7 @@ describe('calculateRatios', () => {
       company_name: 'Test Corp',
       facts: [
         {
-          metric: 'total_liabilities',
+          metric: 'long_term_debt',
           periods: [
             { period: '2024-12-31', value: 600_000, unit: 'USD', form: '10-K', filed: '2025-02-15' },
             { period: '2023-12-31', value: 500_000, unit: 'USD', form: '10-K', filed: '2024-02-15' },
@@ -82,9 +95,25 @@ describe('calculateRatios', () => {
     assert.equal(ratios[0]!.value, 2);
   });
 
+  it('falls back to total_debt for debt-to-equity when components are unavailable', () => {
+    const facts = makeFacts({ total_liabilities: 600_000, stockholders_equity: 200_000 });
+    const ratios = calculateRatios(facts, ['de']);
+    assert.equal(ratios.length, 0);
+  });
+
+  it('computes debt-to-equity from total_debt fallback', () => {
+    const facts = makeFacts({ total_debt: 400_000, stockholders_equity: 200_000 });
+    const ratios = calculateRatios(facts, ['de']);
+    assert.equal(ratios.length, 1);
+    assert.equal(ratios[0]!.value, 2);
+    assert.equal(ratios[0]!.formula, 'total_debt / stockholders_equity');
+    assert.equal(ratios[0]!.components['total_debt'], 400_000);
+  });
+
   it('computes all ratios when no filter specified', () => {
     const facts = makeFacts({
-      total_liabilities: 500_000,
+      long_term_debt: 400_000,
+      short_term_debt: 100_000,
       stockholders_equity: 250_000,
       net_income: 100_000,
       total_assets: 800_000,
@@ -108,6 +137,13 @@ describe('calculateRatios', () => {
     assert.ok(names.includes('fcf'));
   });
 
+  it('computes quick ratio without inventory (inventory defaults to 0)', () => {
+    const facts = makeFacts({ current_assets: 300_000, current_liabilities: 150_000 });
+    const ratios = calculateRatios(facts, ['quick_ratio']);
+    assert.equal(ratios.length, 1);
+    assert.equal(ratios[0]!.value, 2);
+  });
+
   it('enforces period coherence — skips ratios with cross-period data', () => {
     const facts: CompanyFacts = {
       ticker: 'TEST',
@@ -124,9 +160,10 @@ describe('calculateRatios', () => {
   });
 
   it('includes correct components in output', () => {
-    const facts = makeFacts({ total_liabilities: 600_000, stockholders_equity: 200_000 });
+    const facts = makeFacts({ long_term_debt: 500_000, short_term_debt: 100_000, stockholders_equity: 200_000 });
     const ratios = calculateRatios(facts, ['de']);
-    assert.equal(ratios[0]!.components['total_liabilities'], 600_000);
+    assert.equal(ratios[0]!.components['long_term_debt'], 500_000);
+    assert.equal(ratios[0]!.components['short_term_debt'], 100_000);
     assert.equal(ratios[0]!.components['stockholders_equity'], 200_000);
     assert.equal(ratios[0]!.period, '2024-12-31');
   });

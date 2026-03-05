@@ -16,6 +16,7 @@ import { createPlan } from './planner.js';
 import { executePlan } from './executor.js';
 import { analyzeData } from './analyzer.js';
 import { generateNarrative } from './narrator.js';
+import { generateDeterministicNarrative } from './deterministic-narrative.js';
 import { validateReport } from './validator.js';
 import { correctSections } from './corrector.js';
 import { buildFinancialStatementsSection } from './statements-builder.js';
@@ -28,13 +29,16 @@ import type { AnalysisInsights } from './analyzer.js';
  */
 export async function runPipeline(
   config: PipelineConfig,
-  llm: LLMProvider,
+  llm?: LLMProvider,
   callbacks?: PipelineCallbacks,
 ): Promise<PipelineResult> {
   const startTime = Date.now();
   let totalLLMCalls = 0;
+  const signal = config.abortSignal;
 
   try {
+    throwIfAborted(signal);
+
     // ── Step 1: PLAN (deterministic) ──────────────────────────
     callbacks?.onStep?.('Creating analysis plan', 'running');
     const plan = createPlan(config.tickers, config.type);
@@ -42,8 +46,10 @@ export async function runPipeline(
       `${plan.steps.length} steps planned`);
 
     // ── Step 2: EXECUTE (MCP tool calls) ──────────────────────
+    throwIfAborted(signal);
     callbacks?.onStep?.('Gathering SEC data', 'running');
-    const context = await executePlan(plan, config.maxRetries, callbacks);
+    const context = await executePlan(plan, config.maxRetries, callbacks, signal);
+    throwIfAborted(signal);
 
     const successCount = context.results.filter(r => r.success).length;
 
@@ -90,28 +96,47 @@ export async function runPipeline(
       `${successCount}/${context.results.length} tools succeeded`);
 
     // ── Step 3: ANALYZE (deterministic) ──────────────────────
+    throwIfAborted(signal);
     callbacks?.onStep?.('Analyzing financial data', 'running');
     const insights = analyzeData(context);
     callbacks?.onStep?.('Analyzing financial data', 'complete');
 
-    // ── Step 4: NARRATE (structured per-section LLM calls) ───
+    // ── Step 4: NARRATE ───────────────────────────────────────
     callbacks?.onStep?.('Generating narrative report', 'running');
-    const llmOptions = config.snapshotDate ? { temperature: 0 } : undefined;
-    let { sections, llmCallCount } = await generateNarrative(context, insights, llm, config.tone, llmOptions);
-    totalLLMCalls += llmCallCount;
+    // Default to deterministic narrative for reliability. LLM mode is opt-in.
+    const narrativeMode = config.narrativeMode ?? 'deterministic';
+    const llmOptions = config.snapshotDate ? { temperature: 0, signal } : { signal };
+    let sections: ReportSection[];
+
+    if (narrativeMode === 'deterministic') {
+      const deterministic = generateDeterministicNarrative(context, insights);
+      sections = deterministic.sections;
+      callbacks?.onStep?.('Generating narrative report', 'complete', 'deterministic mode');
+    } else {
+      if (!llm) {
+        throw new Error(
+          'LLM provider is required in llm narrative mode. ' +
+          'Provide a provider or switch to deterministic mode.',
+        );
+      }
+      const generated = await generateNarrative(context, insights, llm, config.tone, llmOptions);
+      sections = generated.sections;
+      totalLLMCalls += generated.llmCallCount;
+      callbacks?.onStep?.('Generating narrative report', 'complete', `${generated.llmCallCount} LLM calls`);
+    }
+    throwIfAborted(signal);
 
     // ── Step 4b: Fill deterministic sections ──────────────────
     sections = fillDeterministicSections(sections, context, insights);
 
-    callbacks?.onStep?.('Generating narrative report', 'complete',
-      `${llmCallCount} LLM calls`);
-
     // Emit partial report sections
     for (const section of sections) {
+      throwIfAborted(signal);
       callbacks?.onPartialReport?.(section.id, section.content);
     }
 
     // ── Step 5: VALIDATE (code-based, type-aware) ──────────────
+    throwIfAborted(signal);
     callbacks?.onStep?.('Validating report quality', 'running');
     let validation = validateReport(sections, config.type);
     callbacks?.onStep?.('Validating report quality',
@@ -120,14 +145,16 @@ export async function runPipeline(
         ? 'All checks passed'
         : `${validation.issues.length} issues found`);
 
-    // ── Step 6: CORRECT (conditional, per-section LLM calls) ──
+    // ── Step 6: CORRECT (LLM mode only) ───────────────────────
+    const canRunCorrections = config.maxValidationLoops > 0 && !!llm && narrativeMode === 'llm';
     let correctionLoops = 0;
-    while (!validation.pass && correctionLoops < config.maxValidationLoops) {
+    while (canRunCorrections && !validation.pass && correctionLoops < config.maxValidationLoops) {
+      throwIfAborted(signal);
       correctionLoops++;
       callbacks?.onStep?.(`Correcting report (attempt ${correctionLoops})`, 'running');
 
       const { correctedSections, llmCallCount: corrLLMCalls } =
-        await correctSections(sections, validation.issues, context, insights, llm);
+        await correctSections(sections, validation.issues, context, insights, llm, signal);
 
       totalLLMCalls += corrLLMCalls;
       sections = correctedSections;
@@ -139,7 +166,7 @@ export async function runPipeline(
       );
     }
 
-    // FAIL-CLOSED: if validation still fails after max loops, abort
+    // FAIL-CLOSED: if validation still has errors, abort
     if (!validation.pass) {
       const errorIssues = validation.issues
         .filter(i => i.severity === 'error')
@@ -153,6 +180,7 @@ export async function runPipeline(
     }
 
     // ── Step 7: DELIVER ───────────────────────────────────────
+    throwIfAborted(signal);
     const snapshotId = config.snapshotDate
       ? generateSnapshotId(config.tickers, config.snapshotDate)
       : undefined;
@@ -177,6 +205,7 @@ export async function runPipeline(
     };
 
     await callbacks?.onComplete?.(report, context);
+    throwIfAborted(signal);
 
     return {
       report,
@@ -185,7 +214,7 @@ export async function runPipeline(
       totalDurationMs: report.metadata.total_duration_ms,
     };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = isAbortError(err) ? 'Analysis cancelled' : (err instanceof Error ? err.message : String(err));
     callbacks?.onError?.(message);
     throw err;
   }
@@ -220,26 +249,32 @@ function fillDeterministicSections(
  * Build data sources section from context (deterministic).
  */
 function buildDataSourcesSection(context: AnalysisContext): ReportSection {
-  const sources: string[] = [];
+  const lines: string[] = [];
+  const retrievedAt = new Date().toISOString().slice(0, 10);
+  const annualForms = new Set(['10-K', '20-F', '40-F']);
 
   for (const ticker of context.tickers) {
     const filings = context.filings[ticker] || [];
-    for (const filing of filings.slice(0, 3)) {
-      sources.push(`- [${ticker} ${filing.filing_type} (${filing.date_filed})](${filing.primary_document_url})`);
+    const prioritized = filings.filter(f => annualForms.has(f.filing_type));
+    const selected = (prioritized.length > 0 ? prioritized : filings).slice(0, 3);
+    for (const filing of selected) {
+      lines.push(`- [${ticker} ${filing.filing_type} (${filing.date_filed})](${filing.primary_document_url})`);
     }
   }
 
-  if (sources.length === 0) {
-    sources.push('- No SEC filings were retrieved for this analysis.');
+  if (lines.length === 0) {
+    lines.push('- No SEC filings were retrieved for this analysis.');
   }
 
-  sources.push('');
-  sources.push('*All data sourced from SEC EDGAR. This analysis is generated from public SEC filings and is not financial advice.*');
+  lines.push('');
+  lines.push(`Retrieved: ${retrievedAt}`);
+  lines.push('Source: SEC EDGAR public filings.');
+  lines.push('Disclaimer: For research use only; not investment advice.');
 
   return {
     id: 'data_sources',
     title: 'Data Sources',
-    content: sources.join('\n'),
+    content: lines.join('\n'),
   };
 }
 
@@ -334,4 +369,15 @@ function countDataPoints(context: AnalysisContext): number {
   }
 
   return count;
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new Error('Analysis cancelled');
+  }
+}
+
+function isAbortError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  return /abort|cancel/i.test(err.message);
 }

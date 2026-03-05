@@ -1,2 +1,7 @@
-export { resolveTickerWithConfidence, resolveCik, getCompanyName, searchTickers } from './edgar/cik-lookup.js';
-
+export {
+  resolveTickerWithConfidence,
+  resolveCik,
+  getCompanyName,
+  getEntityByCik,
+  searchTickers,
+} from './edgar/cik-lookup.js';

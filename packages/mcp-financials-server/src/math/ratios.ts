@@ -25,11 +25,19 @@ const RATIO_DEFINITIONS: RatioDefinition[] = [
   {
     name: 'de',
     displayName: 'Debt-to-Equity',
-    formula: 'total_liabilities / stockholders_equity',
-    metrics: ['total_liabilities', 'stockholders_equity'],
+    formula: 'total_debt / stockholders_equity',
+    metrics: ['stockholders_equity'],
     compute: (v) => {
       if (!v['stockholders_equity'] || v['stockholders_equity'] === 0) return null;
-      return v['total_liabilities']! / v['stockholders_equity']!;
+      // Prefer total_debt when available to avoid undercounting when
+      // long_term_debt omits current maturities or is stale.
+      const debtBase = v['total_debt'] ?? (
+        (('long_term_debt' in v) || ('short_term_debt' in v))
+          ? ((v['long_term_debt'] ?? 0) + (v['short_term_debt'] ?? 0))
+          : null
+      );
+      if (debtBase == null) return null;
+      return debtBase / v['stockholders_equity']!;
     },
   },
   {
@@ -66,10 +74,11 @@ const RATIO_DEFINITIONS: RatioDefinition[] = [
     name: 'quick_ratio',
     displayName: 'Quick Ratio',
     formula: '(current_assets - inventory) / current_liabilities',
-    metrics: ['current_assets', 'current_liabilities', 'inventory'],
+    metrics: ['current_assets', 'current_liabilities'],
     compute: (v) => {
       if (!v['current_liabilities'] || v['current_liabilities'] === 0) return null;
-      return (v['current_assets']! - v['inventory']!) / v['current_liabilities']!;
+      const inventory = v['inventory'] ?? 0;
+      return (v['current_assets']! - inventory) / v['current_liabilities']!;
     },
   },
   {
@@ -192,7 +201,12 @@ export function calculateRatios(
 
   for (const def of definitions) {
     for (const { period, values, provenance: periodProvenance } of periodMap) {
-      const allPresent = def.metrics.every(m => m in values);
+      const allPresent = def.name === 'de'
+        ? (
+          'stockholders_equity' in values &&
+          ('long_term_debt' in values || 'short_term_debt' in values || 'total_debt' in values)
+        )
+        : def.metrics.every(m => m in values);
       if (!allPresent) continue;
 
       const result = def.compute(values);
@@ -200,12 +214,40 @@ export function calculateRatios(
 
       const components: Record<string, number> = {};
       const ratioProvenance: Record<string, ProvenanceReceipt> = {};
-      for (const m of def.metrics) {
-        components[m] = values[m]!;
-        if (periodProvenance[m]) {
-          ratioProvenance[m] = periodProvenance[m]!;
+      let formula = def.formula;
+
+      if (def.name === 'de') {
+        components['stockholders_equity'] = values['stockholders_equity']!;
+        if (periodProvenance['stockholders_equity']) {
+          ratioProvenance['stockholders_equity'] = periodProvenance['stockholders_equity']!;
+        }
+
+        if ('total_debt' in values) {
+          components['total_debt'] = values['total_debt']!;
+          if (periodProvenance['total_debt']) {
+            ratioProvenance['total_debt'] = periodProvenance['total_debt']!;
+          }
+          formula = 'total_debt / stockholders_equity';
+        } else {
+          components['long_term_debt'] = values['long_term_debt'] ?? 0;
+          components['short_term_debt'] = values['short_term_debt'] ?? 0;
+          if (periodProvenance['long_term_debt']) {
+            ratioProvenance['long_term_debt'] = periodProvenance['long_term_debt']!;
+          }
+          if (periodProvenance['short_term_debt']) {
+            ratioProvenance['short_term_debt'] = periodProvenance['short_term_debt']!;
+          }
+          formula = '(long_term_debt + short_term_debt) / stockholders_equity';
+        }
+      } else {
+        for (const m of def.metrics) {
+          components[m] = values[m]!;
+          if (periodProvenance[m]) {
+            ratioProvenance[m] = periodProvenance[m]!;
+          }
         }
       }
+
       if (def.name === 'quick_ratio' && 'inventory' in values) {
         components['inventory'] = values['inventory']!;
         if (periodProvenance['inventory']) {
@@ -217,7 +259,7 @@ export function calculateRatios(
         name: def.name,
         display_name: def.displayName,
         value: Math.round(result * 10000) / 10000,
-        formula: def.formula,
+        formula,
         components,
         period,
         provenance: Object.keys(ratioProvenance).length > 0 ? ratioProvenance : undefined,

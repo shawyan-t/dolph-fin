@@ -1,24 +1,20 @@
 /**
- * PDF Exporter — converts a Report to a professionally formatted PDF.
+ * Premium PDF Exporter.
  *
- * Flow: Report sections → Markdown → HTML (marked) → PDF (Puppeteer)
- *
- * With structured LLM output, section content no longer contains
- * duplicate headings or section ID artifacts. The exporter is simpler.
+ * Flow:
+ * 1) Build deterministic page templates from report/context
+ * 2) Apply themed HTML/CSS layout system
+ * 3) Render with Puppeteer to PDF
  */
 
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import puppeteer from 'puppeteer';
-import { marked } from 'marked';
 import type { Report, AnalysisContext } from '@dolph/shared';
 import { buildReportHTML } from './exporter-template.js';
-import { generateCharts } from './charts.js';
+import { buildPdfPages } from './pdf-page-templates.js';
+import { PDF_THEME } from './pdf-theme.js';
 
-/**
- * Generate a PDF report and save it to disk.
- * Returns the absolute path to the generated file.
- */
 export async function generatePDF(
   report: Report,
   outputDir?: string,
@@ -27,58 +23,25 @@ export async function generatePDF(
   const dir = outputDir || resolve(process.cwd(), 'reports');
   await mkdir(dir, { recursive: true });
 
-  // Include time component to prevent same-day overwrites
   const timestamp = new Date(report.generated_at)
     .toISOString()
     .replace(/[:.]/g, '-')
-    .slice(0, 19); // YYYY-MM-DDTHH-MM-SS
+    .slice(0, 19);
   const tickerSlug = report.tickers.join('-');
   const filename = `${tickerSlug}-${timestamp}.pdf`;
   const outputPath = resolve(dir, filename);
 
-  // Generate charts from context data (deterministic SVGs)
-  let chartsHTML = '';
-  if (context) {
-    const charts = generateCharts(context);
-    const chartParts: string[] = [];
+  const { bodyHTML } = buildPdfPages(report, context);
+  const fullHTML = buildReportHTML(report, bodyHTML);
 
-    if (charts.revenueMarginChart) chartParts.push(charts.revenueMarginChart);
-    if (charts.fcfBridgeChart) chartParts.push(charts.fcfBridgeChart);
-    if (charts.growthDurabilityChart) chartParts.push(charts.growthDurabilityChart);
-    if (charts.peerScorecardChart) chartParts.push(charts.peerScorecardChart);
-    if (charts.returnLeverageChart) chartParts.push(charts.returnLeverageChart);
+  const platformDefaultChrome = process.platform === 'darwin'
+    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    : undefined;
+  const executablePath = process.env['PUPPETEER_EXECUTABLE_PATH'] || platformDefaultChrome;
 
-    if (chartParts.length > 0) {
-      chartsHTML = `<div class="section charts-section"><h2>Visual Analysis</h2><div class="charts-grid">${chartParts.join('\n')}</div></div>`;
-    }
-  }
-
-  // Convert each section from Markdown to HTML
-  const sectionParts: string[] = [];
-  for (const section of report.sections) {
-    const contentHTML = marked.parse(section.content, { async: false }) as string;
-    sectionParts.push(`<div class="section"><h2>${escapeHTML(section.title)}</h2>${contentHTML}</div>`);
-
-    // Insert charts after Executive Summary
-    if (section.id === 'executive_summary' && chartsHTML) {
-      sectionParts.push(chartsHTML);
-      chartsHTML = '';
-    }
-  }
-
-  // If charts weren't inserted, add them at the start
-  if (chartsHTML) {
-    sectionParts.unshift(chartsHTML);
-  }
-
-  const sectionsHTML = sectionParts.join('\n');
-  const fullHTML = buildReportHTML(report, sectionsHTML);
-
-  // Launch Puppeteer and render to PDF.
-  // --no-sandbox is required for many CI/container environments and macOS.
-  // This is safe here because we only render locally-generated HTML (no external content).
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
@@ -86,38 +49,90 @@ export async function generatePDF(
     const page = await browser.newPage();
     await page.setContent(fullHTML, { waitUntil: 'networkidle0' });
 
-    // Post-process: color only percentage-change cells (not absolute dollar values)
     await page.evaluate(`
       document.querySelectorAll('td').forEach(function(td) {
         var text = (td.textContent || '').trim();
-        if (!text.includes('%')) return;
-        if (td.cellIndex === 0) return;
+        if (td.cellIndex === 0 || !text) return;
         var num = parseFloat(text.replace(/[^\\d.\\-]/g, ''));
-        if (isNaN(num) || num === 0) return;
-        if (text.startsWith('-') || num < 0) {
-          td.classList.add('negative');
-        } else {
-          td.classList.add('positive');
+        if (isNaN(num)) return;
+        if (text.includes('%') || text.includes('x')) {
+          if (num < 0 || text.startsWith('-')) td.classList.add('negative');
+          else if (num > 0) td.classList.add('positive');
         }
       });
     `);
 
+    const qaIssues = await page.evaluate(() => {
+      const doc = (globalThis as any).document;
+      const issues: string[] = [];
+      const pageEls = Array.from(doc.querySelectorAll('.report-page'));
+
+      pageEls.forEach((pageEl: any, idx: number) => {
+        const text = (pageEl.textContent || '').replace(/\s+/g, ' ').trim();
+        if (text.length < 50) issues.push(`Page ${idx + 1}: near-empty content block.`);
+      });
+
+      const critical = Array.from(doc.querySelectorAll('.cover-thesis, .kpi-label, .kpi-value, .kpi-note, h1, h2, h3'));
+      critical.forEach((el: any) => {
+        if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1) {
+          issues.push(`Truncation detected in "${(el.textContent || '').trim().slice(0, 80)}".`);
+        }
+        if (el.clientHeight > 0 && el.scrollHeight > el.clientHeight + 1) {
+          issues.push(`Vertical overflow detected in "${(el.textContent || '').trim().slice(0, 80)}".`);
+        }
+      });
+
+      const allHeadings = Array.from(doc.querySelectorAll(
+        '.report-page > .page-header h2, .report-page .table-group > h3, .report-page .appendix-section > h3, .report-page .commentary-block > h3',
+      ));
+      allHeadings.forEach((h: any) => {
+        const pageEl = h.closest('.report-page');
+        if (!pageEl) return;
+        const hRect = h.getBoundingClientRect();
+        const pageRect = pageEl.getBoundingClientRect();
+        const remaining = pageRect.bottom - hRect.bottom;
+        if (remaining < 70) issues.push(`Orphan heading risk near page bottom: "${(h.textContent || '').trim()}".`);
+      });
+
+      Array.from(doc.querySelectorAll('.page-dashboard table')).forEach((table: any, idx: number) => {
+        const rows = table.querySelectorAll('tbody tr').length;
+        if (rows > 8) issues.push(`Dashboard table ${idx + 1} exceeds 8-row limit (${rows}).`);
+      });
+      Array.from(doc.querySelectorAll('.page-appendix table')).forEach((table: any, idx: number) => {
+        const rows = table.querySelectorAll('tbody tr').length;
+        if (rows > 14) issues.push(`Appendix table ${idx + 1} exceeds 14-row limit (${rows}).`);
+      });
+
+      Array.from(doc.querySelectorAll('.metrics-module h3')).forEach((h3: any) => {
+        const title = (h3.textContent || '').trim();
+        if (!/additional metrics/i.test(title)) return;
+        const nextTable = h3.nextElementSibling;
+        if (!nextTable || nextTable.tagName !== 'TABLE') {
+          issues.push('Additional Metrics heading missing attached table.');
+          return;
+        }
+        const rows = nextTable.querySelectorAll('tbody tr').length;
+        if (rows < 3) issues.push(`Additional Metrics has fewer than 3 rows (${rows}).`);
+      });
+
+      return issues;
+    });
+
+    if (qaIssues.length > 0) {
+      throw new Error(`PDF layout QA failed: ${qaIssues.slice(0, 8).join(' | ')}`);
+    }
+
     await page.pdf({
       path: outputPath,
-      format: 'Letter',
+      format: PDF_THEME.page.size,
       printBackground: true,
-      margin: {
-        top: '0.75in',
-        bottom: '0.75in',
-        left: '0.6in',
-        right: '0.6in',
-      },
+      margin: PDF_THEME.page.margin,
       displayHeaderFooter: true,
       headerTemplate: '<div></div>',
       footerTemplate: `
-        <div style="width: 100%; text-align: center; font-size: 8px; color: #999; font-family: Arial, sans-serif;">
-          <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-          <span style="margin-left: 20px;">Dolph — ${escapeHTML(report.tickers.join(', '))}</span>
+        <div style="width:100%;padding:0 24px;font-size:8px;color:${PDF_THEME.colors.mutedText};font-family:${PDF_THEME.fonts.body};display:flex;justify-content:space-between;">
+          <span>Dolph Research — ${escapeHTML(report.tickers.join(', '))}</span>
+          <span><span class="pageNumber"></span> / <span class="totalPages"></span></span>
         </div>
       `,
     });
@@ -133,5 +148,6 @@ function escapeHTML(str: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

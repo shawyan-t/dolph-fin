@@ -110,9 +110,17 @@ export function buildDCFAssumptions(context: AnalysisContext, ticker: string): D
     throw new Error(`DCF requires shares outstanding for ${ticker} but none was found in SEC filings.`);
   }
 
-  const opIncome = getMetricValue(facts, 'operating_income') || 0;
-  const ocf = getMetricValue(facts, 'operating_cash_flow') || 0;
+  const opIncomeRaw = getMetricValue(facts, 'operating_income');
+  const ocfRaw = getMetricValue(facts, 'operating_cash_flow');
+  const opIncome = opIncomeRaw ?? 0;
+  const ocf = ocfRaw ?? 0;
   const capex = Math.abs(getMetricValue(facts, 'capex') || 0);
+
+  if ((ocfRaw === null || ocfRaw === 0) && (opIncomeRaw === null || opIncomeRaw === 0)) {
+    throw new Error(
+      `DCF requires operating cash flow or operating income for ${ticker} but neither was found in SEC filings.`,
+    );
+  }
 
   // Derive margins and rates from actual data
   const opMargin = revenue > 0 ? opIncome / revenue : 0.1;
@@ -121,7 +129,7 @@ export function buildDCFAssumptions(context: AnalysisContext, ticker: string): D
   // Leverage-based WACC: adjust baseline 10% based on D/E ratio
   const { debtBase } = resolveDebtBase(facts);
   const equity = getMetricValue(facts, 'stockholders_equity') || 0;
-  const deRatio = equity > 0 ? debtBase / equity : 1;
+  const deRatio = equity > 0 ? debtBase / equity : 5;
   let wacc = 0.10;
   if (deRatio > 2) wacc = 0.12;
   else if (deRatio > 1) wacc = 0.11;

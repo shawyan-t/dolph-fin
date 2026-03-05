@@ -1,0 +1,23 @@
+{
+  "ticker": "GOOGL",
+  "company_name": "ALPHABET INC.",
+  "as_of_date": "2026-03-05",
+  "projection_years": 5,
+  "discount_rate": 0.09,
+  "terminal_growth_rate": 0.025,
+  "revenue_growth_rates": [
+    0.185,
+    0.146,
+    0.107,
+    0.069,
+    0.03
+  ],
+  "operating_margin": 0.369,
+  "tax_rate": 0.21,
+  "capex_as_pct_revenue": 0.261,
+  "depreciation_as_pct_revenue": 0.209,
+  "nwc_as_pct_revenue": 0.05,
+  "base_revenue": 350018000000,
+  "base_fcf": 73266000000,
+  "shares_outstanding": 12088000000
+}

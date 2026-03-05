@@ -1,0 +1,58 @@
+{
+  "ticker": "AMD",
+  "model": "dcf",
+  "generated_at": "2026-03-05T15:00:06.949Z",
+  "implied_share_price": 43.71,
+  "enterprise_value": 69224614293,
+  "sources": {
+    "revenue": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.667Z"
+    },
+    "operating_income": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.668Z"
+    },
+    "operating_cash_flow": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.670Z"
+    },
+    "capex": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.670Z"
+    },
+    "shares_outstanding": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.669Z"
+    },
+    "total_debt": {
+      "xbrl_tag": "DebtInstrumentCarryingAmount",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.669Z"
+    },
+    "cash_and_equivalents": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0000002488-26-000018",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/0000002488-26-000018-index.htm",
+      "extracted_at": "2026-03-05T03:24:22.669Z"
+    }
+  }
+}

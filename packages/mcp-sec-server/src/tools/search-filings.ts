@@ -2,10 +2,10 @@
  * Tool: search_filings
  * Full-text search across SEC filings via EDGAR search API.
  *
- * Graduated fallback strategy:
+ * Graduated fallback strategy (availability with guardrails):
  * 1. Full query with all filters (ticker, date range)
  * 2. Query + ticker only (drop date range)
- * 3. Query only (last resort)
+ * 3. Query only (optional last resort; disabled when ticker relax is off)
  *
  * Only primary (level 0) results are cached. Fallback results are NOT cached
  * under the original key to prevent cache poisoning.
@@ -21,15 +21,21 @@ import {
 } from '@dolph/shared';
 import { edgarFetchJson } from '../edgar/client.js';
 import { fileCache } from '../cache/file-cache.js';
+import { getEntityByCik, resolveCik } from '../edgar/cik-lookup.js';
+import { getCompanyFilings } from './get-company-filings.js';
+
+const STRICT_SEARCH_MODE = process.env['DOLPH_STRICT_SEARCH_MODE'] === '1';
+const ALLOW_TICKER_RELAX = process.env['DOLPH_SEARCH_ALLOW_TICKER_RELAX'] === '1';
+const SEARCH_CACHE_SCHEMA_VERSION = 4;
 
 /**
  * Build a filing index URL from an EDGAR accession number.
  * Accession format: `{CIK_10digits}-{YY}-{SEQ}` e.g. `0000320193-24-000123`
  * URL format: `https://www.sec.gov/Archives/edgar/data/{cikNumeric}/{accessionClean}/`
  */
-function buildFilingIndexUrl(accession: string): string {
+function buildFilingIndexUrl(accession: string, cikCandidate?: string): string {
   if (!accession || !accession.includes('-')) return '';
-  const cikPart = accession.split('-')[0] || '';
+  const cikPart = cikCandidate?.replace(/\D/g, '') || accession.split('-')[0] || '';
   const cikNumeric = cikPart.replace(/^0+/, '') || '0';
   const accessionClean = accession.replace(/-/g, '');
   return `${SEC_EDGAR_ARCHIVES_URL}/${cikNumeric}/${accessionClean}/`;
@@ -85,6 +91,44 @@ function extractAccession(hitId: string, source: Record<string, unknown>): strin
   return normalizeAccession(candidate);
 }
 
+function extractCikFromAccession(accession: string): string | null {
+  const m = accession.match(/^(\d{10})-\d{2}-\d{6}$/);
+  return m ? m[1]! : null;
+}
+
+function normalizeCikCandidate(raw: string): string | null {
+  const digits = raw.replace(/\D/g, '');
+  return digits.length > 0 ? digits.padStart(10, '0').slice(-10) : null;
+}
+
+function extractCiksFromSource(source: Record<string, unknown>): string[] {
+  const result = new Set<string>();
+
+  const pushCik = (value: unknown): void => {
+    if (typeof value !== 'string') return;
+    const normalized = normalizeCikCandidate(value);
+    if (normalized) result.add(normalized);
+  };
+
+  const ciks = source['ciks'];
+  if (Array.isArray(ciks)) {
+    for (const c of ciks) pushCik(c);
+  } else {
+    pushCik(ciks);
+  }
+
+  pushCik(source['cik']);
+  pushCik(source['cik_str']);
+  pushCik(source['entity_cik']);
+  pushCik(source['issuer_cik']);
+
+  return Array.from(result);
+}
+
+function extractCikFromSource(source: Record<string, unknown>): string | null {
+  return extractCiksFromSource(source)[0] || null;
+}
+
 function extractCompanyName(source: Record<string, unknown>, ticker?: string): string {
   return pickFirstNonEmptyString(
     source['entity_name'],
@@ -137,7 +181,39 @@ function extractSnippet(
       ? '[Ticker/date filters relaxed] '
       : '';
 
-  return `${fallbackPrefix}${highlightSnippet || sourceSnippet}`.slice(0, 500);
+  const text = (highlightSnippet || sourceSnippet || 'No preview available').trim();
+  return `${fallbackPrefix}${text}`.slice(0, 500);
+}
+
+function scoreSearchHit(source: Record<string, unknown>): number {
+  let score = 0;
+
+  const seqRaw = pickFirstNonEmptyString(source['sequence'], source['doc_sequence']);
+  const seq = Number(seqRaw);
+  if (Number.isFinite(seq)) {
+    if (seq === 1) score += 50;
+    else if (seq <= 3) score += 20;
+  }
+
+  const fileType = pickFirstNonEmptyString(
+    source['file_type'],
+    source['fileType'],
+    source['document_type'],
+  ).toUpperCase();
+  if (fileType === 'HTML' || fileType === 'HTM') score += 20;
+  if (fileType === 'XML') score -= 10;
+
+  const description = pickFirstNonEmptyString(
+    source['file_description'],
+    source['fileDescription'],
+    source['description'],
+    source['document_description'],
+  ).toUpperCase();
+
+  if (/(^|[^A-Z])EX-?\d/.test(description) || description.includes('EXHIBIT')) score -= 20;
+  if (/(10-K|10-Q|8-K|20-F|6-K|40-F|DEF 14A)/.test(description)) score += 12;
+
+  return score;
 }
 
 function buildSearchUrl(
@@ -164,8 +240,9 @@ function buildSearchUrl(
 
 export async function searchFilings(params: SearchFilingsParams): Promise<FilingSearchResult[]> {
   const { query, ticker, date_from, date_to, limit = 10 } = params;
+  const normalizedTicker = ticker?.trim().toUpperCase() || undefined;
 
-  const cacheKey = JSON.stringify(params);
+  const cacheKey = JSON.stringify({ v: SEARCH_CACHE_SCHEMA_VERSION, ...params });
 
   // Check cache
   const cached = await fileCache.get<FilingSearchResult[]>('search', cacheKey, CACHE_TTL_SEARCH);
@@ -186,7 +263,7 @@ export async function searchFilings(params: SearchFilingsParams): Promise<Filing
   }
 
   // Level 1: Drop date filters, keep ticker
-  if (!data && ticker) {
+  if (!data && ticker && !STRICT_SEARCH_MODE) {
     try {
       const url = buildSearchUrl(query, limit, ticker);
       data = await edgarFetchJson<EFTSResponse>(url);
@@ -198,7 +275,7 @@ export async function searchFilings(params: SearchFilingsParams): Promise<Filing
   }
 
   // Level 2: Query only (last resort)
-  if (!data) {
+  if (!data && !STRICT_SEARCH_MODE && (!ticker || ALLOW_TICKER_RELAX)) {
     try {
       const url = buildSearchUrl(query, limit);
       data = await edgarFetchJson<EFTSResponse>(url);
@@ -212,31 +289,105 @@ export async function searchFilings(params: SearchFilingsParams): Promise<Filing
     return [];
   }
 
-  const results: FilingSearchResult[] = data.hits.hits
-    .slice(0, limit)
-    .map(hit => {
-      const src = hit._source || {};
-      const accession = extractAccession(hit._id || '', src);
-      const filingType = extractFilingType(src);
-      const companyName = extractCompanyName(src, ticker);
-      const dateFiled = extractDateFiled(src);
-      const snippet = extractSnippet(hit.highlight, src, fallbackLevel);
-      const directUrl = pickFirstNonEmptyString(
-        src['primary_document_url'],
-        src['primaryDocumentUrl'],
-        src['linkToFilingDetails'],
-        src['filing_url'],
-      );
+  let resolvedTickerCik: string | null = null;
+  if (normalizedTicker) {
+    try {
+      resolvedTickerCik = await resolveCik(normalizedTicker);
+    } catch {
+      resolvedTickerCik = null;
+    }
+  }
 
-      return {
-        filing_type: filingType,
-        date_filed: dateFiled,
-        accession_number: accession,
-        company_name: companyName,
-        snippet,
-        primary_document_url: directUrl || buildFilingIndexUrl(accession),
-      };
-    });
+  const dedupedResults = new Map<string, { result: FilingSearchResult; score: number }>();
+  for (const hit of data.hits.hits.slice(0, limit)) {
+    const src = hit._source || {};
+    const accession = extractAccession(hit._id || '', src);
+    const filingType = extractFilingType(src);
+    let companyName = extractCompanyName(src, normalizedTicker);
+    const sourceCiks = extractCiksFromSource(src);
+    const sourceCik = sourceCiks[0] || extractCikFromAccession(accession);
+    const dateFiled = extractDateFiled(src);
+    const snippet = extractSnippet(hit.highlight, src, fallbackLevel);
+    const directUrl = pickFirstNonEmptyString(
+      src['primary_document_url'],
+      src['primaryDocumentUrl'],
+      src['link_to_html'],
+      src['linkToHtml'],
+      src['link_to_txt'],
+      src['linkToTxt'],
+      src['linkToFilingDetails'],
+      src['filing_url'],
+    );
+
+    // If EFTS omits company name, recover it from CIK when possible.
+    if (!companyName || companyName === 'Unknown') {
+      if (sourceCik) {
+        const entity = await getEntityByCik(sourceCik);
+        if (entity?.name) {
+          companyName = entity.name;
+        } else if (entity?.ticker) {
+          companyName = entity.ticker;
+        }
+      }
+    }
+
+    // When ticker is explicitly provided, keep results entity-coherent.
+    if (normalizedTicker) {
+      const companyUpper = companyName.toUpperCase();
+      const tickerMentionMatch = companyUpper.includes(`(${normalizedTicker})`) || companyUpper === normalizedTicker;
+      const cikMatch = resolvedTickerCik
+        ? (sourceCik === resolvedTickerCik || sourceCiks.includes(resolvedTickerCik))
+        : false;
+      if (!tickerMentionMatch && !cikMatch) {
+        continue;
+      }
+    }
+
+    const result: FilingSearchResult = {
+      filing_type: filingType,
+      date_filed: dateFiled,
+      accession_number: accession,
+      company_name: companyName || normalizedTicker || 'Unknown',
+      snippet,
+      primary_document_url: directUrl || buildFilingIndexUrl(accession, sourceCik || undefined),
+    };
+
+    const dedupeKey = accession || `${filingType}:${dateFiled}:${result.company_name}`;
+    const score = scoreSearchHit(src);
+    const existing = dedupedResults.get(dedupeKey);
+    if (!existing || score > existing.score) {
+      dedupedResults.set(dedupeKey, { result, score });
+    }
+  }
+
+  const results = Array.from(dedupedResults.values())
+    .map(v => v.result)
+    .sort((a, b) => {
+      const aDate = /^\d{4}-\d{2}-\d{2}$/.test(a.date_filed) ? a.date_filed : '';
+      const bDate = /^\d{4}-\d{2}-\d{2}$/.test(b.date_filed) ? b.date_filed : '';
+      if (aDate !== bDate) return bDate.localeCompare(aDate);
+      return a.accession_number.localeCompare(b.accession_number);
+    })
+    .slice(0, limit);
+
+  // For ticker-scoped searches, prefer canonical EDGAR document URLs from
+  // submissions data so preview/download opens the actual filing document.
+  if (normalizedTicker && results.length > 0) {
+    try {
+      const filings = await getCompanyFilings({ ticker: normalizedTicker, limit: Math.max(50, limit * 3) });
+      const filingUrlByAccession = new Map(
+        filings.map(f => [f.accession_number, f.primary_document_url] as const),
+      );
+      for (const result of results) {
+        const canonicalUrl = filingUrlByAccession.get(result.accession_number);
+        if (canonicalUrl) {
+          result.primary_document_url = canonicalUrl;
+        }
+      }
+    } catch {
+      // Keep EFTS-derived URLs if submissions enrichment fails.
+    }
+  }
 
   // Only cache primary (level 0) results — fallback results are NOT cached
   // under the original filtered key to prevent cache poisoning

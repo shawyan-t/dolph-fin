@@ -10,6 +10,8 @@ export interface PipelineConfig {
   maxRetries: number;
   maxValidationLoops: number;
   tone?: string;
+  /** Narrative generation mode: LLM prose or deterministic code-generated prose */
+  narrativeMode?: 'llm' | 'deterministic';
   outputFormat?: 'terminal' | 'pdf' | 'both';
   /**
    * Snapshot mode: pin the report to an as-of date (YYYY-MM-DD).
@@ -17,6 +19,8 @@ export interface PipelineConfig {
    * enabling reproducible outputs for the same tickers + date.
    */
   snapshotDate?: string;
+  /** Optional abort signal for cancellation (web disconnect, user cancel, etc.) */
+  abortSignal?: AbortSignal;
 }
 
 export interface PipelineCallbacks {

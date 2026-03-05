@@ -29,6 +29,7 @@ export async function correctSections(
   context: AnalysisContext,
   insights: Record<string, AnalysisInsights>,
   llm: LLMProvider,
+  signal?: AbortSignal,
 ): Promise<{ correctedSections: ReportSection[]; llmCallCount: number }> {
   let llmCallCount = 0;
 
@@ -50,6 +51,9 @@ export async function correctSections(
 
   const dataBlock = buildDataBlock(context, insights);
   const correctedSections = [...sections];
+  const llmOptions = signal
+    ? ({ signal } as Parameters<LLMProvider['generate']>[2])
+    : undefined;
 
   for (const [sectionId, sectionIssues] of issuesBySection) {
     // Exact match — no .includes() fuzzy matching
@@ -62,7 +66,7 @@ export async function correctSections(
     if (sectionIdx === -1) {
       // Missing section — generate fresh
       const prompt = buildCorrectionPrompt(sectionId, '', issueList, dataBlock);
-      const response = await llm.generate(prompt, SYSTEM_PROMPT);
+      const response = await llm.generate(prompt, SYSTEM_PROMPT, llmOptions);
       llmCallCount++;
 
       correctedSections.push({
@@ -74,7 +78,7 @@ export async function correctSections(
       // Existing section with issues — regenerate
       const existing = correctedSections[sectionIdx]!;
       const prompt = buildCorrectionPrompt(existing.title, existing.content, issueList, dataBlock);
-      const response = await llm.generate(prompt, SYSTEM_PROMPT);
+      const response = await llm.generate(prompt, SYSTEM_PROMPT, llmOptions);
       llmCallCount++;
 
       correctedSections[sectionIdx] = {

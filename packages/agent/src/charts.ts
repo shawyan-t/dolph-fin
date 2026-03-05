@@ -17,22 +17,22 @@ import { getMappingByName, formatCompactCurrency } from '@dolph/shared';
 // ── Color palette ─────────────────────────────────────────────
 
 const COLORS = {
-  primary: '#1a365d',     // Navy (brand)
-  secondary: '#2b6cb0',   // Blue
-  accent: '#38a169',      // Green
-  warning: '#d69e2e',     // Gold
-  danger: '#c53030',      // Red
-  gray: '#718096',        // Muted text
-  gridLine: '#e2e8f0',    // Light gray grid
-  background: '#ffffff',
+  primary: '#4B3A2E',     // Burnt umber
+  secondary: '#B08D57',   // Brass
+  accent: '#5B6448',      // Forest olive
+  warning: '#A06A4B',     // Muted copper
+  danger: '#6A3B32',      // Burgundy
+  gray: '#6D6258',        // Muted text
+  gridLine: '#D8CCBD',    // Stone beige grid
+  background: '#FFFFFF',  // Crisp chart canvas
 };
 
-const CHART_COLORS = ['#1a365d', '#2b6cb0', '#38a169', '#d69e2e', '#c53030'];
+const CHART_COLORS = ['#5B6448', '#B08D57', '#A06A4B', '#4B3A2E', '#6A3B32'];
 
 // ── Chart dimensions ──────────────────────────────────────────
 
-const CHART_WIDTH = 560;
-const CHART_HEIGHT = 280;
+const CHART_WIDTH = 700;
+const CHART_HEIGHT = 360;
 
 // ── Public API ────────────────────────────────────────────────
 
@@ -69,8 +69,9 @@ function buildRevenueMarginChart(context: AnalysisContext, ticker: string): stri
   const revenueTrend = trends.find(t => t.metric === 'revenue');
   if (!revenueTrend || revenueTrend.values.length < 2) return null;
 
-  const periods = revenueTrend.values.slice(-5);
+  const periods = selectAnnualChartValues(revenueTrend.values, 5);
   const n = periods.length;
+  if (n < 2) return null;
 
   // Gather income trends to compute margins per period
   const opIncomeTrend = trends.find(t => t.metric === 'operating_income');
@@ -125,7 +126,7 @@ function buildRevenueMarginChart(context: AnalysisContext, ticker: string): stri
   const parts: string[] = [];
   parts.push(svgOpen(CHART_WIDTH, CHART_HEIGHT));
   parts.push(svgBg(CHART_WIDTH, CHART_HEIGHT));
-  parts.push(svgTitle(`${escSvg(ticker)} — Revenue &amp; Margins`, CHART_WIDTH));
+  parts.push(svgTitle(`${escSvg(ticker)} — Revenue &amp; Margin Profile`, CHART_WIDTH));
 
   // Left Y-axis grid + labels (Revenue)
   const yTicks = 5;
@@ -133,14 +134,14 @@ function buildRevenueMarginChart(context: AnalysisContext, ticker: string): stri
     const y = pad.top + (plotH * i / yTicks);
     const value = revCeil * (1 - i / yTicks);
     parts.push(`<line x1="${pad.left}" y1="${y}" x2="${pad.left + plotW}" y2="${y}" stroke="${COLORS.gridLine}" stroke-width="0.5"/>`);
-    parts.push(`<text x="${pad.left - 8}" y="${y + 3}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${formatAxisValue(value)}</text>`);
+    parts.push(`<text x="${pad.left - 8}" y="${y + 3}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${formatAxisValue(value)}</text>`);
   }
 
   // Right Y-axis labels (Margin %)
   for (let i = 0; i <= yTicks; i++) {
     const y = pad.top + (plotH * i / yTicks);
     const pct = marginCeil * (1 - i / yTicks);
-    parts.push(`<text x="${pad.left + plotW + 8}" y="${y + 3}" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${pct.toFixed(0)}%</text>`);
+    parts.push(`<text x="${pad.left + plotW + 8}" y="${y + 3}" text-anchor="start" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${pct.toFixed(0)}%</text>`);
   }
 
   // Revenue bars
@@ -154,7 +155,7 @@ function buildRevenueMarginChart(context: AnalysisContext, ticker: string): stri
   // X-axis labels
   for (let i = 0; i < n; i++) {
     const x = pad.left + i * barSpacing + barSpacing / 2;
-    parts.push(`<text x="${x}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${escSvg(formatPeriodShort(periods[i]!.period))}</text>`);
+    parts.push(`<text x="${x}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${escSvg(formatPeriodShort(periods[i]!.period))}</text>`);
   }
 
   // Margin overlay lines
@@ -258,14 +259,14 @@ function buildFCFBridgeChart(context: AnalysisContext, ticker: string): string |
   const parts: string[] = [];
   parts.push(svgOpen(CHART_WIDTH, CHART_HEIGHT));
   parts.push(svgBg(CHART_WIDTH, CHART_HEIGHT));
-  parts.push(svgTitle(`${escSvg(ticker)} — Free Cash Flow Bridge`, CHART_WIDTH));
+  parts.push(svgTitle(`${escSvg(ticker)} — Cash Flow Conversion`, CHART_WIDTH));
 
   // Grid lines
   const gridStep = niceStep(totalYRange, 5);
   for (let v = Math.ceil(yFloor / gridStep) * gridStep; v <= yCeil; v += gridStep) {
     const y = valToY(v);
     parts.push(`<line x1="${pad.left}" y1="${y.toFixed(1)}" x2="${pad.left + plotW}" y2="${y.toFixed(1)}" stroke="${COLORS.gridLine}" stroke-width="0.5"/>`);
-    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${formatAxisValue(v)}</text>`);
+    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${formatAxisValue(v)}</text>`);
   }
 
   // Zero line
@@ -313,10 +314,10 @@ function buildFCFBridgeChart(context: AnalysisContext, ticker: string): string |
 
     // Value label
     const labelY = item.value >= 0 ? barTop - 5 : barBottom + 12;
-    parts.push(`<text x="${cx.toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" font-weight="600" fill="${color}">${formatAxisValue(item.value)}</text>`);
+    parts.push(`<text x="${cx.toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" font-weight="600" fill="${color}">${formatAxisValue(item.value)}</text>`);
 
     // X-axis label
-    parts.push(`<text x="${cx.toFixed(1)}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${escSvg(item.label)}</text>`);
+    parts.push(`<text x="${cx.toFixed(1)}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${escSvg(item.label)}</text>`);
 
     prevBarEndY = valToY(running);
   }
@@ -384,7 +385,7 @@ function buildPeerScorecardChart(context: AnalysisContext): string | null {
   const parts: string[] = [];
   parts.push(svgOpen(CHART_WIDTH, chartH));
   parts.push(svgBg(CHART_WIDTH, chartH));
-  parts.push(svgTitle(`${escSvg(tickers.join(' vs '))} — Peer Scorecard (Z-Score)`, CHART_WIDTH));
+  parts.push(svgTitle(`${escSvg(tickers.join(' vs '))} — Peer Positioning`, CHART_WIDTH));
 
   // Vertical grid lines at z = -2, -1, 0, 1, 2
   for (let z = -2; z <= 2; z++) {
@@ -392,7 +393,7 @@ function buildPeerScorecardChart(context: AnalysisContext): string | null {
     const isCenter = z === 0;
     parts.push(`<line x1="${x.toFixed(1)}" y1="${pad.top}" x2="${x.toFixed(1)}" y2="${pad.top + plotH}" stroke="${isCenter ? COLORS.gray : COLORS.gridLine}" stroke-width="${isCenter ? 1 : 0.5}"${isCenter ? ' stroke-dasharray="4,3"' : ''}/>`);
     const sigmaLabel = z > 0 ? `+${z}` : `${z}`;
-    parts.push(`<text x="${x.toFixed(1)}" y="${pad.top + plotH + 14}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${sigmaLabel}&#963;</text>`);
+    parts.push(`<text x="${x.toFixed(1)}" y="${pad.top + plotH + 14}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${sigmaLabel}&#963;</text>`);
   }
 
   // Rows
@@ -402,7 +403,7 @@ function buildPeerScorecardChart(context: AnalysisContext): string | null {
 
     // Metric label
     const displayLabel = row.label.length > 20 ? row.label.slice(0, 20) + '...' : row.label;
-    parts.push(`<text x="${pad.left - 8}" y="${rowCenterY + 4}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${escSvg(displayLabel)}</text>`);
+    parts.push(`<text x="${pad.left - 8}" y="${rowCenterY + 4}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${escSvg(displayLabel)}</text>`);
 
     // Row separator
     if (r > 0) {
@@ -478,25 +479,25 @@ function buildReturnLeverageChart(context: AnalysisContext): string | null {
   const parts: string[] = [];
   parts.push(svgOpen(CHART_WIDTH, CHART_HEIGHT));
   parts.push(svgBg(CHART_WIDTH, CHART_HEIGHT));
-  parts.push(svgTitle('Return on Equity vs Leverage', CHART_WIDTH));
+  parts.push(svgTitle('Return vs Leverage', CHART_WIDTH));
 
   // X-axis grid (D/E)
   const deStep = niceStep(deMax - deMin, 5);
   for (let v = Math.ceil(deMin / deStep) * deStep; v <= deMax; v += deStep) {
     const x = xToPlot(v);
     parts.push(`<line x1="${x.toFixed(1)}" y1="${pad.top}" x2="${x.toFixed(1)}" y2="${pad.top + plotH}" stroke="${COLORS.gridLine}" stroke-width="0.5"/>`);
-    parts.push(`<text x="${x.toFixed(1)}" y="${pad.top + plotH + 14}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${v.toFixed(1)}x</text>`);
+    parts.push(`<text x="${x.toFixed(1)}" y="${pad.top + plotH + 14}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${v.toFixed(1)}x</text>`);
   }
-  parts.push(`<text x="${pad.left + plotW / 2}" y="${pad.top + plotH + 30}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">D/E Ratio</text>`);
+  parts.push(`<text x="${pad.left + plotW / 2}" y="${pad.top + plotH + 30}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">D/E Ratio</text>`);
 
   // Y-axis grid (ROE)
   const roeStep = niceStep(roeMax - roeMin, 5);
   for (let v = Math.ceil(roeMin / roeStep) * roeStep; v <= roeMax; v += roeStep) {
     const y = yToPlot(v);
     parts.push(`<line x1="${pad.left}" y1="${y.toFixed(1)}" x2="${pad.left + plotW}" y2="${y.toFixed(1)}" stroke="${COLORS.gridLine}" stroke-width="0.5"/>`);
-    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${v.toFixed(0)}%</text>`);
+    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${v.toFixed(0)}%</text>`);
   }
-  parts.push(`<text x="14" y="${pad.top + plotH / 2}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="${COLORS.gray}" transform="rotate(-90 14 ${pad.top + plotH / 2})">ROE (%)</text>`);
+  parts.push(`<text x="14" y="${pad.top + plotH / 2}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}" transform="rotate(-90 14 ${pad.top + plotH / 2})">ROE (%)</text>`);
 
   // Median lines (dashed) creating quadrants
   const medX = xToPlot(medDE);
@@ -507,10 +508,10 @@ function buildReturnLeverageChart(context: AnalysisContext): string | null {
   // Quadrant labels
   const qs = 7;
   const qp = 6;
-  parts.push(`<text x="${pad.left + qp}" y="${pad.top + qp + qs}" font-family="Helvetica Neue, Arial, sans-serif" font-size="${qs}" fill="${COLORS.accent}" opacity="0.6">High Return / Low Leverage</text>`);
-  parts.push(`<text x="${pad.left + plotW - qp}" y="${pad.top + qp + qs}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="${qs}" fill="${COLORS.warning}" opacity="0.6">High Return / High Leverage</text>`);
-  parts.push(`<text x="${pad.left + qp}" y="${pad.top + plotH - qp}" font-family="Helvetica Neue, Arial, sans-serif" font-size="${qs}" fill="${COLORS.gray}" opacity="0.6">Low Return / Low Leverage</text>`);
-  parts.push(`<text x="${pad.left + plotW - qp}" y="${pad.top + plotH - qp}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="${qs}" fill="${COLORS.danger}" opacity="0.6">Low Return / High Leverage</text>`);
+  parts.push(`<text x="${pad.left + qp}" y="${pad.top + qp + qs}" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="${qs}" fill="${COLORS.accent}" opacity="0.6">High Return / Low Leverage</text>`);
+  parts.push(`<text x="${pad.left + plotW - qp}" y="${pad.top + qp + qs}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="${qs}" fill="${COLORS.warning}" opacity="0.6">High Return / High Leverage</text>`);
+  parts.push(`<text x="${pad.left + qp}" y="${pad.top + plotH - qp}" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="${qs}" fill="${COLORS.gray}" opacity="0.6">Low Return / Low Leverage</text>`);
+  parts.push(`<text x="${pad.left + plotW - qp}" y="${pad.top + plotH - qp}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="${qs}" fill="${COLORS.danger}" opacity="0.6">Low Return / High Leverage</text>`);
 
   // Data points
   for (let i = 0; i < points.length; i++) {
@@ -520,7 +521,7 @@ function buildReturnLeverageChart(context: AnalysisContext): string | null {
     const color = CHART_COLORS[i % CHART_COLORS.length]!;
 
     parts.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="6" fill="${color}" stroke="${COLORS.background}" stroke-width="2" opacity="0.9"/>`);
-    parts.push(`<text x="${(cx + 10).toFixed(1)}" y="${(cy + 4).toFixed(1)}" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="${color}">${escSvg(p.ticker)}</text>`);
+    parts.push(`<text x="${(cx + 10).toFixed(1)}" y="${(cy + 4).toFixed(1)}" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" font-weight="600" fill="${color}">${escSvg(p.ticker)}</text>`);
   }
 
   parts.push('</svg>');
@@ -534,20 +535,32 @@ function buildGrowthDurabilityChart(context: AnalysisContext, ticker: string): s
   const revenueTrend = trends.find(t => t.metric === 'revenue');
   if (!revenueTrend || revenueTrend.values.length < 3) return null;
 
-  const periods = revenueTrend.values.slice(-6);
-  const growthPeriods = periods.filter(p => p.yoy_growth !== null);
-  if (growthPeriods.length < 2) return null;
+  const periods = selectAnnualChartValues(revenueTrend.values, 6);
+  if (periods.length < 3) return null;
 
-  const growthRates = growthPeriods.map(p => p.yoy_growth! * 100);
+  const growthPeriods: Array<{ period: string; growth: number }> = [];
+  for (let i = 1; i < periods.length; i++) {
+    const prev = periods[i - 1]!;
+    const curr = periods[i]!;
+    if (!isFinite(prev.value) || !isFinite(curr.value) || prev.value <= 0) continue;
+    growthPeriods.push({
+      period: curr.period,
+      growth: ((curr.value / prev.value) - 1) * 100,
+    });
+  }
+  const normalizedGrowth = normalizeGrowthSeries(growthPeriods);
+  if (normalizedGrowth.length < 2) return null;
+
+  const growthRates = normalizedGrowth.map(p => p.growth);
 
   // 3-year rolling CAGR
   const cagrPoints: { idx: number; cagr: number }[] = [];
-  for (let i = 3; i < growthPeriods.length; i++) {
-    const startVal = revenueTrend.values.find(v => v.period === growthPeriods[i - 3]!.period);
-    const endVal = revenueTrend.values.find(v => v.period === growthPeriods[i]!.period);
-    if (startVal && endVal && startVal.value > 0) {
+  for (let i = 3; i < periods.length; i++) {
+    const startVal = periods[i - 3]!;
+    const endVal = periods[i]!;
+    if (startVal.value > 0) {
       const cagr = (Math.pow(endVal.value / startVal.value, 1 / 3) - 1) * 100;
-      cagrPoints.push({ idx: i, cagr });
+      cagrPoints.push({ idx: i - 1, cagr });
     }
   }
 
@@ -561,7 +574,7 @@ function buildGrowthDurabilityChart(context: AnalysisContext, ticker: string): s
   const plotW = CHART_WIDTH - pad.left - pad.right;
   const plotH = CHART_HEIGHT - pad.top - pad.bottom;
 
-  const n = growthPeriods.length;
+  const n = normalizedGrowth.length;
   const barSpacing = plotW / n;
   const barWidth = barSpacing * 0.55;
 
@@ -582,14 +595,14 @@ function buildGrowthDurabilityChart(context: AnalysisContext, ticker: string): s
   const parts: string[] = [];
   parts.push(svgOpen(CHART_WIDTH, CHART_HEIGHT));
   parts.push(svgBg(CHART_WIDTH, CHART_HEIGHT));
-  parts.push(svgTitle(`${escSvg(ticker)} — Revenue Growth Durability${titleCagr}`, CHART_WIDTH));
+  parts.push(svgTitle(`${escSvg(ticker)} — Revenue Growth${titleCagr}`, CHART_WIDTH));
 
   // Grid lines
   const yStep = niceStep(totalRange, 5);
   for (let v = Math.ceil(yFloor / yStep) * yStep; v <= yCeil; v += yStep) {
     const y = valToY(v);
     parts.push(`<line x1="${pad.left}" y1="${y.toFixed(1)}" x2="${pad.left + plotW}" y2="${y.toFixed(1)}" stroke="${COLORS.gridLine}" stroke-width="0.5"/>`);
-    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${v.toFixed(0)}%</text>`);
+    parts.push(`<text x="${pad.left - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${v.toFixed(0)}%</text>`);
   }
 
   // Zero line
@@ -621,10 +634,10 @@ function buildGrowthDurabilityChart(context: AnalysisContext, ticker: string): s
 
     // Value label
     const labelY = g >= 0 ? barTop - 4 : barBot + 12;
-    parts.push(`<text x="${cx.toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" font-weight="600" fill="${color}">${g.toFixed(1)}%</text>`);
+    parts.push(`<text x="${cx.toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" font-weight="600" fill="${color}">${g.toFixed(1)}%</text>`);
 
     // X-axis label
-    parts.push(`<text x="${cx.toFixed(1)}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${escSvg(formatPeriodShort(growthPeriods[i]!.period))}</text>`);
+    parts.push(`<text x="${cx.toFixed(1)}" y="${pad.top + plotH + 16}" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9" fill="${COLORS.gray}">${escSvg(formatPeriodShort(normalizedGrowth[i]!.period))}</text>`);
   }
 
   // 3Y CAGR overlay line
@@ -662,17 +675,51 @@ function formatAxisValue(n: number): string {
   return formatCompactCurrency(n, { smallDecimals: 0, compactDecimals: 1 });
 }
 
+function normalizeGrowthSeries(
+  points: Array<{ period: string; growth: number }>,
+): Array<{ period: string; growth: number }> {
+  if (points.length <= 3) return points;
+  let out = [...points];
+  while (
+    out.length > 3 &&
+    Math.abs(out[0]!.growth) > 150 &&
+    Math.abs(out[0]!.growth) > Math.abs(out[1]!.growth) * 2
+  ) {
+    // Drop leading base-effect outliers so one transition does not swamp
+    // the whole chart and hide the subsequent operating pattern.
+    out = out.slice(1);
+  }
+  return out;
+}
+
+function selectAnnualChartValues(
+  values: TrendData['values'],
+  maxPoints: number,
+): TrendData['values'] {
+  // Keep a single representative period per fiscal year to avoid mixed
+  // year-start/year-end artifacts in chart labels and growth math.
+  const byYear = new Map<number, TrendData['values'][number]>();
+  const sorted = [...values].sort((a, b) => a.period.localeCompare(b.period));
+  for (const v of sorted) {
+    const date = new Date(v.period);
+    if (isNaN(date.getTime())) continue;
+    const year = date.getUTCFullYear();
+    const prev = byYear.get(year);
+    if (!prev || v.period > prev.period) {
+      byYear.set(year, v);
+    }
+  }
+  return Array.from(byYear.values())
+    .sort((a, b) => a.period.localeCompare(b.period))
+    .slice(-maxPoints);
+}
+
 function formatPeriodShort(period: string): string {
   const date = new Date(period);
   if (isNaN(date.getTime())) return period;
   const year = date.getUTCFullYear() % 100;
-  const month = date.getUTCMonth();
   const yr = year.toString().padStart(2, '0');
-  // December = standard calendar year end
-  if (month === 11) return `FY'${yr}`;
-  // Non-December fiscal year end — show month
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${months[month]}'${yr}`;
+  return `FY'${yr}`;
 }
 
 function escSvg(str: string): string {
@@ -692,7 +739,7 @@ function svgBg(w: number, h: number): string {
 }
 
 function svgTitle(text: string, w: number): string {
-  return `<text x="${w / 2}" y="18" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="600" fill="${COLORS.primary}">${text}</text>`;
+  return `<text x="${w / 2}" y="20" text-anchor="middle" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="${COLORS.primary}">${text}</text>`;
 }
 
 /** Round up to a "nice" axis maximum */
@@ -739,8 +786,8 @@ function buildLegend(items: LegendItem[], startX: number, y: number): string {
     } else {
       parts.push(`<rect x="${x}" y="${y - 6}" width="12" height="8" rx="1.5" fill="${item.color}" opacity="0.75"/>`);
     }
-    parts.push(`<text x="${x + 16}" y="${y}" font-family="Helvetica Neue, Arial, sans-serif" font-size="8" fill="${COLORS.gray}">${escSvg(item.label)}</text>`);
-    x += 16 + item.label.length * 5 + 16;
+    parts.push(`<text x="${x + 16}" y="${y}" font-family="Source Sans 3, Inter, Arial, sans-serif" font-size="9.2" fill="${COLORS.gray}">${escSvg(item.label)}</text>`);
+    x += 18 + item.label.length * 5.6 + 16;
   }
   return parts.join('\n');
 }

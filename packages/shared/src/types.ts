@@ -312,5 +312,9 @@ export interface LLMResponse {
 
 export interface LLMProvider {
   name: LLMProviderName;
-  generate(prompt: string, systemPrompt?: string, options?: { temperature?: number }): Promise<LLMResponse>;
+  generate(
+    prompt: string,
+    systemPrompt?: string,
+    options?: { temperature?: number; signal?: AbortSignal },
+  ): Promise<LLMResponse>;
 }

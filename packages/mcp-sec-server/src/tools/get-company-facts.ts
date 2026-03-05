@@ -61,9 +61,12 @@ interface XBRLCompanyFacts {
  * leadership changes) that is too noisy for financial statement metrics.
  */
 const ACCEPTED_FORMS = new Set(['10-K', '10-Q', '20-F', '6-K', '40-F']);
+const ANNUAL_FORMS = new Set(['10-K', '20-F', '40-F']);
+const MAX_STALE_METRIC_YEAR_GAP = 3;
 
 /** Units that should NOT be FX-converted (they aren't monetary values) */
 const NON_MONETARY_UNITS = new Set(['pure', 'shares']);
+const STRICT_FX_DATA_MODE = process.env['DOLPH_STRICT_FX_MODE'] === '1';
 
 export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<CompanyFacts> {
   const { ticker } = params;
@@ -85,6 +88,7 @@ export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<Co
   // Determine which namespace has data
   const hasUsGaap = Object.keys(usGaap).length > 0;
   const hasIfrs = Object.keys(ifrs).length > 0;
+  const globalLatestAnnualYear = getGlobalLatestAnnualYear(usGaap, ifrs);
 
   // Extract facts using our XBRL mappings
   const facts: FinancialFact[] = [];
@@ -92,33 +96,33 @@ export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<Co
   for (const mapping of XBRL_MAPPINGS) {
     let found = false;
 
-    // Try US-GAAP tags first (most common)
-    if (hasUsGaap) {
-      for (const tagName of mapping.xbrlTags) {
-        const fact = usGaap[tagName];
-        if (!fact || !fact.units) continue;
-
-        const periods = extractPeriods(fact, tagName, 'us-gaap', cik);
-        if (periods.length > 0) {
-          facts.push({ metric: mapping.standardName, periods });
-          found = true;
-          break;
-        }
+    // Try US-GAAP tags first (most common), selecting the freshest/most-complete tag.
+    if (hasUsGaap && mapping.xbrlTags.length > 0) {
+      const best = selectBestTagPeriods(
+        usGaap,
+        mapping.xbrlTags,
+        'us-gaap',
+        cik,
+        globalLatestAnnualYear,
+      );
+      if (best) {
+        facts.push({ metric: mapping.standardName, periods: best.periods });
+        found = true;
       }
     }
 
-    // If not found in US-GAAP, try IFRS tags
-    if (!found && hasIfrs) {
-      for (const tagName of mapping.ifrsTags) {
-        const fact = ifrs[tagName];
-        if (!fact || !fact.units) continue;
-
-        const periods = extractPeriods(fact, tagName, 'ifrs-full', cik);
-        if (periods.length > 0) {
-          facts.push({ metric: mapping.standardName, periods });
-          found = true;
-          break;
-        }
+    // If not found in US-GAAP, try IFRS tags with the same freshness heuristic.
+    if (!found && hasIfrs && mapping.ifrsTags.length > 0) {
+      const best = selectBestTagPeriods(
+        ifrs,
+        mapping.ifrsTags,
+        'ifrs-full',
+        cik,
+        globalLatestAnnualYear,
+      );
+      if (best) {
+        facts.push({ metric: mapping.standardName, periods: best.periods });
+        found = true;
       }
     }
   }
@@ -128,29 +132,46 @@ export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<Co
   let fxNote = '';
 
   if (foreignCurrencies.size > 0) {
-    // Fetch conversion rates for all detected currencies
     const rateMap = new Map<string, number>();
-    const labels: string[] = [];
-
-    for (const currency of foreignCurrencies) {
-      try {
-        const rate = await getConversionRate(currency);
-        rateMap.set(currency, rate);
-        const label = await getFXRateLabel(currency);
-        if (label) labels.push(label);
-      } catch {
-        // If FX conversion fails, leave values unconverted
-        console.error(`Warning: Could not fetch FX rate for ${currency}. Values will remain in ${currency}.`);
-      }
-    }
+    const labelsByCurrency = new Map<string, string>();
+    const droppedByCurrency = new Map<string, number>();
+    let droppedPoints = 0;
 
     // Apply conversion to all facts
     for (const fact of facts) {
+      const keptPeriods: typeof fact.periods = [];
       for (const period of fact.periods) {
         const currency = parseCurrency(period.unit);
-        if (!currency || currency === 'USD') continue;
+        if (!currency || currency === 'USD') {
+          keptPeriods.push(period);
+          continue;
+        }
 
-        const rate = rateMap.get(currency);
+        const periodDate = period.period;
+        const key = `${currency}:${periodDate}`;
+        let rate = rateMap.get(key);
+        if (!rate) {
+          try {
+            rate = await getConversionRate(currency, periodDate);
+            rateMap.set(key, rate);
+            if (!labelsByCurrency.has(currency)) {
+              const label = await getFXRateLabel(currency, periodDate);
+              if (label) labelsByCurrency.set(currency, label);
+            }
+          } catch (err) {
+            if (STRICT_FX_DATA_MODE) {
+              throw new Error(
+                `FX conversion failed for ${ticker.toUpperCase()} ${currency} (${periodDate}) in strict mode: ${
+                  err instanceof Error ? err.message : String(err)
+                }`,
+              );
+            }
+            droppedPoints++;
+            droppedByCurrency.set(currency, (droppedByCurrency.get(currency) || 0) + 1);
+            continue;
+          }
+        }
+
         if (rate) {
           const converted = period.value * rate;
           const decimals = period.unit.includes('/shares') ? 4 : 2;
@@ -158,11 +179,33 @@ export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<Co
           period.value = Math.round(converted * scale) / scale;
           // Update unit to reflect USD conversion
           period.unit = period.unit.replace(currency, 'USD');
+          keptPeriods.push(period);
         }
+      }
+      fact.periods = keptPeriods;
+    }
+
+    // Drop empty metrics so downstream consumers never see non-convertible noise.
+    for (let i = facts.length - 1; i >= 0; i--) {
+      if ((facts[i]?.periods.length || 0) === 0) {
+        facts.splice(i, 1);
       }
     }
 
-    fxNote = labels.join('; ');
+    const labels = Array.from(labelsByCurrency.values()).sort();
+    if (labels.length > 0) {
+      fxNote = `Period-end historical FX conversion applied (${labels.join('; ')})`;
+    }
+    if (droppedPoints > 0) {
+      const droppedStr = Array.from(droppedByCurrency.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([ccy, count]) => `${count} ${ccy}`)
+        .join(', ');
+      const droppedNote =
+        `Excluded ${droppedPoints} data point${droppedPoints === 1 ? '' : 's'} due to unavailable FX conversion` +
+        (droppedStr ? ` (${droppedStr})` : '');
+      fxNote = fxNote ? `${fxNote}; ${droppedNote}` : droppedNote;
+    }
   }
 
   const result: CompanyFacts = {
@@ -177,6 +220,102 @@ export async function getCompanyFacts(params: GetCompanyFactsParams): Promise<Co
   await fileCache.set('company_facts', cacheKey, result);
 
   return result;
+}
+
+function yearFromPeriod(period: string): number | null {
+  const m = period.match(/^(\d{4})-/);
+  return m ? parseInt(m[1]!, 10) : null;
+}
+
+function getLatestAnnualYearFromPeriods(periods: FinancialFact['periods']): number | null {
+  let latest: number | null = null;
+  for (const p of periods) {
+    if (!ANNUAL_FORMS.has(p.form)) continue;
+    const y = yearFromPeriod(p.period);
+    if (y === null) continue;
+    if (latest === null || y > latest) latest = y;
+  }
+  return latest;
+}
+
+function getGlobalLatestAnnualYear(
+  usGaap: Record<string, XBRLFact>,
+  ifrs: Record<string, XBRLFact>,
+): number | null {
+  let latest: number | null = null;
+  const updateLatest = (entry: XBRLFactEntry): void => {
+    if (!ANNUAL_FORMS.has(entry.form)) return;
+    const y = yearFromPeriod(entry.end);
+    if (y === null) return;
+    if (latest === null || y > latest) latest = y;
+  };
+
+  for (const namespace of [usGaap, ifrs]) {
+    for (const fact of Object.values(namespace)) {
+      if (!fact.units) continue;
+      for (const entries of Object.values(fact.units)) {
+        for (const entry of entries) updateLatest(entry);
+      }
+    }
+  }
+
+  return latest;
+}
+
+interface TagCandidate {
+  tagName: string;
+  tagRank: number;
+  periods: FinancialFact['periods'];
+  latestAnnualYear: number | null;
+  annualCount: number;
+  latestPeriod: string;
+}
+
+function selectBestTagPeriods(
+  namespaceFacts: Record<string, XBRLFact>,
+  tagNames: string[],
+  namespace: string,
+  cik: string,
+  globalLatestAnnualYear: number | null,
+): { tagName: string; periods: FinancialFact['periods'] } | null {
+  const candidates: TagCandidate[] = [];
+
+  for (const [tagRank, tagName] of tagNames.entries()) {
+    const fact = namespaceFacts[tagName];
+    if (!fact || !fact.units) continue;
+    const periods = extractPeriods(fact, tagName, namespace, cik);
+    if (periods.length === 0) continue;
+
+    const latestAnnualYear = getLatestAnnualYearFromPeriods(periods);
+    // Discard stale tags for active issuers so we don't surface ancient series
+    // as current metrics (e.g., decade-old shares_outstanding/gross_profit).
+    if (
+      latestAnnualYear !== null &&
+      globalLatestAnnualYear !== null &&
+      globalLatestAnnualYear - latestAnnualYear > MAX_STALE_METRIC_YEAR_GAP
+    ) {
+      continue;
+    }
+
+    const annualCount = periods.filter(p => ANNUAL_FORMS.has(p.form)).length;
+    const latestPeriod = periods[0]?.period || '';
+    candidates.push({ tagName, tagRank, periods, latestAnnualYear, annualCount, latestPeriod });
+  }
+
+  if (candidates.length === 0) return null;
+
+  candidates.sort((a, b) => {
+    const aAnnual = a.latestAnnualYear ?? -1;
+    const bAnnual = b.latestAnnualYear ?? -1;
+    if (aAnnual !== bAnnual) return bAnnual - aAnnual;
+    if (a.annualCount !== b.annualCount) return b.annualCount - a.annualCount;
+    if (a.latestPeriod !== b.latestPeriod) return b.latestPeriod.localeCompare(a.latestPeriod);
+    if (a.tagRank !== b.tagRank) return a.tagRank - b.tagRank;
+    return b.periods.length - a.periods.length;
+  });
+
+  const best = candidates[0]!;
+  return { tagName: best.tagName, periods: best.periods };
 }
 
 /**

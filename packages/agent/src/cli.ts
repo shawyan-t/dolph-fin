@@ -8,7 +8,7 @@
 
 import dotenv from 'dotenv';
 import { resolve } from 'node:path';
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 
 // Load .env from project root (2 levels up from packages/agent/)
@@ -21,6 +21,7 @@ import { createLLMProvider, getLLMConfig } from './llm/provider.js';
 import { generatePDF } from './exporter.js';
 import { generateDCFPackage } from './dcf-builder.js';
 import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
+import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
 import { resolveTickerWithConfidence } from '@dolph/mcp-sec-server/edgar/cik-lookup.js';
 import type { PipelineConfig, PipelineCallbacks } from './types.js';
 import type { Report, AnalysisContext } from '@dolph/shared';
@@ -35,6 +36,20 @@ const RED = '\x1B[31m';
 const CYAN = '\x1B[36m';
 const YELLOW = '\x1B[33m';
 const BLUE = '\x1B[94m';
+
+let activeAbortController: AbortController | null = null;
+
+function getNarrativeModeFromEnv(): 'llm' | 'deterministic' {
+  const envMode = (process.env['DOLPH_NARRATIVE_MODE'] || '').trim().toLowerCase();
+  if (envMode === 'deterministic' || envMode === 'llm') {
+    return envMode;
+  }
+  // Auto mode: use LLM when credentials are present, deterministic otherwise.
+  const hasOpenAI = !!(process.env['DOLPH_OPENAI_API_KEY'] || process.env['OPENAI_API_KEY']);
+  const hasGemini = !!(process.env['DOLPH_GEMINI_API_KEY'] || process.env['GEMINI_API_KEY']);
+  const hasGroq = !!(process.env['DOLPH_GROQ_API_KEY'] || process.env['GROQ_API_KEY']);
+  return hasOpenAI || hasGemini || hasGroq ? 'llm' : 'deterministic';
+}
 
 /** Ensure terminal is in a clean state on exit */
 function cleanupTerminal(): void {
@@ -221,12 +236,14 @@ async function handleAnalyze(): Promise<void> {
     },
   });
   const snapshotDate = snapshotInput.trim() || undefined;
+  const narrativeMode = getNarrativeModeFromEnv();
 
   const config: PipelineConfig = {
     tickers: [resolvedTicker],
     type: 'single',
     maxRetries: parseInt(process.env['DOLPH_MAX_RETRIES'] || '2', 10),
     maxValidationLoops: parseInt(process.env['DOLPH_MAX_VALIDATION_LOOPS'] || '2', 10),
+    narrativeMode,
     outputFormat,
     snapshotDate,
   };
@@ -235,12 +252,23 @@ async function handleAnalyze(): Promise<void> {
   console.log(`${BOLD}Analyzing ${config.tickers[0]}${snapshotDate ? ` (snapshot: ${snapshotDate})` : ''}...${RESET}`);
   console.log('');
 
-  const llmConfig = getLLMConfig();
-  const llm = createLLMProvider(llmConfig);
-  console.log(`  ${DIM}Provider: ${llmConfig.provider} (${llmConfig.model})${RESET}`);
+  let llm: ReturnType<typeof createLLMProvider> | undefined;
+  if (narrativeMode === 'llm') {
+    const llmConfig = getLLMConfig();
+    llm = createLLMProvider(llmConfig);
+    console.log(`  ${DIM}Provider: ${llmConfig.provider} (${llmConfig.model})${RESET}`);
+  } else {
+    console.log(`  ${DIM}Narrative: deterministic mode (no LLM variability)${RESET}`);
+  }
   console.log('');
 
-  await runPipeline(config, llm, buildCallbacks(outputFormat));
+  const controller = new AbortController();
+  activeAbortController = controller;
+  try {
+    await runPipeline({ ...config, abortSignal: controller.signal }, llm, buildCallbacks(outputFormat));
+  } finally {
+    if (activeAbortController === controller) activeAbortController = null;
+  }
 }
 
 async function handleCompare(): Promise<void> {
@@ -270,12 +298,14 @@ async function handleCompare(): Promise<void> {
     },
   });
   const snapshotDate = snapshotInput.trim() || undefined;
+  const narrativeMode = getNarrativeModeFromEnv();
 
   const config: PipelineConfig = {
     tickers,
     type: 'comparison',
     maxRetries: parseInt(process.env['DOLPH_MAX_RETRIES'] || '2', 10),
     maxValidationLoops: parseInt(process.env['DOLPH_MAX_VALIDATION_LOOPS'] || '2', 10),
+    narrativeMode,
     outputFormat,
     snapshotDate,
   };
@@ -284,12 +314,23 @@ async function handleCompare(): Promise<void> {
   console.log(`${BOLD}Comparing ${tickers.join(' vs ')}${snapshotDate ? ` (snapshot: ${snapshotDate})` : ''}...${RESET}`);
   console.log('');
 
-  const llmConfig = getLLMConfig();
-  const llm = createLLMProvider(llmConfig);
-  console.log(`  ${DIM}Provider: ${llmConfig.provider} (${llmConfig.model})${RESET}`);
+  let llm: ReturnType<typeof createLLMProvider> | undefined;
+  if (narrativeMode === 'llm') {
+    const llmConfig = getLLMConfig();
+    llm = createLLMProvider(llmConfig);
+    console.log(`  ${DIM}Provider: ${llmConfig.provider} (${llmConfig.model})${RESET}`);
+  } else {
+    console.log(`  ${DIM}Narrative: deterministic mode (no LLM variability)${RESET}`);
+  }
   console.log('');
 
-  await runPipeline(config, llm, buildCallbacks(outputFormat));
+  const controller = new AbortController();
+  activeAbortController = controller;
+  try {
+    await runPipeline({ ...config, abortSignal: controller.signal }, llm, buildCallbacks(outputFormat));
+  } finally {
+    if (activeAbortController === controller) activeAbortController = null;
+  }
 }
 
 /** Open a URL in the default browser (cross-platform). */
@@ -424,6 +465,8 @@ async function handleSearch(): Promise<void> {
       const actionChoices: Array<{ name: string; value: string }> = [];
       if (filing.primary_document_url) {
         actionChoices.push({ name: '🌐 Open in browser', value: 'open' });
+        actionChoices.push({ name: '👁 Preview filing text', value: 'preview' });
+        actionChoices.push({ name: '💾 Download filing text', value: 'download' });
       }
       actionChoices.push({ name: '← Back to results', value: 'back' });
 
@@ -436,6 +479,45 @@ async function handleSearch(): Promise<void> {
         openInBrowser(filing.primary_document_url);
         console.log(`  ${GREEN}✓${RESET} Opened in browser`);
         console.log('');
+      } else if ((action === 'preview' || action === 'download') && filing.primary_document_url) {
+        try {
+          const content = await getFilingContent({
+            accession_number: filing.accession_number,
+            document_url: filing.primary_document_url,
+          });
+
+          if (action === 'preview') {
+            const previewSections = content.sections.slice(0, 3);
+            console.log(`  ${GREEN}✓${RESET} Loaded filing text (${content.word_count.toLocaleString()} words)`);
+            console.log('');
+            if (previewSections.length > 0) {
+              for (const section of previewSections) {
+                const snippet = section.content.replace(/\s+/g, ' ').slice(0, 280);
+                console.log(`  ${BOLD}${section.title}${RESET}`);
+                console.log(`  ${DIM}${snippet}${snippet.length === 280 ? '…' : ''}${RESET}`);
+                console.log('');
+              }
+            } else {
+              const snippet = content.raw_text.replace(/\s+/g, ' ').slice(0, 500);
+              console.log(`  ${DIM}${snippet}${snippet.length === 500 ? '…' : ''}${RESET}`);
+              console.log('');
+            }
+          } else {
+            const safeTicker = (filing.company_name || 'filing')
+              .replace(/[^a-zA-Z0-9_-]+/g, '_')
+              .replace(/^_+|_+$/g, '')
+              .slice(0, 40) || 'filing';
+            const outDir = resolve(process.cwd(), 'reports', 'filings');
+            await mkdir(outDir, { recursive: true });
+            const path = resolve(outDir, `${safeTicker}-${filing.filing_type}-${filing.date_filed}-${filing.accession_number}.txt`);
+            await writeFile(path, content.raw_text, 'utf-8');
+            console.log(`  ${GREEN}✓${RESET} Saved: ${BOLD}${path}${RESET}`);
+            console.log('');
+          }
+        } catch (err) {
+          console.error(`  ${RED}✗${RESET} Could not retrieve filing content: ${err instanceof Error ? err.message : err}`);
+          console.log('');
+        }
       }
     }
   } catch (err) {
@@ -505,9 +587,7 @@ async function handleDCF(): Promise<void> {
   console.log(`${BOLD}Building DCF model for ${tickerUpper}...${RESET}`);
   console.log('');
 
-  const llmConfig = getLLMConfig();
-  const llm = createLLMProvider(llmConfig);
-  console.log(`  ${DIM}Provider: ${llmConfig.provider} (${llmConfig.model})${RESET}`);
+  console.log(`  ${DIM}Narrative: deterministic mode (no LLM needed for DCF data prep)${RESET}`);
   console.log('');
 
   // Run pipeline to gather AnalysisContext (facts needed for DCF)
@@ -516,17 +596,21 @@ async function handleDCF(): Promise<void> {
     type: 'single',
     maxRetries: parseInt(process.env['DOLPH_MAX_RETRIES'] || '2', 10),
     maxValidationLoops: 0, // Skip validation — we only need data for DCF
+    narrativeMode: 'deterministic',
     outputFormat: 'terminal',
   };
 
   try {
-    const { context } = await runPipeline(config, llm, {
+    const controller = new AbortController();
+    activeAbortController = controller;
+    const { context } = await runPipeline({ ...config, abortSignal: controller.signal }, undefined, {
       onStep(step, status, detail) {
         const icon = ICONS[status];
         const detailStr = detail ? ` ${DIM}(${detail})${RESET}` : '';
         console.log(`  ${icon} ${step}${detailStr}`);
       },
     });
+    if (activeAbortController === controller) activeAbortController = null;
 
     console.log('');
     console.log(`  ${YELLOW}⟳${RESET} Generating DCF package...`);
@@ -537,6 +621,7 @@ async function handleDCF(): Promise<void> {
     console.log(`  ${GREEN}✓${RESET} Assumptions: ${BOLD}${jsonPath}${RESET}`);
     console.log(`  ${GREEN}✓${RESET} Provenance:  ${BOLD}${provenancePath}${RESET}`);
   } catch (err) {
+    activeAbortController = null;
     console.error(`  ${RED}✗${RESET} DCF failed: ${err instanceof Error ? err.message : err}`);
   }
 
@@ -562,6 +647,7 @@ async function handleSettings(): Promise<void> {
 
     const provider = getValue('DOLPH_LLM_PROVIDER') || 'openai';
     const model = getValue('DOLPH_LLM_MODEL') || 'gpt-4o-mini';
+    const narrativeMode = getValue('DOLPH_NARRATIVE_MODE') || 'auto';
     const userAgent = getValue('DOLPH_SEC_USER_AGENT') || '';
 
     console.log('');
@@ -569,6 +655,7 @@ async function handleSettings(): Promise<void> {
     console.log(`  ${DIM}──────────────────────────────────${RESET}`);
     console.log(`  Provider:   ${CYAN}${provider}${RESET}`);
     console.log(`  Model:      ${CYAN}${model}${RESET}`);
+    console.log(`  Narrative:  ${CYAN}${narrativeMode}${RESET}`);
     console.log(`  User-Agent: ${CYAN}${userAgent || '(not set)'}${RESET}`);
     console.log('');
 
@@ -577,6 +664,7 @@ async function handleSettings(): Promise<void> {
       choices: [
         { name: 'LLM Provider', value: 'provider' },
         { name: 'Model', value: 'model' },
+        { name: 'Narrative Mode', value: 'narrative_mode' },
         { name: 'SEC User-Agent', value: 'user_agent' },
         { name: 'Back to menu', value: 'back' },
       ],
@@ -605,6 +693,18 @@ async function handleSettings(): Promise<void> {
         newValueRaw = await input({
           message: 'Enter model name:',
           default: model,
+        });
+        break;
+      }
+      case 'narrative_mode': {
+        key = 'DOLPH_NARRATIVE_MODE';
+        newValueRaw = await select({
+          message: 'Select narrative mode:',
+          choices: [
+            { name: 'Auto (LLM if key is set, else deterministic)', value: 'auto' },
+            { name: 'LLM always', value: 'llm' },
+            { name: 'Deterministic always', value: 'deterministic' },
+          ],
         });
         break;
       }
@@ -699,6 +799,9 @@ async function main(): Promise<void> {
       if (err instanceof Error && err.message.includes('User force closed')) {
         console.log(`  ${DIM}Action cancelled.${RESET}`);
         continue;
+      } else if (err instanceof Error && /analysis cancelled/i.test(err.message)) {
+        console.log(`  ${DIM}Analysis cancelled.${RESET}`);
+        continue;
       } else {
         console.error(`${RED}Error: ${err instanceof Error ? err.message : err}${RESET}`);
       }
@@ -713,6 +816,11 @@ async function main(): Promise<void> {
 
 // Handle unexpected termination
 process.on('SIGINT', () => {
+  if (activeAbortController) {
+    activeAbortController.abort();
+    process.stdout.write(`\n${DIM}Cancelling current analysis...${RESET}\n`);
+    return;
+  }
   cleanupTerminal();
   process.exit(0);
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState, useRef, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { AnalysisTimeline } from "@/components/AnalysisTimeline";
 import { ReportView } from "@/components/ReportView";
 import { ExportButtons } from "@/components/ExportButtons";
@@ -22,6 +22,8 @@ interface ReportSection {
 
 function AnalysisPageContent() {
   const searchParams = useSearchParams();
+  const params = useParams<{ id: string }>();
+  const analysisId = typeof params.id === "string" ? params.id : "";
   const tickers = (searchParams.get("tickers") || "").split(",").filter(Boolean);
   const type = (searchParams.get("type") || "single") as "single" | "comparison";
   const snapshotDate = searchParams.get("snapshot_date") || undefined;
@@ -40,20 +42,39 @@ function AnalysisPageContent() {
     growthDurabilityChart: string | null;
   } | null>(null);
   const started = useRef(false);
+  const requestAbortRef = useRef<AbortController | null>(null);
 
   const startAnalysis = useCallback(async () => {
     if (started.current || tickers.length === 0) return;
     started.current = true;
+    requestAbortRef.current?.abort();
+    const controller = new AbortController();
+    requestAbortRef.current = controller;
 
     try {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tickers, type, snapshot_date: snapshotDate }),
+        body: JSON.stringify({
+          analysis_id: analysisId || undefined,
+          tickers,
+          type,
+          snapshot_date: snapshotDate,
+        }),
+        signal: controller.signal,
       });
 
       if (!response.ok || !response.body) {
-        setError("Failed to start analysis");
+        let message = "Failed to start analysis";
+        try {
+          const errJson = await response.json();
+          if (typeof errJson?.error === "string") {
+            message = errJson.error;
+          }
+        } catch {
+          // keep default message
+        }
+        setError(message);
         started.current = false;
         return;
       }
@@ -134,13 +155,18 @@ function AnalysisPageContent() {
       }
 
       setDone(true);
+      started.current = false;
     } catch (err) {
+      if (controller.signal.aborted) {
+        return;
+      }
       setError(err instanceof Error ? err.message : "Connection failed");
       started.current = false;
     }
-  }, [tickers, type, snapshotDate]);
+  }, [analysisId, tickers, type, snapshotDate]);
 
   const handleRetry = useCallback(() => {
+    requestAbortRef.current?.abort();
     started.current = false;
     setError(null);
     setDone(false);
@@ -153,6 +179,9 @@ function AnalysisPageContent() {
 
   useEffect(() => {
     startAnalysis();
+    return () => {
+      requestAbortRef.current?.abort();
+    };
   }, [startAnalysis, retryToken]);
 
   return (

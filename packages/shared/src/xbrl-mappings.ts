@@ -170,6 +170,7 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     standardName: 'research_and_development',
     displayName: 'R&D Expenses',
     xbrlTags: [
+      'ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost',
       'ResearchAndDevelopmentExpense',
     ],
     ifrsTags: [

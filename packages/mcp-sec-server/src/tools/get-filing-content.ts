@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import type { FilingContent } from '@dolph/shared';
 import { CACHE_TTL_FILING_CONTENT } from '@dolph/shared';
-import { edgarFetchHtml } from '../edgar/client.js';
+import { edgarFetchHtml, edgarFetchJson } from '../edgar/client.js';
 import { parseFilingHtml } from '../edgar/parser.js';
 import { fileCache } from '../cache/file-cache.js';
 
@@ -29,6 +29,80 @@ export const GetFilingContentInput = z.object({
 
 export type GetFilingContentParams = z.infer<typeof GetFilingContentInput>;
 
+interface FilingIndexJson {
+  directory?: {
+    item?: Array<{ name?: string }>;
+  };
+}
+
+function isLikelyIndexUrl(urlStr: string): boolean {
+  try {
+    const { pathname } = new URL(urlStr);
+    return pathname.endsWith('/')
+      || pathname.endsWith('-index.htm')
+      || pathname.endsWith('-index.html')
+      || pathname.endsWith('/index.html')
+      || pathname.endsWith('/index.htm');
+  } catch {
+    return false;
+  }
+}
+
+function resolveBaseDirectory(urlStr: string): string | null {
+  try {
+    const parsed = new URL(urlStr);
+    let path = parsed.pathname;
+    if (path.endsWith('/')) {
+      return `${parsed.origin}${path}`;
+    }
+    path = path.replace(/\/[^/]*$/, '/');
+    return `${parsed.origin}${path}`;
+  } catch {
+    return null;
+  }
+}
+
+function isDocCandidate(name: string): boolean {
+  const lower = name.toLowerCase();
+  if (lower.endsWith('-index.htm') || lower.endsWith('-index.html')) return false;
+  if (lower.startsWith('xsl')) return false;
+  return lower.endsWith('.htm') || lower.endsWith('.html') || lower.endsWith('.txt');
+}
+
+function scoreDocCandidate(name: string, accessionNoDashes: string): number {
+  const lower = name.toLowerCase();
+  let score = 0;
+  if (lower.endsWith('.htm') || lower.endsWith('.html')) score += 60;
+  if (lower.endsWith('.txt')) score += 40;
+  if (lower.includes(accessionNoDashes.toLowerCase())) score += 20;
+  if (/(10k|10q|8k|20f|6k|40f)/.test(lower)) score += 15;
+  if (lower.includes('ex99') || lower.includes('ex-99') || lower.includes('exhibit')) score -= 20;
+  return score;
+}
+
+async function resolvePrimaryDocumentUrl(accession: string, documentUrl: string): Promise<string | null> {
+  const baseDir = resolveBaseDirectory(documentUrl);
+  if (!baseDir) return null;
+
+  const jsonUrl = `${baseDir}index.json`;
+  const payload = await edgarFetchJson<FilingIndexJson>(jsonUrl);
+  const items = payload.directory?.item || [];
+  if (items.length === 0) return null;
+
+  const accessionNoDashes = accession.replace(/-/g, '');
+  const candidates = items
+    .map(i => i.name || '')
+    .filter(isDocCandidate);
+  if (candidates.length === 0) return null;
+
+  const best = candidates
+    .sort((a, b) => scoreDocCandidate(b, accessionNoDashes) - scoreDocCandidate(a, accessionNoDashes))[0];
+  if (!best) return null;
+
+  const resolved = `${baseDir}${best}`;
+  return isAllowedUrl(resolved) ? resolved : null;
+}
+
 export async function getFilingContent(params: GetFilingContentParams): Promise<FilingContent> {
   const { accession_number, document_url } = params;
 
@@ -45,16 +119,36 @@ export async function getFilingContent(params: GetFilingContentParams): Promise<
   const cached = await fileCache.get<FilingContent>('filing_content', cacheKey, CACHE_TTL_FILING_CONTENT);
   if (cached) return cached;
 
-  // Fetch the HTML document
-  const html = await edgarFetchHtml(document_url);
+  // Fetch document content. If search returned an index page URL, resolve
+  // and prefer the primary filing document when it has richer content.
+  const baseHtml = await edgarFetchHtml(document_url);
+  let parsed = parseFilingHtml(baseHtml);
+  if (isLikelyIndexUrl(document_url) && parsed.wordCount < 1200) {
+    try {
+      const primaryUrl = await resolvePrimaryDocumentUrl(accession_number, document_url);
+      if (primaryUrl && primaryUrl !== document_url) {
+        const primaryHtml = await edgarFetchHtml(primaryUrl);
+        const primaryParsed = parseFilingHtml(primaryHtml);
+        if (primaryParsed.wordCount > parsed.wordCount) {
+          parsed = primaryParsed;
+        }
+      }
+    } catch {
+      // Keep base parsed output if primary document resolution fails.
+    }
+  }
 
-  // Parse it
-  const { sections, rawText, wordCount } = parseFilingHtml(html);
+  const { sections, rawText, wordCount } = parsed;
+  const cappedRawText = rawText.slice(0, 200000); // cap raw text at 200k chars
+  const cappedWordCount = cappedRawText.trim().length > 0
+    ? cappedRawText.trim().split(/\s+/).length
+    : 0;
 
   const result: FilingContent = {
     sections: sections.map(s => ({ title: s.title, content: s.content })),
-    raw_text: rawText.slice(0, 200000), // cap raw text at 200k chars
-    word_count: wordCount,
+    raw_text: cappedRawText,
+    // Report count for the delivered text payload, not the discarded tail.
+    word_count: cappedRawText.length === rawText.length ? wordCount : cappedWordCount,
   };
 
   // Cache

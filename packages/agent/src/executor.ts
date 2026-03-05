@@ -31,15 +31,34 @@ import type { PipelineCallbacks } from './types.js';
 /** Hard timeout per tool call (45 seconds) */
 const TOOL_TIMEOUT_MS = 45_000;
 
-function withToolTimeout<T>(promise: Promise<T>, toolName: string): Promise<T> {
+function withToolTimeout<T>(promise: Promise<T>, toolName: string, signal?: AbortSignal): Promise<T> {
   return new Promise<T>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new Error('Analysis cancelled'));
+      return;
+    }
+
     const timer = setTimeout(
       () => reject(new Error(`Tool "${toolName}" timed out after ${TOOL_TIMEOUT_MS}ms`)),
       TOOL_TIMEOUT_MS,
     );
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(new Error('Analysis cancelled'));
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+
     promise
-      .then(result => { clearTimeout(timer); resolve(result); })
-      .catch(err => { clearTimeout(timer); reject(err); });
+      .then(result => {
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+        resolve(result);
+      })
+      .catch(err => {
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+        reject(err);
+      });
   });
 }
 
@@ -61,7 +80,10 @@ export async function executePlan(
   plan: AgentPlan,
   maxRetries: number,
   callbacks?: PipelineCallbacks,
+  signal?: AbortSignal,
 ): Promise<AnalysisContext> {
+  throwIfAborted(signal);
+
   const context: AnalysisContext = {
     tickers: plan.tickers,
     type: plan.type,
@@ -76,6 +98,7 @@ export async function executePlan(
   };
 
   for (const step of plan.steps) {
+    throwIfAborted(signal);
     callbacks?.onStep?.(step.purpose, 'running');
     const startTime = Date.now();
 
@@ -118,14 +141,18 @@ export async function executePlan(
       let lastError: string | undefined;
 
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        throwIfAborted(signal);
         try {
-          data = await withToolTimeout(toolFn(params), step.tool);
+          data = await withToolTimeout(toolFn(params), step.tool, signal);
           lastError = undefined;
           break;
         } catch (err) {
           lastError = err instanceof Error ? err.message : String(err);
+          if (/cancel|abort/i.test(lastError)) {
+            throw new Error('Analysis cancelled');
+          }
           if (attempt < maxRetries) {
-            await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+            await sleepWithSignal(1000 * (attempt + 1), signal);
           }
         }
       }
@@ -217,4 +244,32 @@ function aggregateResult(
       context.comparison = data as CompanyComparison;
       break;
   }
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new Error('Analysis cancelled');
+  }
+}
+
+function sleepWithSignal(ms: number, signal?: AbortSignal): Promise<void> {
+  if (!signal) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(new Error('Analysis cancelled'));
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(new Error('Analysis cancelled'));
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
 }

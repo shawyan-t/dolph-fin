@@ -281,6 +281,23 @@ export async function getCompanyName(ticker: string): Promise<string> {
   return ticker;
 }
 
+/**
+ * Resolve entity metadata from a CIK.
+ * Returns null when the CIK is not present in the SEC ticker map.
+ */
+export async function getEntityByCik(
+  cik: string,
+): Promise<{ ticker: string; name: string } | null> {
+  await loadTickerMap();
+  const padded = padCik(cik.replace(/\D/g, ''));
+  const ticker = cikToTickerMap!.get(padded);
+  if (!ticker) return null;
+  return {
+    ticker,
+    name: companyNameMap!.get(ticker) || ticker,
+  };
+}
+
 /** Resolution result with confidence scoring */
 export interface TickerResolution {
   /** Resolved ticker symbol (as it appears in SEC database) */

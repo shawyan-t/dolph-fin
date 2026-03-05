@@ -6,7 +6,7 @@
  */
 
 import type { CompanyFacts, FinancialStatement, StatementType, Period } from '@dolph/shared';
-import { getMappingsForStatement } from '@dolph/shared';
+import { getMappingsForStatement, getMappingByName } from '@dolph/shared';
 
 /**
  * Annual filing form types in priority order.
@@ -146,9 +146,45 @@ export function getMetricTimeSeries(
   const formFilters = periodType === 'annual'
     ? detectAnnualForm(facts)
     : QUARTERLY_FORMS;
-
-  return fact.periods
+  const filtered = fact.periods
     .filter(p => formFilters.includes(p.form))
-    .slice(0, limit)
     .map(p => ({ period: p.period, value: p.value }));
+
+  if (periodType !== 'annual') {
+    return filtered.slice(0, limit);
+  }
+
+  // Annual-series hygiene: some annual filings include quarter-level points.
+  // Collapse to one representative point per fiscal year.
+  const mapping = getMappingByName(metricName);
+  const isFlowMetric = mapping?.statement === 'income' || mapping?.statement === 'cash_flow';
+  const byYear = new Map<number, { period: string; value: number }>();
+
+  for (const point of filtered) {
+    const date = new Date(point.period);
+    if (isNaN(date.getTime())) continue;
+    const year = date.getUTCFullYear();
+    const prev = byYear.get(year);
+    if (!prev) {
+      byYear.set(year, point);
+      continue;
+    }
+
+    if (isFlowMetric) {
+      const prevAbs = Math.abs(prev.value);
+      const nextAbs = Math.abs(point.value);
+      if (nextAbs > prevAbs || (nextAbs === prevAbs && point.period > prev.period)) {
+        byYear.set(year, point);
+      }
+      continue;
+    }
+
+    if (point.period > prev.period) {
+      byYear.set(year, point);
+    }
+  }
+
+  return Array.from(byYear.values())
+    .sort((a, b) => b.period.localeCompare(a.period))
+    .slice(0, limit);
 }

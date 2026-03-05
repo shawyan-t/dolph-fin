@@ -1,157 +1,367 @@
-/**
- * HTML template and CSS for professional PDF report generation.
- *
- * Design system:
- * - Body text: 'Times New Roman', serif — 11pt
- * - Section headers (h2): 'Helvetica Neue', sans-serif — navy, 14pt
- * - Sub-headers (h3): 'Helvetica Neue', sans-serif — dark gray, 12pt
- * - Tables: 'Times New Roman' body, 'Helvetica Neue' headers
- * - Report header/footer: 'Helvetica Neue' (brand elements only)
- * - No monospace anywhere in the document
- */
-
 import type { Report } from '@dolph/shared';
+import { PDF_THEME } from './pdf-theme.js';
+
+const C = PDF_THEME.colors;
+const F = PDF_THEME.fonts;
+const S = PDF_THEME.spacing;
 
 const CSS = `
-  * {
-    box-sizing: border-box;
+  * { box-sizing: border-box; }
+
+  html, body {
     margin: 0;
     padding: 0;
+    color: ${C.primaryText};
+    background: #ffffff;
+    font-family: ${F.body};
+    font-size: 10pt;
+    line-height: 1.45;
   }
 
-  body {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 11pt;
-    line-height: 1.65;
-    color: #1a1a1a;
-    background: #fff;
-  }
-
-  /* ── Report Header (brand area) ─────────────────── */
-
-  .report-header {
-    border-bottom: 3px solid #1a365d;
-    padding-bottom: 16px;
-    margin-bottom: 28px;
-  }
-
-  .report-header .logo {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: #1a365d;
-    letter-spacing: -0.5px;
-  }
-
-  .report-header .subtitle {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 11px;
-    color: #718096;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 4px;
-  }
-
-  .report-meta {
+  .report-page {
+    page-break-after: always;
+    break-after: page;
+    min-height: 9.2in;
+    padding: 0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #e2e8f0;
+    flex-direction: column;
+    gap: 14px;
   }
 
-  .report-meta .ticker {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 18px;
+  .report-page:last-of-type {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .page-header {
+    border-bottom: 1px solid ${C.stoneBeige};
+    padding-bottom: 8px;
+  }
+
+  h1, h2, h3, h4 {
+    margin: 0;
+    break-after: avoid;
+    page-break-after: avoid;
+    color: ${C.primaryText};
+  }
+
+  h1 {
+    font-family: ${F.title};
+    font-size: 32pt;
     font-weight: 600;
-    color: #2d3748;
+    line-height: 1.1;
+    letter-spacing: 0.15px;
   }
-
-  .report-meta .date {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 11px;
-    color: #718096;
-  }
-
-  /* ── Sections ───────────────────────────────────── */
-
-  .section {
-    margin-bottom: 28px;
-    page-break-inside: auto;
-  }
-
-  /* ── Headings ───────────────────────────────────── */
 
   h2 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14pt;
+    font-family: ${F.title};
+    font-size: 19pt;
     font-weight: 600;
-    color: #1a365d;
-    border-bottom: 1px solid #cbd5e0;
-    padding-bottom: 5px;
-    margin-bottom: 14px;
-    margin-top: 8px;
-    page-break-after: avoid;
+    line-height: 1.2;
   }
 
   h3 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 12pt;
+    font-family: ${F.body};
+    font-size: 11.5pt;
     font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 8px;
-    margin-top: 18px;
-    border-bottom: none;
-    page-break-after: avoid;
+    line-height: 1.25;
+    color: ${C.secondaryText};
+    margin-bottom: ${S.xs}px;
   }
 
   h4 {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 11pt;
+    font-family: ${F.body};
+    font-size: 9pt;
     font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 6px;
-    margin-top: 14px;
+    color: ${C.mutedText};
+    margin: 0;
   }
 
-  /* ── Body text ──────────────────────────────────── */
-
   p {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 11pt;
-    margin-bottom: 10px;
-    text-align: left;
+    margin: 0 0 12px;
+    color: ${C.secondaryText};
+    line-height: 1.5;
+    orphans: 3;
+    widows: 3;
   }
 
   ul, ol {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    margin-bottom: 10px;
-    padding-left: 24px;
+    margin: 0;
+    padding-left: 20px;
   }
 
   li {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    color: ${C.secondaryText};
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .module {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    background: transparent;
+  }
+
+  /* Cover */
+  .page-cover {
+    background: linear-gradient(180deg, ${C.inkWalnut} 0%, ${C.smokedOak} 48%, ${C.burntUmber} 100%);
+    color: ${C.warmIvory};
+    border-radius: 14px;
+    padding: ${S.lg}px ${S.lg}px ${S.md}px;
+    box-shadow: inset 0 0 0 1px rgba(176, 141, 87, 0.25);
+    min-height: 8.9in;
+  }
+
+  .page-cover .cover-top {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: ${S.sm}px;
+    align-items: baseline;
+    padding-bottom: ${S.sm}px;
+    border-bottom: 1px solid rgba(216, 204, 189, 0.35);
+  }
+
+  .cover-brand {
+    font-family: ${F.title};
+    font-size: 22pt;
+    color: ${C.warmIvory};
+  }
+
+  .cover-family {
+    font-size: 8.5pt;
+    letter-spacing: 0.35px;
+    color: ${C.stoneBeige};
+    text-transform: uppercase;
+  }
+
+  .cover-date {
+    font-size: 8.5pt;
+    color: ${C.stoneBeige};
+  }
+
+  .cover-hero {
+    margin-top: ${S.lg}px;
+  }
+
+  .cover-hero h1 {
+    color: ${C.warmIvory};
+  }
+
+  .cover-thesis {
+    margin-top: ${S.sm}px;
+    margin-bottom: 10px;
     font-size: 11pt;
+    line-height: 1.5;
+    color: ${C.stoneBeige};
+    max-width: 95%;
+    word-break: break-word;
   }
 
-  strong {
-    font-weight: 700;
+  .cover-kpis {
+    margin-top: ${S.sm}px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: ${S.sm}px;
   }
 
-  em {
-    font-style: italic;
+  .kpi-card {
+    background: ${C.parchment};
+    color: ${C.primaryText};
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: inset 0 0 0 1px rgba(30, 26, 23, 0.16);
   }
 
-  /* ── Tables ─────────────────────────────────────── */
+  .kpi-label {
+    font-size: 8.5pt;
+    color: ${C.mutedText};
+    margin-bottom: 6px;
+  }
 
+  .kpi-value {
+    font-family: ${F.title};
+    font-size: 22pt;
+    line-height: 1.1;
+    color: ${C.primaryText};
+  }
+
+  .kpi-note {
+    margin-top: 6px;
+    font-size: 8.3pt;
+    color: ${C.secondaryText};
+  }
+
+  .cover-glance {
+    margin-top: auto;
+    border-top: 1px solid rgba(216, 204, 189, 0.3);
+    padding-top: ${S.sm}px;
+  }
+
+  .cover-glance h3 {
+    color: ${C.parchment};
+    margin-bottom: ${S.xs}px;
+  }
+
+  .cover-glance li {
+    color: ${C.stoneBeige};
+    margin-bottom: 6px;
+  }
+
+  /* Executive */
+  .executive-copy {
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .thesis {
+    font-size: 10.6pt;
+    color: ${C.secondaryText};
+    margin-bottom: 0;
+  }
+
+  .thesis-secondary {
+    margin-top: 10px;
+    font-size: 9.5pt;
+    color: ${C.mutedText};
+  }
+
+  .exec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: ${S.sm}px;
+  }
+
+  .exec-block {
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    padding: ${S.sm}px;
+    min-height: 0;
+  }
+
+  .executive-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    background: ${C.parchment};
+    padding: 10px;
+  }
+
+  .mini-kpi {
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 8px;
+    background: ${C.warmIvory};
+    padding: 8px 10px;
+    min-height: 56px;
+  }
+
+  .mini-kpi p {
+    margin: 4px 0 0;
+    font-size: 12pt;
+    line-height: 1.15;
+    color: ${C.primaryText};
+    font-weight: 600;
+  }
+
+  /* Visual pages */
+  .visual-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .visual-grid.single {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-card {
+    margin: 0;
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    background: ${C.warmIvory};
+    padding: 12px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .visual-frame {
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 10px;
+    min-height: 270px;
+  }
+
+  .visual-frame svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .visual-card figcaption {
+    margin-top: ${S.xs}px;
+  }
+
+  .visual-card h3 {
+    font-size: 12pt;
+    color: ${C.primaryText};
+  }
+
+  .visual-card p {
+    font-size: 9.2pt;
+    margin: 0;
+    color: ${C.mutedText};
+  }
+
+  .visual-insight {
+    background: ${C.parchment};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+
+  .visual-insight h3 {
+    margin-bottom: 8px;
+    color: ${C.primaryText};
+    font-size: 12.5pt;
+  }
+
+  .visual-insight p {
+    margin-bottom: 10px;
+    color: ${C.secondaryText};
+    font-size: 9.6pt;
+  }
+
+  .visual-insight ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .visual-insight li {
+    margin-bottom: 8px;
+    color: ${C.secondaryText};
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-content: start;
+  }
+
+  /* Dashboard / appendix tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 14px 0 18px;
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 10pt;
-    page-break-inside: auto;
+    margin: 0 0 ${S.sm}px;
+    font-size: 9.4pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   thead {
@@ -159,178 +369,161 @@ const CSS = `
   }
 
   thead th {
-    background: #1a365d;
-    color: #fff;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    font-size: 8.5pt;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 7px 10px;
+    background: ${C.inkWalnut};
+    color: ${C.parchment};
+    border: 1px solid ${C.inkWalnut};
     text-align: left;
-    border: 1px solid #1a365d;
+    padding: 9px 10px;
+    font-size: 8.9pt;
+    font-weight: 600;
+    letter-spacing: 0.35px;
   }
 
   tbody td {
-    padding: 5px 10px;
-    border: 1px solid #e2e8f0;
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 10pt;
+    padding: 8px 10px;
+    border: 1px solid ${C.stoneBeige};
+    color: ${C.secondaryText};
+    font-family: ${F.numeric};
     font-variant-numeric: tabular-nums;
   }
 
-  tbody tr:nth-child(even) {
-    background: #f7fafc;
+  tbody tr:nth-child(odd) td {
+    background: ${C.parchment};
   }
 
-  tbody tr {
+  tbody tr:nth-child(even) td {
+    background: ${C.warmIvory};
+  }
+
+  td:not(:first-child), th:not(:first-child) {
+    text-align: right;
+  }
+
+  td:first-child, th:first-child {
+    width: 40%;
+  }
+
+  .table-group {
+    break-inside: avoid;
     page-break-inside: avoid;
+    margin: 0;
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    background: ${C.warmIvory};
+    padding: 10px 10px 4px;
   }
 
-  /* Right-align numeric columns (2nd column onwards) */
-  td:not(:first-child) {
-    text-align: right;
+  .table-group.tall {
+    grid-column: span 2;
   }
 
-  th:not(:first-child) {
-    text-align: right;
+  /* Commentary */
+  .commentary-block {
+    background: ${C.parchment};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
   }
 
-  /* Color coding for positive/negative percentage values */
-  .positive { color: #276749; }
-  .negative { color: #c53030; }
+  .commentary-block:nth-of-type(1) h3 { color: ${C.forestOlive}; }
+  .commentary-block:nth-of-type(2) h3 { color: ${C.mutedCopper}; }
+  .commentary-block:nth-of-type(3) h3 { color: ${C.burntUmber}; }
 
-  /* ── Code/Pre: render as normal text ────────────── */
-  /* LLM sometimes outputs markdown with backticks or code fences.
-     In a financial report these should render as regular text. */
-
-  code {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: inherit;
-    background: none;
-    padding: 0;
-    border-radius: 0;
-    color: inherit;
+  .checklist-block {
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    padding: 12px 16px;
   }
 
-  pre {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 11pt;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  .checklist-block h3 {
+    color: ${C.primaryText};
+    margin-bottom: 8px;
+  }
+
+  /* Appendix */
+  .page-appendix h3,
+  .page-appendix h4 {
+    color: ${C.secondaryText};
+  }
+
+  .appendix-module {
+    font-size: 8.9pt;
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .appendix-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
+  .appendix-module hr {
+    border: none;
+    border-top: 1px solid ${C.stoneBeige};
+    margin: ${S.sm}px 0;
+  }
+
+  .page-sources .sources-module {
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    padding: ${S.sm}px;
+    font-size: 9pt;
     margin-bottom: 10px;
-    background: none;
-    padding: 0;
-    border: none;
-    color: #1a1a1a;
   }
 
-  pre code {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-size: 11pt;
-    background: none;
-    padding: 0;
+  .page-sources .methodology-module {
+    background: ${C.warmIvory};
+    border: 1px solid ${C.stoneBeige};
+    border-radius: 10px;
+    padding: ${S.sm}px;
+    font-size: 9pt;
   }
 
-  /* ── Blockquotes: subtle, not dominant ──────────── */
-
-  blockquote {
-    border-left: 2px solid #cbd5e0;
-    padding-left: 14px;
-    margin: 10px 0;
-    color: #4a5568;
-    font-style: italic;
-    font-size: 10.5pt;
+  .page-sources ul {
+    margin-bottom: ${S.sm}px;
   }
 
-  /* ── Charts ───────────────────────────────────────── */
-
-  .charts-section {
-    page-break-inside: avoid;
+  .page-sources p,
+  .page-sources li {
+    color: ${C.secondaryText};
   }
 
-  .charts-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  .sources-table .source-url {
+    text-align: left;
+    font-size: 8.1pt;
+    color: ${C.mutedText};
+    word-break: break-all;
   }
-
-  .charts-grid svg {
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-  }
-
-  /* ── Horizontal rules ───────────────────────────── */
-
-  hr {
-    border: none;
-    border-top: 1px solid #e2e8f0;
-    margin: 16px 0;
-  }
-
-  /* ── Links ──────────────────────────────────────── */
 
   a {
-    color: #2b6cb0;
+    color: ${C.burntUmber};
     text-decoration: none;
   }
 
-  /* ── Footer ─────────────────────────────────────── */
-
-  .report-footer {
-    margin-top: 40px;
-    padding-top: 14px;
-    border-top: 2px solid #1a365d;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 8pt;
-    color: #a0aec0;
-    text-align: center;
-    line-height: 1.8;
-  }
+  .positive { color: ${C.forestOlive}; }
+  .warning { color: ${C.mutedCopper}; }
+  .negative { color: ${C.burgundy}; }
 `;
 
 export function buildReportHTML(report: Report, bodyHTML: string): string {
   const tickerStr = report.tickers.join(', ');
-  const dateStr = new Date(report.generated_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  const typeLabel = report.type === 'comparison' ? 'Comparative Analysis' : 'Equity Research Note';
   const safeTicker = escapeHTML(tickerStr);
-  const safeDate = escapeHTML(dateStr);
-  const safeType = escapeHTML(typeLabel);
-  const safeLlmCalls = Number.isFinite(report.metadata.llm_calls) ? report.metadata.llm_calls : 0;
-  const safeDataPoints = Number.isFinite(report.metadata.data_points_used) ? report.metadata.data_points_used : 0;
-  const safeDurationSec = Number.isFinite(report.metadata.total_duration_ms)
-    ? (report.metadata.total_duration_ms / 1000).toFixed(1)
-    : '0.0';
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dolph — ${safeTicker} Analysis</title>
+  <title>Dolph Research — ${safeTicker}</title>
   <style>${CSS}</style>
 </head>
 <body>
-  <div class="report-header">
-    <div class="logo">Dolph</div>
-    <div class="subtitle">${safeType}</div>
-    <div class="report-meta">
-      <span class="ticker">${safeTicker}</span>
-      <span class="date">${safeDate}</span>
-    </div>
-  </div>
-
   ${bodyHTML}
-
-  <div class="report-footer">
-    <div>Data sourced exclusively from SEC EDGAR public filings.</div>
-    <div>This report is generated by Dolph and is not financial advice.</div>
-    <div>LLM calls: ${safeLlmCalls} | Data points: ${safeDataPoints} | Generated in ${safeDurationSec}s</div>
-  </div>
 </body>
 </html>`;
 }
@@ -340,5 +533,6 @@ function escapeHTML(str: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

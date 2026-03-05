@@ -1,0 +1,23 @@
+{
+  "ticker": "AMD",
+  "company_name": "ADVANCED MICRO DEVICES, INC.",
+  "as_of_date": "2026-03-05",
+  "projection_years": 5,
+  "discount_rate": 0.09,
+  "terminal_growth_rate": 0.025,
+  "revenue_growth_rates": [
+    0.26,
+    0.203,
+    0.145,
+    0.088,
+    0.03
+  ],
+  "operating_margin": 0.107,
+  "tax_rate": 0.21,
+  "capex_as_pct_revenue": 0.028,
+  "depreciation_as_pct_revenue": 0.022,
+  "nwc_as_pct_revenue": 0.05,
+  "base_revenue": 34639000000,
+  "base_fcf": 6735000000,
+  "shares_outstanding": 1636000000
+}
