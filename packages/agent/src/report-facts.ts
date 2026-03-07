@@ -12,7 +12,7 @@ const CASH_OUTFLOW_METRICS = new Set([
 
 export const SHARE_CHANGE_ALERT_THRESHOLD = 1.5;
 
-export type CanonicalSourceKind = 'xbrl' | 'statement' | 'derived' | 'unknown';
+export type CanonicalSourceKind = 'xbrl' | 'statement' | 'derived' | 'adjusted' | 'unknown';
 
 export interface CanonicalFactSource {
   kind: CanonicalSourceKind;
@@ -24,6 +24,7 @@ export interface CanonicalFactSource {
   statementType?: FinancialStatement['statement_type'];
   provenance?: ProvenanceReceipt;
   detail?: string;
+  reportedValue?: number;
 }
 
 export interface CanonicalAnnualSeries {
@@ -31,9 +32,23 @@ export interface CanonicalAnnualSeries {
   sources: Map<string, Record<string, CanonicalFactSource>>;
 }
 
+export interface CanonicalAnnualPeriodMetadata {
+  period: string;
+  fiscalYear: number | null;
+  fiscalPeriod: string | null;
+  forms: string[];
+  sources: Array<'facts' | 'statements'>;
+}
+
 function finite(value: number | undefined): number | null {
   if (value === undefined) return null;
   return isFinite(value) ? value : null;
+}
+
+function materiallyDiffers(a: number, b: number, relativeTolerance = 0.1, absoluteTolerance = 50_000): boolean {
+  const gap = Math.abs(a - b);
+  const scale = Math.max(Math.abs(a), Math.abs(b), 1);
+  return gap > Math.max(scale * relativeTolerance, absoluteTolerance);
 }
 
 export function normalizeMetricValue(metric: string, value: number): number {
@@ -107,6 +122,146 @@ function ensureSourceBucket(
   return bucket;
 }
 
+function compareFiledDates(a?: string, b?: string): number {
+  if (!a && !b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  return a.localeCompare(b);
+}
+
+function shouldReplaceExistingSource(
+  existing: CanonicalFactSource | undefined,
+  candidateForm: string | undefined,
+  candidateFiled: string | undefined,
+): boolean {
+  if (!existing) return true;
+  const existingIsAnnual = existing.form ? ANNUAL_FORMS.has(existing.form) : false;
+  const candidateIsAnnual = candidateForm ? ANNUAL_FORMS.has(candidateForm) : false;
+  if (candidateIsAnnual !== existingIsAnnual) return candidateIsAnnual;
+  return compareFiledDates(candidateFiled, existing.filed) > 0;
+}
+
+const SHARE_SENSITIVE_METRICS = new Set([
+  'shares_outstanding',
+  'weighted_avg_shares_diluted',
+  'weighted_avg_shares_basic',
+  'eps_diluted',
+  'eps_basic',
+]);
+
+const NUMBER_WORDS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+  eleven: 11,
+  twelve: 12,
+  thirteen: 13,
+  fourteen: 14,
+  fifteen: 15,
+  sixteen: 16,
+  seventeen: 17,
+  eighteen: 18,
+  nineteen: 19,
+  twenty: 20,
+};
+
+function wordToNumber(value: string): number | null {
+  const clean = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (/^\d+$/.test(clean)) return Number.parseInt(clean, 10);
+  return NUMBER_WORDS[clean] ?? null;
+}
+
+function detectSplitFactor(rawText: string): number | null {
+  if (!rawText) return null;
+  const text = rawText.toLowerCase().replace(/\s+/g, ' ');
+  const patterns = [
+    /(\d+)\s*-\s*for\s*-\s*(\d+)\s+(?:forward\s+)?stock split/g,
+    /(\d+)\s*for\s*(\d+)\s+(?:forward\s+)?stock split/g,
+    /([a-z]+)\s*-\s*for\s*-\s*([a-z]+)\s+(?:forward\s+)?stock split/g,
+    /([a-z]+)\s*for\s*([a-z]+)\s+(?:forward\s+)?stock split/g,
+  ];
+  for (const pattern of patterns) {
+    const match = pattern.exec(text);
+    if (!match) continue;
+    const numerator = wordToNumber(match[1] || '');
+    const denominator = wordToNumber(match[2] || '');
+    if (numerator && denominator && denominator > 0) {
+      const factor = numerator / denominator;
+      if (factor > 1) return factor;
+    }
+  }
+  return null;
+}
+
+function determineSplitAdjustmentPeriods(
+  values: Map<string, Record<string, number>>,
+  splitFactor: number,
+): Set<string> {
+  const periods = Array.from(values.keys()).sort((a, b) => b.localeCompare(a));
+  const weightedSeries = periods
+    .map(period => ({ period, value: finite(values.get(period)?.['weighted_avg_shares_diluted']) }))
+    .filter((entry): entry is { period: string; value: number } => entry.value !== null);
+  const splitPeriods = new Set<string>();
+  for (let i = 1; i < weightedSeries.length; i++) {
+    const newer = weightedSeries[i - 1]!;
+    const older = weightedSeries[i]!;
+    const adjustedOlder = older.value * splitFactor;
+    const relativeGap = Math.abs(adjustedOlder - newer.value) / Math.max(Math.abs(newer.value), Math.abs(adjustedOlder), 1);
+    if (relativeGap <= 0.25) {
+      for (let j = i; j < weightedSeries.length; j++) {
+        splitPeriods.add(weightedSeries[j]!.period);
+      }
+      break;
+    }
+  }
+  return splitPeriods;
+}
+
+function applySplitAdjustedHistoricalValues(
+  context: AnalysisContext,
+  ticker: string,
+  values: Map<string, Record<string, number>>,
+  sources: Map<string, Record<string, CanonicalFactSource>>,
+): void {
+  const rawText = context.filing_content[ticker]?.raw_text || '';
+  const splitFactor = detectSplitFactor(rawText);
+  if (!splitFactor || splitFactor <= 1) return;
+
+  const targetPeriods = determineSplitAdjustmentPeriods(values, splitFactor);
+  if (targetPeriods.size === 0) return;
+
+  for (const period of targetPeriods) {
+    const bucket = values.get(period);
+    const sourceBucket = sources.get(period);
+    if (!bucket || !sourceBucket) continue;
+
+    for (const metric of SHARE_SENSITIVE_METRICS) {
+      const current = finite(bucket[metric]);
+      const source = sourceBucket[metric];
+      if (current === null || !source || source.kind === 'adjusted') continue;
+
+      const adjustedValue = metric.startsWith('eps_')
+        ? current / splitFactor
+        : current * splitFactor;
+
+      bucket[metric] = adjustedValue;
+      sourceBucket[metric] = {
+        ...source,
+        kind: 'adjusted',
+        reportedValue: current,
+        detail: `Adjusted by ${splitFactor}:1 stock split factor disclosed in the aligned annual filing.`,
+      };
+    }
+  }
+}
+
 /**
  * Build canonical annual values + source references for one ticker.
  *
@@ -126,12 +281,11 @@ export function buildCanonicalAnnualSeries(
   for (const fact of context.facts[ticker]?.facts || []) {
     for (const period of fact.periods) {
       if (!ANNUAL_FORMS.has(period.form)) continue;
+      if (period.fiscal_period && period.fiscal_period !== 'FY') continue;
       if (!isFinite(period.value)) continue;
       const bucket = ensureValueBucket(values, period.period);
       const sourceBucket = ensureSourceBucket(sources, period.period);
-      if (bucket[fact.metric] !== undefined) continue;
-      bucket[fact.metric] = normalizeMetricValue(fact.metric, period.value);
-      sourceBucket[fact.metric] = {
+      const candidateSource: CanonicalFactSource = {
         kind: 'xbrl',
         ticker,
         metric: fact.metric,
@@ -140,6 +294,9 @@ export function buildCanonicalAnnualSeries(
         filed: period.filed,
         provenance: period.provenance,
       };
+      if (!shouldReplaceExistingSource(sourceBucket[fact.metric], period.form, period.filed)) continue;
+      bucket[fact.metric] = normalizeMetricValue(fact.metric, period.value);
+      sourceBucket[fact.metric] = candidateSource;
     }
   }
 
@@ -147,11 +304,12 @@ export function buildCanonicalAnnualSeries(
   for (const statement of context.statements[ticker] || []) {
     if (statement.period_type !== 'annual') continue;
     for (const period of statement.periods) {
+      if (period.fiscal_period && period.fiscal_period !== 'FY') continue;
       const bucket = ensureValueBucket(values, period.period);
       const sourceBucket = ensureSourceBucket(sources, period.period);
       for (const [metric, rawValue] of Object.entries(period.data)) {
         if (!isFinite(rawValue)) continue;
-        if (bucket[metric] !== undefined) continue;
+        if (!shouldReplaceExistingSource(sourceBucket[metric], period.form, period.filed)) continue;
         bucket[metric] = normalizeMetricValue(metric, rawValue);
         sourceBucket[metric] = {
           kind: 'statement',
@@ -165,6 +323,8 @@ export function buildCanonicalAnnualSeries(
       }
     }
   }
+
+  applySplitAdjustedHistoricalValues(context, ticker, values, sources);
 
   // 3) Add deterministic derived values + explicit derived source markers
   for (const [period, bucket] of values.entries()) {
@@ -195,10 +355,63 @@ export function buildCanonicalAnnualSourceMap(
   return buildCanonicalAnnualSeries(context, ticker).sources;
 }
 
+export function buildCanonicalAnnualPeriodMetadataMap(
+  context: AnalysisContext,
+  ticker: string,
+): Map<string, CanonicalAnnualPeriodMetadata> {
+  const metadata = new Map<string, CanonicalAnnualPeriodMetadata>();
+
+  const ensure = (period: string): CanonicalAnnualPeriodMetadata => {
+    let existing = metadata.get(period);
+    if (!existing) {
+      existing = {
+        period,
+        fiscalYear: yearFromPeriod(period),
+        fiscalPeriod: 'FY',
+        forms: [],
+        sources: [],
+      };
+      metadata.set(period, existing);
+    }
+    return existing;
+  };
+
+  for (const fact of context.facts[ticker]?.facts || []) {
+    for (const period of fact.periods) {
+      if (!ANNUAL_FORMS.has(period.form)) continue;
+      if (period.fiscal_period && period.fiscal_period !== 'FY') continue;
+      const meta = ensure(period.period);
+      if (period.fiscal_year !== undefined && period.fiscal_year !== null) {
+        meta.fiscalYear = period.fiscal_year;
+      }
+      if (period.fiscal_period) {
+        meta.fiscalPeriod = period.fiscal_period;
+      }
+      if (!meta.forms.includes(period.form)) meta.forms.push(period.form);
+      if (!meta.sources.includes('facts')) meta.sources.push('facts');
+    }
+  }
+
+  for (const statement of context.statements[ticker] || []) {
+    if (statement.period_type !== 'annual') continue;
+    for (const period of statement.periods) {
+      const meta = ensure(period.period);
+      if (!meta.sources.includes('statements')) meta.sources.push('statements');
+    }
+  }
+
+  return metadata;
+}
+
+function yearFromPeriod(period: string): number | null {
+  const match = period.match(/^(\d{4})-/);
+  return match ? Number.parseInt(match[1]!, 10) : null;
+}
+
 export function corporateActionEvidence(rawText: string): boolean {
   if (!rawText) return false;
   const text = rawText.toLowerCase();
-  return /stock split|share split|split-adjusted|share issuance|equity offering|at-the-market|convertible|conversion|merger|acquisition/.test(text);
+  return /reverse stock split|stock split|share split|split-adjusted|share issuance|issuance of common stock|equity offering|public offering|follow-on offering|at-the-market|atm program|convertible|conversion|merger|acquisition|warrant|exercise of warrants|exercise of options|preferred stock|exchange offer|recapitalization|share repurchase|repurchased|retired shares|retirement of shares/.test(text);
 }
 
 export function shareBasisDivergence(

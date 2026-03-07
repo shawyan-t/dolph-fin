@@ -1,0 +1,15 @@
+{
+  "id": "fl_mmgx53xo_fgk01m",
+  "type": "single",
+  "tickers": [
+    "NVDA"
+  ],
+  "generated_at": "2026-03-07T22:52:26.028Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 62,
+    "data_points_used": 3300,
+    "policy_mode": "institutional",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

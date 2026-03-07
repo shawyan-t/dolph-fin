@@ -1,75 +1,13 @@
 /**
  * Deterministic Key Metrics Section Builder.
  *
- * Generates a clean Markdown table from ratios and trends data.
+ * Generates clean Markdown tables from the locked canonical report model.
  * NO LLM involved — pure code.
  */
 
-import { formatCompactShares } from '@dolph/shared';
-import type { AnalysisContext, ReportSection } from '@dolph/shared';
-import type { AnalysisInsights } from './analyzer.js';
-
-interface MetricDatum {
-  current: number;
-  prior: number | null;
-  change: number | null;
-  unit: string;
-}
-
-const METRIC_GROUPS: Array<{ title: string; metrics: string[] }> = [
-  {
-    title: 'Profitability',
-    metrics: [
-      'Return on Equity',
-      'Return on Assets',
-      'Operating Margin',
-      'Net Margin',
-      'Gross Margin',
-      'Earnings Per Share (Diluted)',
-      'EBITDA',
-      ],
-  },
-  {
-    title: 'Liquidity & Leverage',
-    metrics: [
-      'Total Debt',
-      'Net Debt',
-      'Current Ratio',
-      'Quick Ratio',
-      'Cash Ratio',
-      'Debt-to-Equity',
-      'Debt Maturity (Current %)',
-      'Equity Multiplier',
-    ],
-  },
-  {
-    title: 'Scale',
-    metrics: [
-      'Revenue',
-      'Net Income',
-      'Operating Income',
-      'Total Assets',
-      "Stockholders' Equity",
-      'Total Liabilities',
-    ],
-  },
-  {
-    title: 'Cash Flow & Per Share',
-    metrics: [
-      'Operating Cash Flow',
-      'Free Cash Flow',
-      'Capital Expenditures',
-      'FCF Margin',
-      'CFO Margin',
-      'CFO / Net Income',
-      'CapEx / Revenue',
-      'ROIC Proxy',
-      'Asset Turnover',
-      'Book Value Per Share',
-      'Working Capital',
-    ],
-  },
-];
+import type { ReportSection } from '@dolph/shared';
+import type { CanonicalReportPackage } from './canonical-report-package.js';
+import type { CompanyReportModel, ReportModel } from './report-model.js';
 const FRONT_TABLE_MAX_ROWS = 8;
 
 /**
@@ -78,12 +16,12 @@ const FRONT_TABLE_MAX_ROWS = 8;
  * For comparison: a Metric | Ticker1 | Ticker2 | ... table.
  */
 export function buildKeyMetricsSection(
-  context: AnalysisContext,
-  insights: Record<string, AnalysisInsights>,
+  canonicalPackage: CanonicalReportPackage,
 ): ReportSection {
+  const { context } = canonicalPackage;
   const content = context.type === 'comparison'
-    ? buildComparisonMetricsTable(context, insights)
-    : buildSingleMetricsTable(context, insights);
+    ? buildComparisonMetricsTable(canonicalPackage)
+    : buildSingleMetricsTable(canonicalPackage);
 
   return {
     id: 'key_metrics',
@@ -93,36 +31,36 @@ export function buildKeyMetricsSection(
 }
 
 function buildSingleMetricsTable(
-  context: AnalysisContext,
-  insights: Record<string, AnalysisInsights>,
+  canonicalPackage: CanonicalReportPackage,
 ): string {
-  const ticker = context.tickers[0]!;
-  const tickerInsights = insights[ticker];
+  const model = canonicalPackage.reportModel;
+  const company = model.companies[0];
 
-  if (!tickerInsights || Object.keys(tickerInsights.keyMetrics).length === 0) {
+  if (!company || company.metrics.length === 0) {
     return '*No key metrics data available.*';
   }
 
   const rows: string[] = [];
-  if (tickerInsights.snapshotPeriod) {
-    const snapshot = formatSnapshotLabel(tickerInsights.snapshotPeriod);
-    const prior = tickerInsights.priorPeriod ? formatSnapshotLabel(tickerInsights.priorPeriod) : null;
+  if (company.snapshotPeriod) {
+    const snapshot = company.snapshotLabel;
+    const prior = company.priorPeriod ? company.priorLabel : null;
     rows.push(
       prior
         ? `*Snapshot period: ${snapshot}. Prior period: ${prior}.*`
         : `*Snapshot period: ${snapshot}.*`,
     );
-    if (tickerInsights.periodBasis?.note) {
-      rows.push(`*Period lock note: ${tickerInsights.periodBasis.note}*`);
+    if (company.periodNote) {
+      rows.push(`*Period lock note: ${company.periodNote}*`);
     }
     rows.push('');
   }
   rows.push('The dashboard is grouped to surface headline signals first, then supporting detail.');
-  rows.push('*Per-share basis: EPS uses diluted weighted-average shares; BVPS uses period-end shares outstanding.*');
+  for (const disclosure of buildMetricBasisDisclosures(company)) {
+    rows.push(`*${disclosure}*`);
+  }
   rows.push('');
 
-  const grouped = groupMetrics(tickerInsights.keyMetrics);
-  for (const section of grouped) {
+  for (const section of company.dashboardGroups) {
     if (section.rows.length === 0) continue;
     const chunks = chunk(section.rows, FRONT_TABLE_MAX_ROWS);
     for (let i = 0; i < chunks.length; i++) {
@@ -131,11 +69,8 @@ function buildSingleMetricsTable(
       rows.push('');
       rows.push('| Metric | Current Value | Prior Period | Change (%) |');
       rows.push('|:---|---:|---:|---:|');
-      for (const [name, data] of chunks[i]!) {
-        const current = formatValue(data.current, data.unit);
-        const prior = data.prior !== null ? formatValue(data.prior, data.unit) : 'N/A';
-        const change = data.change !== null ? `${(data.change * 100).toFixed(1)}%` : 'N/A';
-        rows.push(`| ${name} | ${current} | ${prior} | ${change} |`);
+      for (const metric of chunks[i]!) {
+        rows.push(`| ${metric.label} | ${metric.currentDisplay} | ${metric.priorDisplay} | ${metric.changeDisplay} |`);
       }
       rows.push('');
     }
@@ -145,43 +80,30 @@ function buildSingleMetricsTable(
 }
 
 function buildComparisonMetricsTable(
-  context: AnalysisContext,
-  insights: Record<string, AnalysisInsights>,
+  canonicalPackage: CanonicalReportPackage,
 ): string {
-  const tickers = context.tickers;
-
-  // Collect all metric names across all tickers
-  const allMetricNames = new Set<string>();
-  for (const ticker of tickers) {
-    const metrics = insights[ticker]?.keyMetrics;
-    if (metrics) {
-      for (const name of Object.keys(metrics)) {
-        allMetricNames.add(name);
-      }
-    }
-  }
-
-  if (allMetricNames.size === 0) {
+  const model = canonicalPackage.reportModel;
+  const tickers = model.companies.map(company => company.ticker);
+  if (model.companies.length === 0) {
     return '*No comparison metrics data available.*';
   }
 
   const rows: string[] = [];
-  rows.push('Each company is shown at its own latest annual filing period; fiscal year-ends can differ across peers.');
-  rows.push('*Per-share basis: EPS uses diluted weighted-average shares; BVPS uses period-end shares outstanding.*');
+  rows.push(companyComparisonDisclosure(model));
+  for (const disclosure of mergeMetricBasisDisclosures(model.companies)) {
+    rows.push(`*${disclosure}*`);
+  }
   rows.push('');
   rows.push(`| Metric | ${tickers.join(' | ')} |`);
   rows.push(`|:---|${tickers.map(() => '---:').join('|')}|`);
-  const periodValues = tickers.map(ticker => {
-    const p = insights[ticker]?.snapshotPeriod;
-    return p ? formatSnapshotLabel(p) : 'N/A';
-  });
+  const periodValues = model.companies.map(company => company.snapshotLabel);
   rows.push(`| Snapshot Period | ${periodValues.join(' | ')} |`);
   rows.push('');
 
-  const grouped = groupComparisonMetricNames(Array.from(allMetricNames));
-  for (const section of grouped) {
-    if (section.metrics.length === 0) continue;
-    const chunks = chunk(section.metrics, FRONT_TABLE_MAX_ROWS);
+  const referenceGroups = mergeComparisonGroups(model.companies.map(company => company.comparisonGroups));
+  for (const section of referenceGroups) {
+    if (section.rows.length === 0) continue;
+    const chunks = chunk(section.rows, FRONT_TABLE_MAX_ROWS);
     for (let i = 0; i < chunks.length; i++) {
       const title = chunks.length === 1 ? section.title : `${section.title} (${i + 1}/${chunks.length})`;
       rows.push(`### ${title}`);
@@ -189,13 +111,9 @@ function buildComparisonMetricsTable(
       rows.push(`| Metric | ${tickers.join(' | ')} |`);
       rows.push(`|:---|${tickers.map(() => '---:').join('|')}|`);
 
-      for (const name of chunks[i]!) {
-        const values = tickers.map(ticker => {
-          const data = insights[ticker]?.keyMetrics[name];
-          if (!data) return 'N/A';
-          return formatValue(data.current, data.unit);
-        });
-        rows.push(`| ${name} | ${values.join(' | ')} |`);
+      for (const metric of chunks[i]!) {
+        const values = model.companies.map(company => company.metricsByLabel.get(metric.label)?.currentDisplay || 'Unavailable');
+        rows.push(`| ${metric.label} | ${values.join(' | ')} |`);
       }
       rows.push('');
     }
@@ -204,28 +122,56 @@ function buildComparisonMetricsTable(
   return rows.join('\n').trim();
 }
 
-function formatValue(value: number, unit: string): string {
-  if (!isFinite(value)) return 'N/A';
-  if (unit === '%') return `${(value * 100).toFixed(1)}%`;
-  if (unit === 'x') return `${value.toFixed(2)}x`;
-  if (unit === 'USD') return formatUSDInBillions(value);
-  if (unit === 'USD/share' || unit === 'USD/shares') return `$${value.toFixed(2)}`;
-  if (unit === 'shares') return formatCompactShares(value);
-  return `${value}`;
+function buildMetricBasisDisclosures(company: CompanyReportModel): string[] {
+  const lines: string[] = [];
+  const bases = company.metrics
+    .filter(metric => metric.basis)
+    .map(metric => metric.basis!);
+  const seen = new Set<string>();
+  for (const basis of bases) {
+    const text = `${basis.displayName}: ${basis.disclosureText || basis.note || humanizeBasis(basis.basis)}${basis.fallbackUsed ? ' Fallback was applied and is audit-traceable.' : ''}`;
+    if (seen.has(text)) continue;
+    seen.add(text);
+    lines.push(text);
+  }
+  return lines.slice(0, 4);
 }
 
-function formatUSDInBillions(value: number): string {
-  const sign = value < 0 ? '-' : '';
-  const abs = Math.abs(value);
-  const billions = abs / 1e9;
-  // Use $M below $1B to avoid over-rounding (e.g. 126M -> 0.13B drift).
-  if (abs < 1_000_000_000) {
-    const millions = abs / 1e6;
-    return `${sign}$${millions.toFixed(millions >= 10 ? 0 : 1)}M`;
+function mergeMetricBasisDisclosures(
+  companies: ReportModel['companies'],
+): string[] {
+  const seen = new Set<string>();
+  const lines: string[] = [];
+  for (const company of companies) {
+    for (const disclosure of buildMetricBasisDisclosures(company)) {
+      if (seen.has(disclosure)) continue;
+      seen.add(disclosure);
+      lines.push(disclosure);
+    }
   }
-  if (billions >= 100) return `${sign}$${billions.toFixed(0)}B`;
-  if (billions >= 10) return `${sign}$${billions.toFixed(1)}B`;
-  return `${sign}$${billions.toFixed(2)}B`;
+  return lines.slice(0, 5);
+}
+
+function companyComparisonDisclosure(model: ReportModel): string {
+  const policy = model.companies[0]?.policy;
+  const basis = model.comparisonBasis;
+  if (!policy) {
+    return 'Peer metrics are shown on the canonical latest annual basis available for each company.';
+  }
+  if (basis?.effective_mode === 'overlap_normalized') {
+    if (basis.note) {
+      return basis.note;
+    }
+    return 'Peer metrics are overlap-normalized to the same comparable annual periods across all companies.';
+  }
+  if ((basis?.effective_mode || policy.comparisonBasisMode) === 'latest_per_peer_screening') {
+    return basis?.note || 'Peer metrics use each company’s latest annual filing and should be treated as screening output, not strict like-for-like comparison.';
+  }
+  return basis?.note || 'Peer metrics use each company’s latest annual filing with prominent disclosure that fiscal year-ends can differ across peers.';
+}
+
+function humanizeBasis(basis: string): string {
+  return basis.replace(/_/g, ' ');
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -236,58 +182,24 @@ function chunk<T>(arr: T[], size: number): T[][] {
   return out;
 }
 
-function formatSnapshotLabel(period: string): string {
-  const date = new Date(period);
-  if (isNaN(date.getTime())) return period;
-
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  if (month === 11) return `FY${year}`;
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-  return `FY${year} (${monthNames[month] || 'Dec'})`;
-}
-
-function groupMetrics(
-  metrics: Record<string, MetricDatum>,
-): Array<{ title: string; rows: Array<[string, MetricDatum]> }> {
-  const used = new Set<string>();
-  const grouped = METRIC_GROUPS.map(group => {
-    const rows: Array<[string, MetricDatum]> = [];
-    for (const metric of group.metrics) {
-      const data = metrics[metric];
-      if (!data) continue;
-      rows.push([metric, data]);
-      used.add(metric);
+function mergeComparisonGroups(
+  groupsByCompany: Array<Array<{ title: string; rows: Array<{ label: string }> }>>,
+): Array<{ title: string; rows: Array<{ label: string }> }> {
+  const merged = new Map<string, Map<string, { label: string }>>();
+  for (const companyGroups of groupsByCompany) {
+    for (const group of companyGroups) {
+      let bucket = merged.get(group.title);
+      if (!bucket) {
+        bucket = new Map();
+        merged.set(group.title, bucket);
+      }
+      for (const row of group.rows) {
+        if (!bucket.has(row.label)) bucket.set(row.label, { label: row.label });
+      }
     }
-    return { title: group.title, rows };
-  });
-
-  const extras = Object.entries(metrics)
-    .filter(([name]) => !used.has(name))
-    .sort((a, b) => a[0].localeCompare(b[0]));
-  if (extras.length >= 3) {
-    grouped.push({ title: 'Additional Metrics', rows: extras });
   }
-
-  return grouped;
-}
-
-function groupComparisonMetricNames(
-  metricNames: string[],
-): Array<{ title: string; metrics: string[] }> {
-  const used = new Set<string>();
-  const grouped = METRIC_GROUPS.map(group => {
-    const metrics = group.metrics.filter(name => metricNames.includes(name));
-    for (const m of metrics) used.add(m);
-    return { title: group.title, metrics };
-  });
-
-  const extras = metricNames
-    .filter(name => !used.has(name))
-    .sort((a, b) => a.localeCompare(b));
-  if (extras.length >= 3) {
-    grouped.push({ title: 'Additional Metrics', metrics: extras });
-  }
-
-  return grouped;
+  return Array.from(merged.entries()).map(([title, rows]) => ({
+    title,
+    rows: Array.from(rows.values()).sort((a, b) => a.label.localeCompare(b.label)),
+  }));
 }

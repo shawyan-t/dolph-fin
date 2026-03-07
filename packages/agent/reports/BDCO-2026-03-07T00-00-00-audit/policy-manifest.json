@@ -1,0 +1,23 @@
+{
+  "policy": {
+    "mode": "institutional",
+    "comparisonBasisMode": "overlap_normalized",
+    "statementHistoryPeriods": 5,
+    "trendHistoryPeriods": 10,
+    "returnMetricBasisMode": "average_balance",
+    "sparseDerivationMode": "expanded",
+    "strictLayoutQA": true,
+    "persistAuditArtifacts": true,
+    "narrativeGovernanceMode": "deterministic",
+    "allowExternalContext": false,
+    "comparisonRequireOverlap": false,
+    "metricNAInference": "governed",
+    "displayDerivedLabels": true,
+    "percentMeaningfulBase": 0.05
+  },
+  "report_id": "snap_2026-03-07_1wac8xx",
+  "tickers": [
+    "BDCO"
+  ],
+  "generated_at": "2026-03-07T00:00:00.000Z"
+}

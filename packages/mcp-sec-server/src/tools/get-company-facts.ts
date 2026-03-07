@@ -307,10 +307,13 @@ function selectBestTagPeriods(
   candidates.sort((a, b) => {
     const aAnnual = a.latestAnnualYear ?? -1;
     const bAnnual = b.latestAnnualYear ?? -1;
+    // Primary: prefer tag with most recent annual data
     if (aAnnual !== bAnnual) return bAnnual - aAnnual;
+    // When latest annual year is tied, prefer the higher-priority tag
+    // (lower tagRank = earlier in mapping's xbrlTags array = more preferred)
+    if (a.tagRank !== b.tagRank) return a.tagRank - b.tagRank;
     if (a.annualCount !== b.annualCount) return b.annualCount - a.annualCount;
     if (a.latestPeriod !== b.latestPeriod) return b.latestPeriod.localeCompare(a.latestPeriod);
-    if (a.tagRank !== b.tagRank) return a.tagRank - b.tagRank;
     return b.periods.length - a.periods.length;
   });
 
@@ -384,7 +387,7 @@ function extractPeriods(
   for (const entry of entries) {
     if (!ACCEPTED_FORMS.has(entry.form)) continue;
 
-    const periodKey = `${entry.end}-${entry.form}`;
+    const periodKey = `${entry.end}-${entry.form}-${entry.fy}-${entry.fp}`;
     if (seen.has(periodKey)) continue;
     seen.add(periodKey);
 
@@ -397,6 +400,8 @@ function extractPeriods(
       value: entry.val,
       unit: bestUnit,
       form: entry.form,
+      fiscal_year: entry.fy,
+      fiscal_period: entry.fp,
       filed: entry.filed,
       provenance: {
         xbrl_tag: tagName,

@@ -1,0 +1,16 @@
+{
+  "id": "snap_2026-03-04_tf6l03",
+  "type": "single",
+  "tickers": [
+    "NVDA"
+  ],
+  "generated_at": "2026-03-04T00:00:00.000Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 60,
+    "data_points_used": 3300,
+    "snapshot_id": "snap_2026-03-04_tf6l03",
+    "policy_mode": "institutional",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

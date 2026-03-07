@@ -1,0 +1,20 @@
+{
+  "warnings": [
+    {
+      "section": "relative_strengths",
+      "issue": "Section has too few specific numbers (found 1, expected at least 2)",
+      "severity": "warning"
+    },
+    {
+      "section": "analyst_notes",
+      "issue": "Section has too few specific numbers (found 0, expected at least 2)",
+      "severity": "warning"
+    },
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $744K not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    }
+  ],
+  "mappingFixes": []
+}

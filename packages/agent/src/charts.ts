@@ -12,7 +12,7 @@
  */
 
 import type { AnalysisContext, TrendData, CompanyFacts } from '@dolph/shared';
-import { getMappingByName, formatCompactCurrency } from '@dolph/shared';
+import { classifyChangeMeaning, getMappingByName, formatCompactCurrency } from '@dolph/shared';
 import { buildCanonicalAnnualPeriodMap } from './report-facts.js';
 
 // ── Color palette ─────────────────────────────────────────────
@@ -609,6 +609,7 @@ function buildGrowthDurabilityChart(
     const prev = periods[i - 1]!;
     const curr = periods[i]!;
     if (!isFinite(prev.value) || !isFinite(curr.value) || prev.value <= 0) continue;
+    if (classifyChangeMeaning(curr.value, prev.value) !== 'ok') continue;
     growthPeriods.push({
       period: curr.period,
       growth: ((curr.value / prev.value) - 1) * 100,
@@ -738,7 +739,7 @@ function buildGrowthDurabilityChart(
 // ── Utility functions ─────────────────────────────────────────
 
 function formatAxisValue(n: number): string {
-  return formatCompactCurrency(n, { smallDecimals: 0, compactDecimals: 1 });
+  return formatCompactCurrency(n, { smallDecimals: 0, smartDecimals: true });
 }
 
 function normalizeGrowthSeries(

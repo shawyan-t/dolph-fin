@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { AnalysisContext, Report } from '@dolph/shared';
-import { analyzeData } from './analyzer.js';
+import type { AnalysisInsights } from './analyzer.js';
 import { normalizeMissingDataMarkdown, parseMetricRows } from './pdf-render-rules.js';
 import {
   buildCanonicalAnnualPeriodMap,
@@ -9,6 +9,7 @@ import {
   SHARE_CHANGE_ALERT_THRESHOLD,
   shareBasisDivergence,
 } from './report-facts.js';
+import { requireCanonicalReportPackage, type CanonicalReportPackage } from './canonical-report-package.js';
 
 type GateId =
   | 'data.cross_section_equality'
@@ -16,7 +17,6 @@ type GateId =
   | 'data.sanity'
   | 'data.units'
   | 'data.no_fake_na'
-  | 'narrative.fact_id_reference'
   | 'narrative.threshold_alignment'
   | 'narrative.templated_repetition'
   | 'layout.truncation'
@@ -61,11 +61,15 @@ const REQUIRED_DASHBOARD_METRICS = new Set([
   'Debt-to-Equity',
 ]);
 
+type InsightsMap = Record<string, AnalysisInsights>;
+
 export function runDeterministicQAGates(
   report: Report,
   context: AnalysisContext,
+  canonicalPackage: CanonicalReportPackage,
 ): DeterministicQAResult {
-  const insights = analyzeData(context);
+  const pkg = requireCanonicalReportPackage(canonicalPackage, 'runDeterministicQAGates');
+  const insights = pkg.insights;
   const failures: QAFailure[] = [];
   const periodBasis: DeterministicQAResult['periodBasis'] = {};
   const mappingFixes: string[] = [];
@@ -122,7 +126,7 @@ export function runDeterministicQAGates(
 function runSingleReportCrossSectionGates(
   report: Report,
   context: AnalysisContext,
-  insights: ReturnType<typeof analyzeData>,
+  insights: InsightsMap,
   failures: QAFailure[],
 ): void {
   const ticker = report.tickers[0]!;
@@ -240,9 +244,52 @@ function runSingleReportCrossSectionGates(
 function runComparisonReportCrossSectionGates(
   report: Report,
   context: AnalysisContext,
-  insights: ReturnType<typeof analyzeData>,
+  insights: InsightsMap,
   failures: QAFailure[],
 ): void {
+  const policy = report.policy || context.policy;
+  const comparisonBasis = report.comparison_basis || context.comparison_basis;
+  const missingSnapshotPeriods = context.tickers.filter(ticker => !insights[ticker]?.snapshotPeriod);
+  if (
+    policy?.comparisonRequireOverlap
+    && (
+      !comparisonBasis
+      || comparisonBasis.effective_mode !== 'overlap_normalized'
+      || comparisonBasis.status !== 'resolved'
+    )
+  ) {
+    failures.push({
+      gate: 'data.period_coherence',
+      source: 'comparison:policy',
+      message: comparisonBasis?.fallback_reason
+        ? `Institutional comparison mode requires overlap-normalized periods, but ${comparisonBasis.fallback_reason}`
+        : 'Institutional comparison mode requires overlap-normalized periods, but no governed shared annual basis was available across all peers.',
+    });
+  }
+  if (policy?.comparisonRequireOverlap && missingSnapshotPeriods.length > 0) {
+    failures.push({
+      gate: 'data.period_coherence',
+      source: 'comparison:policy',
+      message: `Institutional comparison mode requires shared current periods, but no snapshot period was locked for ${missingSnapshotPeriods.join(', ')}.`,
+    });
+  }
+  const distinctPeriods = new Set(
+    context.tickers
+      .map(ticker => insights[ticker]?.snapshotPeriod)
+      .filter((period): period is string => !!period),
+  );
+  if (
+    policy?.comparisonRequireOverlap
+    && comparisonBasis?.resolution_kind === 'exact_date_overlap'
+    && distinctPeriods.size > 1
+  ) {
+    failures.push({
+      gate: 'data.period_coherence',
+      source: 'comparison:policy',
+      message: 'Institutional comparison mode requires overlap-normalized periods, but peers are locked to different annual periods.',
+    });
+  }
+
   const keyMetricsSection = report.sections.find(s => s.id === 'key_metrics')?.content || '';
   const tableMap = parseComparisonMetricTable(keyMetricsSection, context.tickers);
 
@@ -318,7 +365,7 @@ function runSanityGatesForTicker(
   report: Report,
   context: AnalysisContext,
   ticker: string,
-  insight: ReturnType<typeof analyzeData>[string] | undefined,
+  insight: AnalysisInsights | undefined,
   failures: QAFailure[],
 ): void {
   if (!insight?.snapshotPeriod) return;
@@ -363,6 +410,20 @@ function runSanityGatesForTicker(
       source: `${ticker}:income_statement`,
       message: 'Gross profit is below operating income.',
     });
+  }
+
+  const dna = finite(current['depreciation_and_amortization']);
+  const dep = finite(current['depreciation_expense']);
+  const amort = finite(current['amortization_expense']);
+  if (dna !== null && dep !== null && amort !== null) {
+    const componentSum = dep + amort;
+    if (materiallyDiffers(dna, componentSum, 0.1, 50_000)) {
+      failures.push({
+        gate: 'data.sanity',
+        source: `${ticker}:depreciation_and_amortization`,
+        message: 'Depreciation & amortization does not reconcile with depreciation + amortization components.',
+      });
+    }
   }
 
   // Debt completeness: if components exist, total debt must be resolved.
@@ -420,14 +481,20 @@ function runSanityGatesForTicker(
     && prevShares > 0
     && Math.max(currShares / prevShares, prevShares / currShares) >= SHARE_CHANGE_ALERT_THRESHOLD;
   const hasBasisGap = (currentShareBasisGap ?? 0) > 0.2 || (priorShareBasisGap ?? 0) > 0.2;
+  const corroboratedShareChange = corroboratesShareChange(
+    currShares,
+    prevShares,
+    currWeightedShares,
+    prevWeightedShares,
+  );
 
   if (hasShareJump) {
     const text = context.filing_content[ticker]?.raw_text || '';
-    if (!corporateActionEvidence(text)) {
+    if (!corporateActionEvidence(text) && !corroboratedShareChange) {
       failures.push({
         gate: 'data.sanity',
         source: `${ticker}:shares_outstanding`,
-        message: `Shares outstanding changed by >= ${SHARE_CHANGE_ALERT_THRESHOLD.toFixed(1)}x without split/issuance/conversion evidence.`,
+        message: `Shares outstanding changed by >= ${SHARE_CHANGE_ALERT_THRESHOLD.toFixed(1)}x without filing-text evidence or weighted-share corroboration.`,
       });
     }
   }
@@ -488,9 +555,60 @@ function parseComparisonMetricTable(
 function runNarrativeGates(
   report: Report,
   context: AnalysisContext,
-  insights: ReturnType<typeof analyzeData>,
+  insights: InsightsMap,
   failures: QAFailure[],
 ): void {
+  if (report.narrative?.sections) {
+    const validFactIds = new Set<string>();
+    const sectionContentById = new Map(report.sections.map(section => [section.id, section.content.trim()]));
+    for (const insight of Object.values(insights)) {
+      for (const factId of Object.keys(insight.canonicalFacts || {})) validFactIds.add(factId);
+    }
+    for (const section of report.narrative.sections) {
+      const rendered = section.rendered_content?.trim();
+      const actual = sectionContentById.get(section.id) || '';
+      if (!rendered) {
+        failures.push({
+          gate: 'narrative.threshold_alignment',
+          source: `narrative:${section.id}`,
+          message: 'Structured narrative section is missing rendered_content.',
+        });
+      } else if (rendered !== actual) {
+        failures.push({
+          gate: 'narrative.threshold_alignment',
+          source: `narrative:${section.id}`,
+          message: 'Structured narrative rendered_content does not match the rendered report section.',
+        });
+      }
+      for (const paragraph of section.paragraphs) {
+        if (!paragraph.text.trim()) {
+          failures.push({
+            gate: 'narrative.threshold_alignment',
+            source: `narrative:${section.id}`,
+            message: 'Structured narrative contains an empty paragraph.',
+          });
+          continue;
+        }
+        if (paragraph.fact_ids.length === 0) {
+          failures.push({
+            gate: 'narrative.threshold_alignment',
+            source: `narrative:${section.id}`,
+            message: 'Structured narrative paragraph has no fact bindings.',
+          });
+          continue;
+        }
+        const invalid = paragraph.fact_ids.filter(factId => !validFactIds.has(factId));
+        if (invalid.length > 0) {
+          failures.push({
+            gate: 'narrative.threshold_alignment',
+            source: `narrative:${section.id}`,
+            message: `Structured narrative references unsupported fact ids: ${invalid.join(', ')}.`,
+          });
+        }
+      }
+    }
+  }
+
   const narrativeSectionIds = report.type === 'comparison'
     ? ['executive_summary', 'relative_strengths', 'risk_factors', 'analyst_notes']
     : ['executive_summary', 'trend_analysis', 'risk_factors', 'analyst_notes'];
@@ -499,19 +617,6 @@ function runNarrativeGates(
     .filter(s => narrativeSectionIds.includes(s.id))
     .map(s => s.content)
     .join('\n');
-
-  for (const line of narrative.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed.startsWith('-')) continue;
-    if (!/\d/.test(trimmed)) continue;
-    if (!/facts:/i.test(trimmed)) {
-      failures.push({
-        gate: 'narrative.fact_id_reference',
-        source: 'narrative',
-        message: `Numeric bullet missing fact reference: "${trimmed.slice(0, 120)}"`,
-      });
-    }
-  }
 
   const repeatedPattern = /\b([a-z][a-z'’-]*)[ \t]+\1[ \t]+is currently\b/i;
   if (repeatedPattern.test(narrative)) {
@@ -526,6 +631,8 @@ function runNarrativeGates(
     const ticker = context.tickers[0]!;
     const de = insights[ticker]?.keyMetrics['Debt-to-Equity']?.current ?? null;
     const currentRatio = insights[ticker]?.keyMetrics['Current Ratio']?.current ?? null;
+    const operatingCashFlow = insights[ticker]?.keyMetrics['Operating Cash Flow']?.current ?? null;
+    const freeCashFlow = insights[ticker]?.keyMetrics['Free Cash Flow']?.current ?? null;
     const low = narrative.toLowerCase();
     const leverageMagnitude = de === null ? null : Math.abs(de);
 
@@ -534,6 +641,16 @@ function runNarrativeGates(
         gate: 'narrative.threshold_alignment',
         source: 'narrative',
         message: 'Narrative claims strong liquidity but current ratio threshold is not met.',
+      });
+    }
+    if (
+      /strong liquidity|conservatively positioned|significant strategic flexibility/.test(low)
+      && ((operatingCashFlow !== null && operatingCashFlow < 0) || (freeCashFlow !== null && freeCashFlow < 0))
+    ) {
+      failures.push({
+        gate: 'narrative.threshold_alignment',
+        source: 'narrative',
+        message: 'Narrative presents balance-sheet strength without acknowledging negative operating or free cash flow.',
       });
     }
     if ((/high leverage|elevated leverage/.test(low)) && (leverageMagnitude === null || leverageMagnitude < 2)) {
@@ -550,6 +667,36 @@ function runNarrativeGates(
         message: 'Narrative claims conservative leverage but debt-to-equity is above threshold.',
       });
     }
+    return;
+  }
+
+  const low = narrative.toLowerCase();
+  const comparisonDebt = context.tickers.map(ticker => ({
+    ticker,
+    debtToEquity: insights[ticker]?.keyMetrics['Debt-to-Equity']?.current ?? null,
+  }));
+  if (
+    /most conservative leverage|conservative leverage profile|lowest leverage/i.test(low)
+    && comparisonDebt.some(entry => entry.debtToEquity === null)
+  ) {
+    failures.push({
+      gate: 'narrative.threshold_alignment',
+      source: 'comparison:narrative',
+      message: 'Peer leverage ranking is claimed even though one or more peers have no debt-to-equity value.',
+    });
+  }
+
+  const periods = context.tickers.map(ticker => insights[ticker]?.snapshotPeriod ?? null).filter(Boolean);
+  const distinctPeriods = new Set(periods);
+  if (
+    /same reported annual period|figures are aligned to the same reported annual period/i.test(low)
+    && distinctPeriods.size > 1
+  ) {
+    failures.push({
+      gate: 'narrative.threshold_alignment',
+      source: 'comparison:narrative',
+      message: 'Narrative claims synchronized peer periods even though locked annual periods differ.',
+    });
   }
 }
 
@@ -632,6 +779,34 @@ function withinTolerance(parsed: number, canonical: number, unit: string): boole
 function finite(v: number | undefined): number | null {
   if (v === undefined) return null;
   return isFinite(v) ? v : null;
+}
+
+function shareRatio(current: number | null, prior: number | null): number | null {
+  if (current === null || prior === null || current <= 0 || prior <= 0) return null;
+  return current / prior;
+}
+
+function corroboratesShareChange(
+  currentShares: number | null,
+  priorShares: number | null,
+  currentWeightedShares: number | null,
+  priorWeightedShares: number | null,
+): boolean {
+  const periodRatio = shareRatio(currentShares, priorShares);
+  const weightedRatio = shareRatio(currentWeightedShares, priorWeightedShares);
+  if (periodRatio === null || weightedRatio === null) return false;
+
+  const sameDirection = (periodRatio >= 1 && weightedRatio >= 1) || (periodRatio <= 1 && weightedRatio <= 1);
+  if (!sameDirection) return false;
+
+  const relativeGap = Math.abs(periodRatio - weightedRatio) / Math.max(Math.abs(periodRatio), Math.abs(weightedRatio), 1);
+  return relativeGap <= 0.35;
+}
+
+function materiallyDiffers(a: number, b: number, relativeTolerance: number, absoluteTolerance: number): boolean {
+  const gap = Math.abs(a - b);
+  const scale = Math.max(Math.abs(a), Math.abs(b), 1);
+  return gap > Math.max(scale * relativeTolerance, absoluteTolerance);
 }
 
 export async function writeQAFailureReport(

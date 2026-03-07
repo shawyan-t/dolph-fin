@@ -1,0 +1,916 @@
+{
+  "AMD": [
+    {
+      "key": "asset_turnover",
+      "label": "Asset Turnover",
+      "current": "0.47x",
+      "prior": "0.37x",
+      "change": "27.3%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "asset_turnover",
+        "displayName": "Asset Turnover",
+        "basis": "average_balance",
+        "note": "Asset turnover uses average assets for the current period and prior ending assets for the prior comparison."
+      },
+      "note": "Average-balance efficiency policy applied."
+    },
+    {
+      "key": "bvps",
+      "label": "Book Value Per Share",
+      "current": "$38.65",
+      "prior": "$35.49",
+      "change": "8.9%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "bvps",
+        "displayName": "Book Value Per Share",
+        "basis": "period_end_shares",
+        "note": "BVPS uses period-end shares outstanding.",
+        "disclosureText": "Book Value Per Share uses period-end shares outstanding.",
+        "alternativesConsidered": [
+          "weighted_average_diluted"
+        ]
+      },
+      "note": "BVPS uses period-end shares outstanding."
+    },
+    {
+      "key": "capex_to_revenue",
+      "label": "CapEx / Revenue",
+      "current": "2.8%",
+      "prior": "2.5%",
+      "change": "14.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "capex",
+      "label": "Capital Expenditures",
+      "current": "-$974M",
+      "prior": "-$636M",
+      "change": "53.1%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cash_ratio",
+      "label": "Cash Ratio",
+      "current": "0.59x",
+      "prior": "0.52x",
+      "change": "12.6%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_to_net_income",
+      "label": "CFO / Net Income",
+      "current": "1.78x",
+      "prior": "1.85x",
+      "change": "-4.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_margin",
+      "label": "CFO Margin",
+      "current": "22.3%",
+      "prior": "11.8%",
+      "change": "88.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "current_ratio",
+      "label": "Current Ratio",
+      "current": "2.85x",
+      "prior": "2.62x",
+      "change": "8.9%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "debt_maturity_current_pct",
+      "label": "Debt Maturity (Current %)",
+      "current": "26.9%",
+      "prior": "0.0%",
+      "change": "N/A",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "de",
+      "label": "Debt-to-Equity",
+      "current": "0.05x",
+      "prior": "0.03x",
+      "change": "69.7%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "eps",
+      "label": "Earnings Per Share (Diluted)",
+      "current": "$2.65",
+      "prior": "$1.00",
+      "change": "165.0%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": {
+        "metric": "eps",
+        "displayName": "Earnings Per Share (Diluted)",
+        "basis": "weighted_average_diluted",
+        "note": "EPS uses diluted weighted-average shares from the income statement.",
+        "disclosureText": "Earnings Per Share (Diluted) uses diluted weighted-average shares from the income statement.",
+        "alternativesConsidered": [
+          "weighted_average_basic",
+          "period_end_shares"
+        ]
+      },
+      "note": "EPS uses diluted weighted-average shares from the income statement."
+    },
+    {
+      "key": "ebitda",
+      "label": "EBITDA",
+      "current": "$6.51B",
+      "prior": "$4.75B",
+      "change": "37.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "equity_multiplier",
+      "label": "Equity Multiplier",
+      "current": "1.21x",
+      "prior": "1.20x",
+      "change": "0.8%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "equity_multiplier",
+        "displayName": "Equity Multiplier",
+        "basis": "average_balance",
+        "note": "Equity multiplier uses average assets and average equity for the locked current period."
+      },
+      "note": "Average-balance capital-structure policy applied."
+    },
+    {
+      "key": "fcf_margin",
+      "label": "FCF Margin",
+      "current": "19.4%",
+      "prior": "9.3%",
+      "change": "108.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "fcf",
+      "label": "Free Cash Flow",
+      "current": "$6.74B",
+      "prior": "$2.40B",
+      "change": "180.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "gross_margin",
+      "label": "Gross Margin",
+      "current": "49.5%",
+      "prior": "49.4%",
+      "change": "0.3%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_debt",
+      "label": "Net Debt",
+      "current": "-$2.29B",
+      "prior": "-$2.04B",
+      "change": "12.4%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_income",
+      "label": "Net Income",
+      "current": "$4.33B",
+      "prior": "$1.64B",
+      "change": "164.2%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_margin",
+      "label": "Net Margin",
+      "current": "12.5%",
+      "prior": "6.4%",
+      "change": "96.6%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_cash_flow",
+      "label": "Operating Cash Flow",
+      "current": "$7.71B",
+      "prior": "$3.04B",
+      "change": "153.5%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_income",
+      "label": "Operating Income",
+      "current": "$3.69B",
+      "prior": "$1.90B",
+      "change": "94.4%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_margin",
+      "label": "Operating Margin",
+      "current": "10.7%",
+      "prior": "7.4%",
+      "change": "44.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "quick_ratio",
+      "label": "Quick Ratio",
+      "current": "2.01x",
+      "prior": "1.83x",
+      "change": "10.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "roa",
+      "label": "Return on Assets",
+      "current": "5.9%",
+      "prior": "2.4%",
+      "change": "150.3%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "roa",
+        "displayName": "Return on Assets",
+        "basis": "average_balance",
+        "note": "ROA uses average assets over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "roe",
+      "label": "Return on Equity",
+      "current": "7.2%",
+      "prior": "2.9%",
+      "change": "152.3%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "roe",
+        "displayName": "Return on Equity",
+        "basis": "average_balance",
+        "note": "ROE uses average equity over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "revenue",
+      "label": "Revenue",
+      "current": "$34.6B",
+      "prior": "$25.8B",
+      "change": "34.3%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "roic_proxy",
+      "label": "ROIC Proxy",
+      "current": "5.6%",
+      "prior": "3.2%",
+      "change": "74.1%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "stockholders_equity",
+      "label": "Stockholders' Equity",
+      "current": "$63.0B",
+      "prior": "$57.6B",
+      "change": "9.4%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "total_assets",
+      "label": "Total Assets",
+      "current": "$76.9B",
+      "prior": "$69.2B",
+      "change": "11.1%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "total_debt",
+      "label": "Total Debt",
+      "current": "$3.25B",
+      "prior": "$1.75B",
+      "change": "85.7%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": "Total Debt uses reported total debt when available, otherwise long-term debt plus short-term debt."
+    },
+    {
+      "key": "total_liabilities",
+      "label": "Total Liabilities",
+      "current": "$13.9B",
+      "prior": "$11.7B",
+      "change": "19.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "working_capital",
+      "label": "Working Capital",
+      "current": "$17.5B",
+      "prior": "$11.8B",
+      "change": "48.6%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    }
+  ],
+  "NVDA": [
+    {
+      "key": "asset_turnover",
+      "label": "Asset Turnover",
+      "current": "1.36x",
+      "prior": "1.17x",
+      "change": "16.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "asset_turnover",
+        "displayName": "Asset Turnover",
+        "basis": "average_balance",
+        "note": "Asset turnover uses average assets for the current period and prior ending assets for the prior comparison."
+      },
+      "note": "Average-balance efficiency policy applied."
+    },
+    {
+      "key": "bvps",
+      "label": "Book Value Per Share",
+      "current": "$6.47",
+      "prior": "$3.24",
+      "change": "99.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "bvps",
+        "displayName": "Book Value Per Share",
+        "basis": "period_end_shares",
+        "note": "BVPS uses period-end shares outstanding.",
+        "disclosureText": "Book Value Per Share uses period-end shares outstanding.",
+        "alternativesConsidered": [
+          "weighted_average_diluted"
+        ]
+      },
+      "note": "BVPS uses period-end shares outstanding."
+    },
+    {
+      "key": "capex_to_revenue",
+      "label": "CapEx / Revenue",
+      "current": "2.8%",
+      "prior": "2.5%",
+      "change": "12.8%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "capex",
+      "label": "Capital Expenditures",
+      "current": "-$6.04B",
+      "prior": "-$3.24B",
+      "change": "86.7%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cash_ratio",
+      "label": "Cash Ratio",
+      "current": "0.33x",
+      "prior": "0.48x",
+      "change": "-30.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_to_net_income",
+      "label": "CFO / Net Income",
+      "current": "0.86x",
+      "prior": "0.88x",
+      "change": "-2.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_margin",
+      "label": "CFO Margin",
+      "current": "47.6%",
+      "prior": "49.1%",
+      "change": "-3.1%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "current_ratio",
+      "label": "Current Ratio",
+      "current": "3.91x",
+      "prior": "4.44x",
+      "change": "-12.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "debt_maturity_current_pct",
+      "label": "Debt Maturity (Current %)",
+      "current": "10.6%",
+      "prior": "0.0%",
+      "change": "N/A",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "de",
+      "label": "Debt-to-Equity",
+      "current": "0.06x",
+      "prior": "0.11x",
+      "change": "-43.6%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "eps",
+      "label": "Earnings Per Share (Diluted)",
+      "current": "$4.90",
+      "prior": "$2.94",
+      "change": "66.7%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": {
+        "metric": "eps",
+        "displayName": "Earnings Per Share (Diluted)",
+        "basis": "weighted_average_diluted",
+        "note": "EPS uses diluted weighted-average shares from the income statement.",
+        "disclosureText": "Earnings Per Share (Diluted) uses diluted weighted-average shares from the income statement.",
+        "alternativesConsidered": [
+          "weighted_average_basic",
+          "period_end_shares"
+        ]
+      },
+      "note": "EPS uses diluted weighted-average shares from the income statement."
+    },
+    {
+      "key": "ebitda",
+      "label": "EBITDA",
+      "current": "$133B",
+      "prior": "$83.3B",
+      "change": "59.9%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "equity_multiplier",
+      "label": "Equity Multiplier",
+      "current": "1.35x",
+      "prior": "1.41x",
+      "change": "-4.4%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "equity_multiplier",
+        "displayName": "Equity Multiplier",
+        "basis": "average_balance",
+        "note": "Equity multiplier uses average assets and average equity for the locked current period."
+      },
+      "note": "Average-balance capital-structure policy applied."
+    },
+    {
+      "key": "fcf_margin",
+      "label": "FCF Margin",
+      "current": "44.8%",
+      "prior": "46.6%",
+      "change": "-4.0%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "fcf",
+      "label": "Free Cash Flow",
+      "current": "$96.7B",
+      "prior": "$60.9B",
+      "change": "58.9%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "gross_margin",
+      "label": "Gross Margin",
+      "current": "71.1%",
+      "prior": "75.0%",
+      "change": "-5.2%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_debt",
+      "label": "Net Debt",
+      "current": "-$1.14B",
+      "prior": "-$126M",
+      "change": "803.2%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_income",
+      "label": "Net Income",
+      "current": "$120B",
+      "prior": "$72.9B",
+      "change": "64.7%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_margin",
+      "label": "Net Margin",
+      "current": "55.6%",
+      "prior": "55.8%",
+      "change": "-0.4%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_cash_flow",
+      "label": "Operating Cash Flow",
+      "current": "$103B",
+      "prior": "$64.1B",
+      "change": "60.3%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_income",
+      "label": "Operating Income",
+      "current": "$130B",
+      "prior": "$81.5B",
+      "change": "60.1%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_margin",
+      "label": "Operating Margin",
+      "current": "60.4%",
+      "prior": "62.4%",
+      "change": "-3.3%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "quick_ratio",
+      "label": "Quick Ratio",
+      "current": "3.24x",
+      "prior": "3.88x",
+      "change": "-16.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "roa",
+      "label": "Return on Assets",
+      "current": "75.4%",
+      "prior": "65.3%",
+      "change": "15.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "roa",
+        "displayName": "Return on Assets",
+        "basis": "average_balance",
+        "note": "ROA uses average assets over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "roe",
+      "label": "Return on Equity",
+      "current": "101.5%",
+      "prior": "91.9%",
+      "change": "10.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": {
+        "metric": "roe",
+        "displayName": "Return on Equity",
+        "basis": "average_balance",
+        "note": "ROE uses average equity over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "revenue",
+      "label": "Revenue",
+      "current": "$216B",
+      "prior": "$130B",
+      "change": "65.5%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "roic_proxy",
+      "label": "ROIC Proxy",
+      "current": "78.2%",
+      "prior": "92.8%",
+      "change": "-15.7%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "stockholders_equity",
+      "label": "Stockholders' Equity",
+      "current": "$157B",
+      "prior": "$79.3B",
+      "change": "98.3%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "total_assets",
+      "label": "Total Assets",
+      "current": "$207B",
+      "prior": "$112B",
+      "change": "85.3%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "total_debt",
+      "label": "Total Debt",
+      "current": "$9.47B",
+      "prior": "$8.46B",
+      "change": "11.9%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": "Total Debt uses reported total debt when available, otherwise long-term debt plus short-term debt."
+    },
+    {
+      "key": "total_liabilities",
+      "label": "Total Liabilities",
+      "current": "$49.5B",
+      "prior": "$32.3B",
+      "change": "53.4%",
+      "availability": {
+        "current": "reported",
+        "prior": "reported"
+      },
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "working_capital",
+      "label": "Working Capital",
+      "current": "$93.4B",
+      "prior": "$62.1B",
+      "change": "50.5%",
+      "availability": {
+        "current": "derived",
+        "prior": "derived"
+      },
+      "basis": null,
+      "note": null
+    }
+  ]
+}

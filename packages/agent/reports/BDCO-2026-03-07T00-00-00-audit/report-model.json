@@ -1,0 +1,1812 @@
+{
+  "type": "single",
+  "companies": [
+    {
+      "ticker": "BDCO",
+      "companyName": "BLUE DOLPHIN ENERGY CO",
+      "snapshotPeriod": "2024-12-31",
+      "priorPeriod": "2023-12-31",
+      "periodNote": null,
+      "snapshotLabel": "FY2024",
+      "priorLabel": "FY2023",
+      "filingReferences": [
+        {
+          "accessionNumber": "0001437749-25-010478",
+          "form": "10-K",
+          "filed": "2025-04-01",
+          "url": "https://www.sec.gov/Archives/edgar/data/793306/000143774925010478/0001437749-25-010478-index.htm",
+          "metrics": [
+            "revenue",
+            "cost_of_revenue",
+            "operating_expenses",
+            "operating_income",
+            "net_income",
+            "eps_basic",
+            "eps_diluted",
+            "shares_outstanding",
+            "pretax_income",
+            "income_tax_expense",
+            "total_assets",
+            "total_liabilities",
+            "stockholders_equity",
+            "current_assets",
+            "current_liabilities",
+            "cash_and_equivalents",
+            "inventory",
+            "accounts_receivable",
+            "other_current_assets",
+            "retained_earnings",
+            "operating_cash_flow",
+            "capex",
+            "investing_cash_flow",
+            "financing_cash_flow",
+            "depreciation_and_amortization",
+            "debt_repayment",
+            "net_change_in_cash",
+            "cash_ending"
+          ],
+          "periods": [
+            "2024-12-31"
+          ],
+          "sourceKinds": [
+            "xbrl"
+          ]
+        },
+        {
+          "accessionNumber": "0001437749-24-010434",
+          "form": "10-K",
+          "filed": "2024-04-01",
+          "url": "https://www.sec.gov/Archives/edgar/data/793306/000143774924010434/0001437749-24-010434-index.htm",
+          "metrics": [
+            "revenue",
+            "cost_of_revenue",
+            "gross_profit",
+            "operating_expenses",
+            "operating_income",
+            "net_income",
+            "eps_basic",
+            "eps_diluted",
+            "shares_outstanding",
+            "weighted_avg_shares_diluted",
+            "pretax_income",
+            "income_tax_expense",
+            "total_assets",
+            "total_liabilities",
+            "stockholders_equity",
+            "current_assets",
+            "current_liabilities",
+            "cash_and_equivalents",
+            "inventory",
+            "accounts_receivable",
+            "other_current_assets",
+            "retained_earnings",
+            "operating_cash_flow",
+            "capex",
+            "investing_cash_flow",
+            "financing_cash_flow",
+            "depreciation_and_amortization",
+            "debt_repayment",
+            "net_change_in_cash",
+            "cash_ending"
+          ],
+          "periods": [
+            "2023-12-31",
+            "2022-12-31"
+          ],
+          "sourceKinds": [
+            "xbrl"
+          ]
+        },
+        {
+          "accessionNumber": "0001654954-23-004195",
+          "form": "10-K",
+          "filed": "2023-04-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/793306/000165495423004195/0001654954-23-004195-index.htm",
+          "metrics": [
+            "gross_profit",
+            "operating_income",
+            "net_income",
+            "eps_basic",
+            "eps_diluted",
+            "weighted_avg_shares_diluted",
+            "pretax_income",
+            "income_tax_expense",
+            "total_assets",
+            "total_liabilities",
+            "stockholders_equity",
+            "current_assets",
+            "current_liabilities",
+            "cash_and_equivalents",
+            "total_debt",
+            "long_term_debt",
+            "short_term_debt",
+            "inventory",
+            "other_current_assets",
+            "accounts_payable",
+            "accrued_expenses",
+            "retained_earnings",
+            "operating_cash_flow",
+            "investing_cash_flow",
+            "financing_cash_flow",
+            "depreciation_and_amortization",
+            "amortization_expense",
+            "debt_repayment",
+            "cash_ending"
+          ],
+          "periods": [
+            "2022-12-31"
+          ],
+          "sourceKinds": [
+            "xbrl"
+          ]
+        }
+      ],
+      "alignedFiling": {
+        "accessionNumber": "0001437749-25-010478",
+        "documentUrl": "https://www.sec.gov/Archives/edgar/data/793306/000143774925010478/0001437749-25-010478-index.htm",
+        "form": "10-K",
+        "filed": "2025-04-01",
+        "period": "2024-12-31"
+      },
+      "dashboardGroups": [
+        {
+          "title": "Profitability",
+          "rows": [
+            {
+              "key": "roe",
+              "label": "Return on Equity",
+              "unit": "%",
+              "current": -0.23164614683082535,
+              "prior": 0.7454746508329527,
+              "change": -1.310736450356825,
+              "currentDisplay": "-23.2%",
+              "priorDisplay": "74.5%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "roe",
+                "displayName": "Return on Equity",
+                "basis": "average_balance",
+                "note": "ROE uses average equity over the locked current/prior annual periods."
+              },
+              "note": "Average-balance return policy applied."
+            },
+            {
+              "key": "roa",
+              "label": "Return on Assets",
+              "unit": "%",
+              "current": -0.08304924196890942,
+              "prior": 0.29234424050453917,
+              "change": -1.284080308288543,
+              "currentDisplay": "-8.3%",
+              "priorDisplay": "29.2%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "roa",
+                "displayName": "Return on Assets",
+                "basis": "average_balance",
+                "note": "ROA uses average assets over the locked current/prior annual periods."
+              },
+              "note": "Average-balance return policy applied."
+            },
+            {
+              "key": "operating_margin",
+              "label": "Operating Margin",
+              "unit": "%",
+              "current": -0.013561393176471329,
+              "prior": 0.09187775219165353,
+              "change": -1.147602579002834,
+              "currentDisplay": "-1.4%",
+              "priorDisplay": "9.2%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "net_margin",
+              "label": "Net Margin",
+              "unit": "%",
+              "current": -0.027198372380865397,
+              "prior": 0.07830111501636165,
+              "change": -1.3473561312017341,
+              "currentDisplay": "-2.7%",
+              "priorDisplay": "7.8%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "gross_margin",
+              "label": "Gross Margin",
+              "unit": "%",
+              "current": 0.012251235359143861,
+              "prior": 0.11280955843736112,
+              "change": -0.8913989600806167,
+              "currentDisplay": "1.2%",
+              "priorDisplay": "11.3%",
+              "changeDisplay": "-89.1%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "eps",
+              "label": "Earnings Per Share (Diluted)",
+              "unit": "USD/shares",
+              "current": -0.58,
+              "prior": 2.08,
+              "change": -1.2788461538461537,
+              "currentDisplay": "$-0.58",
+              "priorDisplay": "$2.08",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              },
+              "basis": {
+                "metric": "eps",
+                "displayName": "Earnings Per Share (Diluted)",
+                "basis": "weighted_average_diluted",
+                "note": "EPS uses diluted weighted-average shares from the income statement."
+              },
+              "note": "EPS uses diluted weighted-average shares from the income statement."
+            },
+            {
+              "key": "ebitda",
+              "label": "EBITDA",
+              "unit": "USD",
+              "current": -1500000,
+              "prior": 39186000,
+              "change": -1.0382789771857297,
+              "currentDisplay": "-$1.5M",
+              "priorDisplay": "$39M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Liquidity & Leverage",
+          "rows": [
+            {
+              "key": "current_ratio",
+              "label": "Current Ratio",
+              "unit": "x",
+              "current": 0.7004898201906073,
+              "prior": 0.8893098782138025,
+              "change": -0.21232200681549174,
+              "currentDisplay": "0.70x",
+              "priorDisplay": "0.89x",
+              "changeDisplay": "-21.2%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "quick_ratio",
+              "label": "Quick Ratio",
+              "unit": "x",
+              "current": 0.14240778704558615,
+              "prior": 0.4458998646820027,
+              "change": -0.6806283241481907,
+              "currentDisplay": "0.14x",
+              "priorDisplay": "0.45x",
+              "changeDisplay": "-68.1%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cash_ratio",
+              "label": "Cash Ratio",
+              "unit": "x",
+              "current": 0.0012675857967793932,
+              "prior": 0.33762742444745153,
+              "change": -0.9962456077172822,
+              "currentDisplay": "0.00x",
+              "priorDisplay": "0.34x",
+              "changeDisplay": "-99.6%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "equity_multiplier",
+              "label": "Equity Multiplier",
+              "unit": "x",
+              "current": 2.789262627075454,
+              "prior": 2.54998918243227,
+              "change": 0.09383312144679645,
+              "currentDisplay": "2.79x",
+              "priorDisplay": "2.55x",
+              "changeDisplay": "9.4%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "equity_multiplier",
+                "displayName": "Equity Multiplier",
+                "basis": "average_balance",
+                "note": "Equity multiplier uses average assets and average equity for the locked current period."
+              },
+              "note": "Average-balance capital-structure policy applied."
+            }
+          ]
+        },
+        {
+          "title": "Scale",
+          "rows": [
+            {
+              "key": "revenue",
+              "label": "Revenue",
+              "unit": "USD",
+              "current": 317519000,
+              "prior": 396048000,
+              "change": -0.1982815214317456,
+              "currentDisplay": "$318M",
+              "priorDisplay": "$396M",
+              "changeDisplay": "-19.8%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "net_income",
+              "label": "Net Income",
+              "unit": "USD",
+              "current": -8636000,
+              "prior": 31011000,
+              "change": -1.2784818290284092,
+              "currentDisplay": "-$8.6M",
+              "priorDisplay": "$31M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "operating_income",
+              "label": "Operating Income",
+              "unit": "USD",
+              "current": -4306000,
+              "prior": 36388000,
+              "change": -1.1183357150709026,
+              "currentDisplay": "-$4.3M",
+              "priorDisplay": "$36M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "total_assets",
+              "label": "Total Assets",
+              "unit": "USD",
+              "current": 101896000,
+              "prior": 106077000,
+              "change": -0.03941476474636352,
+              "currentDisplay": "$102M",
+              "priorDisplay": "$106M",
+              "changeDisplay": "-3.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "stockholders_equity",
+              "label": "Stockholders' Equity",
+              "unit": "USD",
+              "current": 32963000,
+              "prior": 41599000,
+              "change": -0.20760114425827547,
+              "currentDisplay": "$33M",
+              "priorDisplay": "$42M",
+              "changeDisplay": "-20.8%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "total_liabilities",
+              "label": "Total Liabilities",
+              "unit": "USD",
+              "current": 68933000,
+              "prior": 64478000,
+              "change": 0.0690933341604889,
+              "currentDisplay": "$69M",
+              "priorDisplay": "$64M",
+              "changeDisplay": "6.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Cash Flow & Per Share",
+          "rows": [
+            {
+              "key": "operating_cash_flow",
+              "label": "Operating Cash Flow",
+              "unit": "USD",
+              "current": -15674000,
+              "prior": 20005000,
+              "change": -1.7835041239690077,
+              "currentDisplay": "-$16M",
+              "priorDisplay": "$20M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "fcf",
+              "label": "Free Cash Flow",
+              "unit": "USD",
+              "current": -15720000,
+              "prior": 19903000,
+              "change": -1.7898306787921419,
+              "currentDisplay": "-$16M",
+              "priorDisplay": "$20M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "capex",
+              "label": "Capital Expenditures",
+              "unit": "USD",
+              "current": -46000,
+              "prior": -102000,
+              "change": -0.5490196078431373,
+              "currentDisplay": "-$46K",
+              "priorDisplay": "-$102K",
+              "changeDisplay": "-54.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "fcf_margin",
+              "label": "FCF Margin",
+              "unit": "%",
+              "current": -0.049508848289393705,
+              "prior": 0.05025400961499616,
+              "change": -1.9851721020608852,
+              "currentDisplay": "-5.0%",
+              "priorDisplay": "5.0%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cfo_margin",
+              "label": "CFO Margin",
+              "unit": "%",
+              "current": -0.049363975069208456,
+              "prior": 0.050511554155051916,
+              "change": -1.9772808596955695,
+              "currentDisplay": "-4.9%",
+              "priorDisplay": "5.1%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cfo_to_net_income",
+              "label": "CFO / Net Income",
+              "unit": "x",
+              "current": 1.81496062992126,
+              "prior": 0.6450936764373932,
+              "change": 1.813483833765968,
+              "currentDisplay": "1.81x",
+              "priorDisplay": "0.65x",
+              "changeDisplay": "181.3%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "capex_to_revenue",
+              "label": "CapEx / Revenue",
+              "unit": "%",
+              "current": 0.00014487322018524876,
+              "prior": 0.00025754454005575084,
+              "change": -0.4374828518830648,
+              "currentDisplay": "0.0%",
+              "priorDisplay": "0.0%",
+              "changeDisplay": "-43.7%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "asset_turnover",
+              "label": "Asset Turnover",
+              "unit": "x",
+              "current": 3.053463670764955,
+              "prior": 3.73358975084137,
+              "change": -0.18216411696629164,
+              "currentDisplay": "3.05x",
+              "priorDisplay": "3.73x",
+              "changeDisplay": "-18.2%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "asset_turnover",
+                "displayName": "Asset Turnover",
+                "basis": "average_balance",
+                "note": "Asset turnover uses average assets for the current period and prior ending assets for the prior comparison."
+              },
+              "note": "Average-balance efficiency policy applied."
+            },
+            {
+              "key": "bvps",
+              "label": "Book Value Per Share",
+              "unit": "USD/shares",
+              "current": 2.2090249757940774,
+              "prior": 2.78776901277365,
+              "change": -0.20760114425827547,
+              "currentDisplay": "$2.21",
+              "priorDisplay": "$2.79",
+              "changeDisplay": "-20.8%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "bvps",
+                "displayName": "Book Value Per Share",
+                "basis": "period_end_shares",
+                "note": "BVPS uses period-end shares outstanding."
+              },
+              "note": "BVPS uses period-end shares outstanding."
+            },
+            {
+              "key": "working_capital",
+              "label": "Working Capital",
+              "unit": "USD",
+              "current": -19139000,
+              "prior": -6135000,
+              "change": 2.119641401792991,
+              "currentDisplay": "-$19M",
+              "priorDisplay": "-$6.1M",
+              "changeDisplay": "212.0%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            }
+          ]
+        }
+      ],
+      "comparisonGroups": [
+        {
+          "title": "Profitability",
+          "rows": [
+            {
+              "key": "roe",
+              "label": "Return on Equity",
+              "unit": "%",
+              "current": -0.23164614683082535,
+              "prior": 0.7454746508329527,
+              "change": -1.310736450356825,
+              "currentDisplay": "-23.2%",
+              "priorDisplay": "74.5%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "roe",
+                "displayName": "Return on Equity",
+                "basis": "average_balance",
+                "note": "ROE uses average equity over the locked current/prior annual periods."
+              },
+              "note": "Average-balance return policy applied."
+            },
+            {
+              "key": "roa",
+              "label": "Return on Assets",
+              "unit": "%",
+              "current": -0.08304924196890942,
+              "prior": 0.29234424050453917,
+              "change": -1.284080308288543,
+              "currentDisplay": "-8.3%",
+              "priorDisplay": "29.2%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "roa",
+                "displayName": "Return on Assets",
+                "basis": "average_balance",
+                "note": "ROA uses average assets over the locked current/prior annual periods."
+              },
+              "note": "Average-balance return policy applied."
+            },
+            {
+              "key": "operating_margin",
+              "label": "Operating Margin",
+              "unit": "%",
+              "current": -0.013561393176471329,
+              "prior": 0.09187775219165353,
+              "change": -1.147602579002834,
+              "currentDisplay": "-1.4%",
+              "priorDisplay": "9.2%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "net_margin",
+              "label": "Net Margin",
+              "unit": "%",
+              "current": -0.027198372380865397,
+              "prior": 0.07830111501636165,
+              "change": -1.3473561312017341,
+              "currentDisplay": "-2.7%",
+              "priorDisplay": "7.8%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "gross_margin",
+              "label": "Gross Margin",
+              "unit": "%",
+              "current": 0.012251235359143861,
+              "prior": 0.11280955843736112,
+              "change": -0.8913989600806167,
+              "currentDisplay": "1.2%",
+              "priorDisplay": "11.3%",
+              "changeDisplay": "-89.1%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "eps",
+              "label": "Earnings Per Share (Diluted)",
+              "unit": "USD/shares",
+              "current": -0.58,
+              "prior": 2.08,
+              "change": -1.2788461538461537,
+              "currentDisplay": "$-0.58",
+              "priorDisplay": "$2.08",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              },
+              "basis": {
+                "metric": "eps",
+                "displayName": "Earnings Per Share (Diluted)",
+                "basis": "weighted_average_diluted",
+                "note": "EPS uses diluted weighted-average shares from the income statement."
+              },
+              "note": "EPS uses diluted weighted-average shares from the income statement."
+            },
+            {
+              "key": "ebitda",
+              "label": "EBITDA",
+              "unit": "USD",
+              "current": -1500000,
+              "prior": 39186000,
+              "change": -1.0382789771857297,
+              "currentDisplay": "-$1.5M",
+              "priorDisplay": "$39M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Liquidity & Leverage",
+          "rows": [
+            {
+              "key": "current_ratio",
+              "label": "Current Ratio",
+              "unit": "x",
+              "current": 0.7004898201906073,
+              "prior": 0.8893098782138025,
+              "change": -0.21232200681549174,
+              "currentDisplay": "0.70x",
+              "priorDisplay": "0.89x",
+              "changeDisplay": "-21.2%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "quick_ratio",
+              "label": "Quick Ratio",
+              "unit": "x",
+              "current": 0.14240778704558615,
+              "prior": 0.4458998646820027,
+              "change": -0.6806283241481907,
+              "currentDisplay": "0.14x",
+              "priorDisplay": "0.45x",
+              "changeDisplay": "-68.1%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cash_ratio",
+              "label": "Cash Ratio",
+              "unit": "x",
+              "current": 0.0012675857967793932,
+              "prior": 0.33762742444745153,
+              "change": -0.9962456077172822,
+              "currentDisplay": "0.00x",
+              "priorDisplay": "0.34x",
+              "changeDisplay": "-99.6%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "equity_multiplier",
+              "label": "Equity Multiplier",
+              "unit": "x",
+              "current": 2.789262627075454,
+              "prior": 2.54998918243227,
+              "change": 0.09383312144679645,
+              "currentDisplay": "2.79x",
+              "priorDisplay": "2.55x",
+              "changeDisplay": "9.4%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "equity_multiplier",
+                "displayName": "Equity Multiplier",
+                "basis": "average_balance",
+                "note": "Equity multiplier uses average assets and average equity for the locked current period."
+              },
+              "note": "Average-balance capital-structure policy applied."
+            }
+          ]
+        },
+        {
+          "title": "Scale",
+          "rows": [
+            {
+              "key": "revenue",
+              "label": "Revenue",
+              "unit": "USD",
+              "current": 317519000,
+              "prior": 396048000,
+              "change": -0.1982815214317456,
+              "currentDisplay": "$318M",
+              "priorDisplay": "$396M",
+              "changeDisplay": "-19.8%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "net_income",
+              "label": "Net Income",
+              "unit": "USD",
+              "current": -8636000,
+              "prior": 31011000,
+              "change": -1.2784818290284092,
+              "currentDisplay": "-$8.6M",
+              "priorDisplay": "$31M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "operating_income",
+              "label": "Operating Income",
+              "unit": "USD",
+              "current": -4306000,
+              "prior": 36388000,
+              "change": -1.1183357150709026,
+              "currentDisplay": "-$4.3M",
+              "priorDisplay": "$36M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "total_assets",
+              "label": "Total Assets",
+              "unit": "USD",
+              "current": 101896000,
+              "prior": 106077000,
+              "change": -0.03941476474636352,
+              "currentDisplay": "$102M",
+              "priorDisplay": "$106M",
+              "changeDisplay": "-3.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "stockholders_equity",
+              "label": "Stockholders' Equity",
+              "unit": "USD",
+              "current": 32963000,
+              "prior": 41599000,
+              "change": -0.20760114425827547,
+              "currentDisplay": "$33M",
+              "priorDisplay": "$42M",
+              "changeDisplay": "-20.8%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "total_liabilities",
+              "label": "Total Liabilities",
+              "unit": "USD",
+              "current": 68933000,
+              "prior": 64478000,
+              "change": 0.0690933341604889,
+              "currentDisplay": "$69M",
+              "priorDisplay": "$64M",
+              "changeDisplay": "6.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Cash Flow & Per Share",
+          "rows": [
+            {
+              "key": "operating_cash_flow",
+              "label": "Operating Cash Flow",
+              "unit": "USD",
+              "current": -15674000,
+              "prior": 20005000,
+              "change": -1.7835041239690077,
+              "currentDisplay": "-$16M",
+              "priorDisplay": "$20M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "fcf",
+              "label": "Free Cash Flow",
+              "unit": "USD",
+              "current": -15720000,
+              "prior": 19903000,
+              "change": -1.7898306787921419,
+              "currentDisplay": "-$16M",
+              "priorDisplay": "$20M",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "capex",
+              "label": "Capital Expenditures",
+              "unit": "USD",
+              "current": -46000,
+              "prior": -102000,
+              "change": -0.5490196078431373,
+              "currentDisplay": "-$46K",
+              "priorDisplay": "-$102K",
+              "changeDisplay": "-54.9%",
+              "availability": {
+                "current": "reported",
+                "prior": "reported"
+              }
+            },
+            {
+              "key": "fcf_margin",
+              "label": "FCF Margin",
+              "unit": "%",
+              "current": -0.049508848289393705,
+              "prior": 0.05025400961499616,
+              "change": -1.9851721020608852,
+              "currentDisplay": "-5.0%",
+              "priorDisplay": "5.0%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cfo_margin",
+              "label": "CFO Margin",
+              "unit": "%",
+              "current": -0.049363975069208456,
+              "prior": 0.050511554155051916,
+              "change": -1.9772808596955695,
+              "currentDisplay": "-4.9%",
+              "priorDisplay": "5.1%",
+              "changeDisplay": "NM",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "cfo_to_net_income",
+              "label": "CFO / Net Income",
+              "unit": "x",
+              "current": 1.81496062992126,
+              "prior": 0.6450936764373932,
+              "change": 1.813483833765968,
+              "currentDisplay": "1.81x",
+              "priorDisplay": "0.65x",
+              "changeDisplay": "181.3%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "capex_to_revenue",
+              "label": "CapEx / Revenue",
+              "unit": "%",
+              "current": 0.00014487322018524876,
+              "prior": 0.00025754454005575084,
+              "change": -0.4374828518830648,
+              "currentDisplay": "0.0%",
+              "priorDisplay": "0.0%",
+              "changeDisplay": "-43.7%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            },
+            {
+              "key": "asset_turnover",
+              "label": "Asset Turnover",
+              "unit": "x",
+              "current": 3.053463670764955,
+              "prior": 3.73358975084137,
+              "change": -0.18216411696629164,
+              "currentDisplay": "3.05x",
+              "priorDisplay": "3.73x",
+              "changeDisplay": "-18.2%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "asset_turnover",
+                "displayName": "Asset Turnover",
+                "basis": "average_balance",
+                "note": "Asset turnover uses average assets for the current period and prior ending assets for the prior comparison."
+              },
+              "note": "Average-balance efficiency policy applied."
+            },
+            {
+              "key": "bvps",
+              "label": "Book Value Per Share",
+              "unit": "USD/shares",
+              "current": 2.2090249757940774,
+              "prior": 2.78776901277365,
+              "change": -0.20760114425827547,
+              "currentDisplay": "$2.21",
+              "priorDisplay": "$2.79",
+              "changeDisplay": "-20.8%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              },
+              "basis": {
+                "metric": "bvps",
+                "displayName": "Book Value Per Share",
+                "basis": "period_end_shares",
+                "note": "BVPS uses period-end shares outstanding."
+              },
+              "note": "BVPS uses period-end shares outstanding."
+            },
+            {
+              "key": "working_capital",
+              "label": "Working Capital",
+              "unit": "USD",
+              "current": -19139000,
+              "prior": -6135000,
+              "change": 2.119641401792991,
+              "currentDisplay": "-$19M",
+              "priorDisplay": "-$6.1M",
+              "changeDisplay": "212.0%",
+              "availability": {
+                "current": "derived",
+                "prior": "derived"
+              }
+            }
+          ]
+        }
+      ],
+      "statementTables": [
+        {
+          "statementType": "income",
+          "title": "Income Statement",
+          "periods": [
+            "2024-12-31",
+            "2023-12-31",
+            "2022-12-31"
+          ],
+          "periodLabels": [
+            "FY2024",
+            "FY2023",
+            "FY2022"
+          ],
+          "rows": [
+            {
+              "key": "revenue",
+              "label": "Revenue",
+              "values": [
+                317519000,
+                396048000,
+                487504000
+              ],
+              "displays": [
+                "$318M",
+                "$396M",
+                "$488M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "cost_of_revenue",
+              "label": "Cost of Revenue",
+              "values": [
+                313629000,
+                351370000,
+                441433000
+              ],
+              "displays": [
+                "$314M",
+                "$351M",
+                "$441M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "gross_profit",
+              "label": "Gross Profit (reported/reconciled)",
+              "values": [
+                3890000,
+                44678000,
+                46071000
+              ],
+              "displays": [
+                "$3.9M",
+                "$45M",
+                "$46M"
+              ],
+              "sourceKinds": [
+                "derived",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "operating_expenses",
+              "label": "Operating Expenses",
+              "values": [
+                321825000,
+                8290000,
+                6988000
+              ],
+              "displays": [
+                "$322M",
+                "$8.3M",
+                "$7.0M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "operating_income",
+              "label": "Operating Income",
+              "values": [
+                -4306000,
+                36388000,
+                39083000
+              ],
+              "displays": [
+                "-$4.3M",
+                "$36M",
+                "$39M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "net_income",
+              "label": "Net Income",
+              "values": [
+                -8636000,
+                31011000,
+                32892000
+              ],
+              "displays": [
+                "-$8.6M",
+                "$31M",
+                "$33M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "eps_basic",
+              "label": "EPS (Basic)",
+              "values": [
+                -0.58,
+                2.08,
+                2.34
+              ],
+              "displays": [
+                "$-0.58",
+                "$2.08",
+                "$2.34"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "eps_diluted",
+              "label": "EPS (Diluted)",
+              "values": [
+                -0.58,
+                2.08,
+                2.34
+              ],
+              "displays": [
+                "$-0.58",
+                "$2.08",
+                "$2.34"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "weighted_avg_shares_diluted",
+              "label": "Weighted Avg Shares (Diluted)",
+              "values": [
+                null,
+                14921968,
+                14079327
+              ],
+              "displays": [
+                "Not reported",
+                "14.9M",
+                "14.1M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "pretax_income",
+              "label": "Pretax Income",
+              "values": [
+                -10165000,
+                30526000,
+                33199000
+              ],
+              "displays": [
+                "-$10M",
+                "$31M",
+                "$33M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "income_tax_expense",
+              "label": "Income Tax Expense",
+              "values": [
+                -1529000,
+                485000,
+                307000
+              ],
+              "displays": [
+                "-$1.5M",
+                "$485K",
+                "$307K"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            }
+          ]
+        },
+        {
+          "statementType": "balance_sheet",
+          "title": "Balance Sheet",
+          "periods": [
+            "2024-12-31",
+            "2023-12-31",
+            "2022-12-31"
+          ],
+          "periodLabels": [
+            "FY2024",
+            "FY2023",
+            "FY2022"
+          ],
+          "rows": [
+            {
+              "key": "shares_outstanding",
+              "label": "Shares Outstanding",
+              "values": [
+                14921968,
+                14921968,
+                14921968
+              ],
+              "displays": [
+                "14.9M",
+                "14.9M",
+                "14.9M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "total_assets",
+              "label": "Total Assets",
+              "values": [
+                101896000,
+                106077000,
+                83904000
+              ],
+              "displays": [
+                "$102M",
+                "$106M",
+                "$84M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "total_liabilities",
+              "label": "Total Liabilities",
+              "values": [
+                68933000,
+                64478000,
+                73316000
+              ],
+              "displays": [
+                "$69M",
+                "$64M",
+                "$73M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "stockholders_equity",
+              "label": "Total Stockholders' Equity",
+              "values": [
+                32963000,
+                41599000,
+                10588000
+              ],
+              "displays": [
+                "$33M",
+                "$42M",
+                "$11M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "current_assets",
+              "label": "Current Assets",
+              "values": [
+                44762000,
+                49290000,
+                25088000
+              ],
+              "displays": [
+                "$45M",
+                "$49M",
+                "$25M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "current_liabilities",
+              "label": "Current Liabilities",
+              "values": [
+                63901000,
+                55425000,
+                70334000
+              ],
+              "displays": [
+                "$64M",
+                "$55M",
+                "$70M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "cash_and_equivalents",
+              "label": "Cash & Equivalents",
+              "values": [
+                81000,
+                18713000,
+                1500000
+              ],
+              "displays": [
+                "$81K",
+                "$19M",
+                "$1.5M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "total_debt",
+              "label": "Total Debt",
+              "values": [
+                null,
+                null,
+                46626000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$47M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "long_term_debt",
+              "label": "Long-Term Debt",
+              "values": [
+                null,
+                null,
+                2149000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$2.1M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "short_term_debt",
+              "label": "Short-Term Debt",
+              "values": [
+                null,
+                null,
+                42155000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$42M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "inventory",
+              "label": "Inventory",
+              "values": [
+                35662000,
+                24576000,
+                19844000
+              ],
+              "displays": [
+                "$36M",
+                "$25M",
+                "$20M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "accounts_receivable",
+              "label": "Accounts Receivable",
+              "values": [
+                5960000,
+                4300000,
+                1148000
+              ],
+              "displays": [
+                "$6.0M",
+                "$4.3M",
+                "$1.1M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "other_current_assets",
+              "label": "Other Current Assets",
+              "values": [
+                1874000,
+                1591000,
+                3466000
+              ],
+              "displays": [
+                "$1.9M",
+                "$1.6M",
+                "$3.5M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "accounts_payable",
+              "label": "Accounts Payable",
+              "values": [
+                null,
+                null,
+                2161000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$2.2M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "accrued_expenses",
+              "label": "Accrued Expenses",
+              "values": [
+                null,
+                null,
+                6114000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$6.1M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "retained_earnings",
+              "label": "Retained Earnings",
+              "values": [
+                -6944000,
+                1692000,
+                -29319000
+              ],
+              "displays": [
+                "-$6.9M",
+                "$1.7M",
+                "-$29M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            }
+          ]
+        },
+        {
+          "statementType": "cash_flow",
+          "title": "Cash Flow Statement",
+          "periods": [
+            "2024-12-31",
+            "2023-12-31",
+            "2022-12-31"
+          ],
+          "periodLabels": [
+            "FY2024",
+            "FY2023",
+            "FY2022"
+          ],
+          "rows": [
+            {
+              "key": "operating_cash_flow",
+              "label": "Operating Cash Flow",
+              "values": [
+                -15674000,
+                20005000,
+                16272000
+              ],
+              "displays": [
+                "-$16M",
+                "$20M",
+                "$16M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "capex",
+              "label": "Capital Expenditures",
+              "values": [
+                -46000,
+                -102000,
+                -102000
+              ],
+              "displays": [
+                "-$46K",
+                "-$102K",
+                "-$102K"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "investing_cash_flow",
+              "label": "Investing Cash Flow",
+              "values": [
+                -46000,
+                -102000,
+                -102000
+              ],
+              "displays": [
+                "-$46K",
+                "-$102K",
+                "-$102K"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "financing_cash_flow",
+              "label": "Financing Cash Flow",
+              "values": [
+                -1917000,
+                -2706000,
+                -14706000
+              ],
+              "displays": [
+                "-$1.9M",
+                "-$2.7M",
+                "-$15M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "depreciation_and_amortization",
+              "label": "Depreciation & Amortization",
+              "values": [
+                2806000,
+                2798000,
+                2798000
+              ],
+              "displays": [
+                "$2.8M",
+                "$2.8M",
+                "$2.8M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "amortization_expense",
+              "label": "Amortization of Intangibles",
+              "values": [
+                null,
+                null,
+                83904000
+              ],
+              "displays": [
+                "Not reported",
+                "Not reported",
+                "$84M"
+              ],
+              "sourceKinds": [
+                "xbrl"
+              ]
+            },
+            {
+              "key": "debt_repayment",
+              "label": "Debt Repayment",
+              "values": [
+                -5167000,
+                -1495000,
+                -1017000
+              ],
+              "displays": [
+                "-$5.2M",
+                "-$1.5M",
+                "-$1.0M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "net_change_in_cash",
+              "label": "Net Change in Cash",
+              "values": [
+                -17637000,
+                17197000,
+                1464000
+              ],
+              "displays": [
+                "-$18M",
+                "$17M",
+                "$1.5M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            },
+            {
+              "key": "cash_ending",
+              "label": "Cash at End of Period",
+              "values": [
+                1081000,
+                18718000,
+                1521000
+              ],
+              "displays": [
+                "$1.1M",
+                "$19M",
+                "$1.5M"
+              ],
+              "sourceKinds": [
+                "xbrl",
+                "xbrl",
+                "xbrl"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

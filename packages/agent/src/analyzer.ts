@@ -3,9 +3,23 @@
  * No LLM calls. All cross-section numeric values should flow from here.
  */
 
-import type { AnalysisContext, CompanyFacts, Ratio, TrendData } from '@dolph/shared';
-import { getMappingByName } from '@dolph/shared';
-import { buildCanonicalAnnualPeriodMap } from './report-facts.js';
+import type {
+  AnalysisContext,
+  ComparisonBasisResolution,
+  CompanyFacts,
+  MetricAvailabilityReasonCode,
+  MetricBasisUsage,
+  ReportingPolicy,
+  TrendData,
+} from '@dolph/shared';
+import { formatMetricChange, getMappingByName } from '@dolph/shared';
+import {
+  buildCanonicalAnnualPeriodMap,
+  buildCanonicalAnnualPeriodMetadataMap,
+  buildCanonicalAnnualSourceMap,
+  type CanonicalFactSource,
+} from './report-facts.js';
+import { INSTITUTIONAL_DEFAULTS } from './report-policy.js';
 
 type FlagSeverity = 'high' | 'medium' | 'low';
 
@@ -18,20 +32,26 @@ interface KeyMetricValue {
   unit: MetricUnit;
 }
 
-interface PeriodBasis {
+export interface PeriodBasis {
   source: 'statements' | 'facts';
   current: string | null;
   prior: string | null;
   note?: string;
 }
 
-interface LedgerMetric {
+export interface LedgerMetric {
   key: string;
   displayName: string;
   unit: MetricUnit;
   current: number | null;
   prior: number | null;
   change: number | null;
+  availability: {
+    current: MetricAvailabilityReasonCode;
+    prior: MetricAvailabilityReasonCode;
+  };
+  basis?: MetricBasisUsage;
+  note?: string;
 }
 
 interface PeriodBucket {
@@ -44,7 +64,6 @@ interface MetricDefinition {
   unit: MetricUnit;
   dependencies: string[];
   compute: (values: Record<string, number>) => number | null;
-  ratioFallback?: string;
 }
 
 const ANNUAL_FORMS = new Set(['10-K', '20-F', '40-F']);
@@ -80,6 +99,13 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     compute: v => finiteOrNull(v['operating_income']),
   },
   {
+    key: 'gross_profit',
+    displayName: 'Gross Profit',
+    unit: 'USD',
+    dependencies: ['gross_profit'],
+    compute: v => finiteOrNull(v['gross_profit']),
+  },
+  {
     key: 'total_assets',
     displayName: 'Total Assets',
     unit: 'USD',
@@ -108,6 +134,41 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     compute: v => finiteOrNull(v['stockholders_equity']),
   },
   {
+    key: 'current_assets',
+    displayName: 'Current Assets',
+    unit: 'USD',
+    dependencies: ['current_assets'],
+    compute: v => finiteOrNull(v['current_assets']),
+  },
+  {
+    key: 'current_liabilities',
+    displayName: 'Current Liabilities',
+    unit: 'USD',
+    dependencies: ['current_liabilities'],
+    compute: v => finiteOrNull(v['current_liabilities']),
+  },
+  {
+    key: 'cash_and_equivalents',
+    displayName: 'Cash & Equivalents',
+    unit: 'USD',
+    dependencies: ['cash_and_equivalents'],
+    compute: v => finiteOrNull(v['cash_and_equivalents']),
+  },
+  {
+    key: 'long_term_debt',
+    displayName: 'Long-Term Debt',
+    unit: 'USD',
+    dependencies: ['long_term_debt'],
+    compute: v => finiteOrNull(v['long_term_debt']),
+  },
+  {
+    key: 'short_term_debt',
+    displayName: 'Short-Term Debt',
+    unit: 'USD',
+    dependencies: ['short_term_debt'],
+    compute: v => finiteOrNull(v['short_term_debt']),
+  },
+  {
     key: 'operating_cash_flow',
     displayName: 'Operating Cash Flow',
     unit: 'USD',
@@ -127,7 +188,13 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: 'USD/shares',
     dependencies: ['eps_diluted'],
     compute: v => finiteOrNull(v['eps_diluted']),
-    ratioFallback: 'eps',
+  },
+  {
+    key: 'shares_outstanding',
+    displayName: 'Shares Outstanding',
+    unit: 'shares',
+    dependencies: ['shares_outstanding'],
+    compute: v => finiteOrNull(v['shares_outstanding']),
   },
   {
     key: 'bvps',
@@ -135,12 +202,12 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: 'USD/shares',
     dependencies: ['stockholders_equity', 'shares_outstanding'],
     compute: v => {
-      const shares = finiteOrNull(v['shares_outstanding']);
       const equity = finiteOrNull(v['stockholders_equity']);
-      if (shares === null || equity === null || shares === 0) return null;
+      if (equity === null) return null;
+      const shares = crossValidatedShares(v).value;
+      if (shares === null || shares === 0) return null;
       return equity / shares;
     },
-    ratioFallback: 'bvps',
   },
   {
     key: 'fcf',
@@ -153,7 +220,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
       if (ocf === null || capex === null) return null;
       return ocf - Math.abs(capex);
     },
-    ratioFallback: 'fcf',
   },
   {
     key: 'working_capital',
@@ -168,107 +234,11 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     },
   },
   {
-    key: 'cash_ratio',
-    displayName: 'Cash Ratio',
-    unit: 'x',
-    dependencies: ['cash_and_equivalents', 'current_liabilities'],
-    compute: v => safeDivide(v['cash_and_equivalents'], v['current_liabilities']),
-  },
-  {
-    key: 'net_debt',
-    displayName: 'Net Debt',
-    unit: 'USD',
-    dependencies: ['cash_and_equivalents', 'total_debt', 'long_term_debt', 'short_term_debt'],
-    compute: v => {
-      const debt = resolveDebt(v);
-      const cash = finiteOrNull(v['cash_and_equivalents']);
-      if (debt === null || cash === null) return null;
-      return debt - cash;
-    },
-  },
-  {
-    key: 'fcf_margin',
-    displayName: 'FCF Margin',
-    unit: '%',
-    dependencies: ['operating_cash_flow', 'capex', 'revenue'],
-    compute: v => {
-      const fcf = finiteOrNull(v['operating_cash_flow']) !== null && finiteOrNull(v['capex']) !== null
-        ? ((v['operating_cash_flow'] || 0) - Math.abs(v['capex'] || 0))
-        : null;
-      if (fcf === null) return null;
-      return safeDivide(fcf, v['revenue']);
-    },
-  },
-  {
-    key: 'cfo_margin',
-    displayName: 'CFO Margin',
-    unit: '%',
-    dependencies: ['operating_cash_flow', 'revenue'],
-    compute: v => safeDivide(v['operating_cash_flow'], v['revenue']),
-  },
-  {
-    key: 'cfo_to_net_income',
-    displayName: 'CFO / Net Income',
-    unit: 'x',
-    dependencies: ['operating_cash_flow', 'net_income'],
-    compute: v => safeDivide(v['operating_cash_flow'], v['net_income']),
-  },
-  {
-    key: 'capex_to_revenue',
-    displayName: 'CapEx / Revenue',
-    unit: '%',
-    dependencies: ['capex', 'revenue'],
-    compute: v => {
-      const capex = finiteOrNull(v['capex']);
-      const revenue = finiteOrNull(v['revenue']);
-      if (capex === null || revenue === null || revenue === 0) return null;
-      return Math.abs(capex) / revenue;
-    },
-  },
-  {
-    key: 'debt_maturity_current_pct',
-    displayName: 'Debt Maturity (Current %)',
-    unit: '%',
-    dependencies: ['short_term_debt', 'total_debt', 'long_term_debt'],
-    compute: v => {
-      const debt = resolveDebt(v);
-      const shortDebt = finiteOrNull(v['short_term_debt']);
-      if (debt === null || shortDebt === null || debt === 0) return null;
-      return shortDebt / debt;
-    },
-  },
-  {
-    key: 'ebitda',
-    displayName: 'EBITDA',
-    unit: 'USD',
-    dependencies: ['operating_income', 'depreciation_and_amortization'],
-    compute: v => {
-      const op = finiteOrNull(v['operating_income']);
-      const da = finiteOrNull(v['depreciation_and_amortization']);
-      if (op === null || da === null) return null;
-      return op + Math.abs(da);
-    },
-  },
-  {
-    key: 'roic_proxy',
-    displayName: 'ROIC Proxy',
-    unit: '%',
-    dependencies: ['operating_income', 'stockholders_equity', 'total_debt', 'long_term_debt', 'short_term_debt'],
-    compute: v => {
-      const opIncome = finiteOrNull(v['operating_income']);
-      const equity = finiteOrNull(v['stockholders_equity']);
-      const debt = resolveDebt(v);
-      if (opIncome === null || equity === null || debt === null || equity + debt === 0) return null;
-      return opIncome / (equity + debt);
-    },
-  },
-  {
     key: 'gross_margin',
     displayName: 'Gross Margin',
     unit: '%',
     dependencies: ['gross_profit', 'revenue'],
     compute: v => safeDivide(v['gross_profit'], v['revenue']),
-    ratioFallback: 'gross_margin',
   },
   {
     key: 'operating_margin',
@@ -276,7 +246,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: '%',
     dependencies: ['operating_income', 'revenue'],
     compute: v => safeDivide(v['operating_income'], v['revenue']),
-    ratioFallback: 'operating_margin',
   },
   {
     key: 'net_margin',
@@ -284,7 +253,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: '%',
     dependencies: ['net_income', 'revenue'],
     compute: v => safeDivide(v['net_income'], v['revenue']),
-    ratioFallback: 'net_margin',
   },
   {
     key: 'roe',
@@ -292,7 +260,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: '%',
     dependencies: ['net_income', 'stockholders_equity'],
     compute: v => safeDivide(v['net_income'], v['stockholders_equity']),
-    ratioFallback: 'roe',
   },
   {
     key: 'roa',
@@ -300,7 +267,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: '%',
     dependencies: ['net_income', 'total_assets'],
     compute: v => safeDivide(v['net_income'], v['total_assets']),
-    ratioFallback: 'roa',
   },
   {
     key: 'current_ratio',
@@ -308,7 +274,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     unit: 'x',
     dependencies: ['current_assets', 'current_liabilities'],
     compute: v => safeDivide(v['current_assets'], v['current_liabilities']),
-    ratioFallback: 'current_ratio',
   },
   {
     key: 'quick_ratio',
@@ -322,7 +287,13 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
       const inventory = finiteOrNull(v['inventory']) ?? 0;
       return (currentAssets - inventory) / currentLiabilities;
     },
-    ratioFallback: 'quick_ratio',
+  },
+  {
+    key: 'asset_turnover',
+    displayName: 'Asset Turnover',
+    unit: 'x',
+    dependencies: ['revenue', 'total_assets'],
+    compute: _v => null,
   },
   {
     key: 'de',
@@ -336,7 +307,6 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
       if (debt === null) return null;
       return debt / equity;
     },
-    ratioFallback: 'de',
   },
 ];
 
@@ -365,18 +335,34 @@ export interface AnalysisInsights {
   canonicalFacts?: Record<string, LedgerMetric>;
 }
 
-export function analyzeData(context: AnalysisContext): Record<string, AnalysisInsights> {
+const DEFAULT_ANALYZER_POLICY: ReportingPolicy = { ...INSTITUTIONAL_DEFAULTS };
+
+export function analyzeData(
+  context: AnalysisContext,
+  policy: ReportingPolicy = context.policy || DEFAULT_ANALYZER_POLICY,
+): Record<string, AnalysisInsights> {
   const results: Record<string, AnalysisInsights> = {};
+  const periodMaps = new Map<string, Map<string, PeriodBucket>>();
+
+  for (const ticker of context.tickers) {
+    periodMaps.set(ticker, buildAnnualPeriodMap(context, ticker));
+  }
+
+  const comparisonBasis = context.type === 'comparison'
+    ? selectComparisonBasis(context, periodMaps, policy)
+    : null;
+  context.comparison_basis = comparisonBasis;
 
   for (const ticker of context.tickers) {
     const trends = context.trends[ticker] || [];
-    const ratios = context.ratios[ticker] || [];
     const facts = context.facts[ticker];
-
-    const periodMap = buildAnnualPeriodMap(context, ticker);
-    const basis = selectPeriodBasis(periodMap, facts);
-    const ledger = computeLedgerMetrics(periodMap, ratios, basis.current, basis.prior);
-    const sanityFlags = runSanityChecks(ledger, periodMap, ratios, basis.current);
+    const periodMap = periodMaps.get(ticker) || new Map<string, PeriodBucket>();
+    const sourceMap = buildCanonicalAnnualSourceMap(context, ticker);
+    const basis = comparisonBasis
+      ? selectComparisonPeriodBasis(ticker, periodMap, facts, comparisonBasis, policy)
+      : selectPeriodBasis(periodMap, facts);
+    const ledger = computeLedgerMetrics(periodMap, sourceMap, basis.current, basis.prior, policy);
+    const sanityFlags = runSanityChecks(ledger, periodMap, basis.current);
     const keyMetrics = toKeyMetricsMap(ledger.metrics, sanityFlags.excludedMetricKeys);
 
     const redFlags = dedupeFlags([
@@ -398,6 +384,323 @@ export function analyzeData(context: AnalysisContext): Record<string, AnalysisIn
   }
 
   return results;
+}
+
+function selectComparisonBasis(
+  context: AnalysisContext,
+  periodMaps: Map<string, Map<string, PeriodBucket>>,
+  policy: ReportingPolicy,
+): ComparisonBasisResolution | null {
+  const requestedMode = policy.requestedComparisonBasisMode || policy.comparisonBasisMode;
+  const descriptorsByTicker = new Map(
+    context.tickers.map(ticker => [ticker, buildAnnualPeriodDescriptors(context, ticker, periodMaps.get(ticker) || new Map())] as const),
+  );
+
+  if (policy.comparisonBasisMode !== 'overlap_normalized') {
+    return buildLatestPerPeerResolution(
+      context,
+      descriptorsByTicker,
+      requestedMode,
+      policy.comparisonBasisMode,
+      'resolved',
+      policy.comparisonBasisMode === 'latest_per_peer_screening'
+        ? 'Peer figures are screening-only and use each company’s latest annual filing.'
+        : 'Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.',
+      null,
+    );
+  }
+
+  const exact = resolveExactDateOverlap(context.tickers, descriptorsByTicker, requestedMode);
+  if (exact) {
+    return exact;
+  }
+
+  const cohort = resolveFiscalCohortOverlap(context.tickers, descriptorsByTicker, requestedMode, policy.comparisonMaxPeriodSpreadDays);
+  if (cohort) {
+    return cohort;
+  }
+
+  if (policy.comparisonFallbackMode) {
+    return buildLatestPerPeerResolution(
+      context,
+      descriptorsByTicker,
+      requestedMode,
+      policy.comparisonFallbackMode,
+      'downgraded',
+      policy.comparisonFallbackMode === 'latest_per_peer_screening'
+        ? 'No governed shared annual basis existed across all peers, so the comparison downgraded to screening-only latest annual periods.'
+        : 'No governed shared annual basis existed across all peers, so the comparison downgraded to latest annual periods with prominent fiscal-period disclosure.',
+      'No exact or tolerance-based shared annual period set was available across all peers.',
+    );
+  }
+
+  return {
+    requested_mode: requestedMode,
+    effective_mode: 'overlap_normalized',
+    status: 'unavailable',
+    resolution_kind: 'none',
+    comparable_current_key: null,
+    comparable_prior_key: null,
+    max_current_spread_days: null,
+    max_prior_spread_days: null,
+    note: 'No shared annual periods were available for overlap-normalized comparison.',
+    fallback_reason: 'No exact or tolerance-based shared annual period set was available across all peers.',
+    peer_periods: Object.fromEntries(
+      context.tickers.map(ticker => [ticker, { current_period: null, prior_period: null }]),
+    ),
+  };
+}
+
+function selectComparisonPeriodBasis(
+  ticker: string,
+  periodMap: Map<string, PeriodBucket>,
+  facts: CompanyFacts | undefined,
+  comparisonBasis: ComparisonBasisResolution,
+  policy: ReportingPolicy,
+): PeriodBasis {
+  const peerBinding = comparisonBasis.peer_periods[ticker];
+  if (
+    comparisonBasis.effective_mode === 'overlap_normalized'
+    && peerBinding?.current_period
+    && periodMap.has(peerBinding.current_period)
+    && (!peerBinding.prior_period || periodMap.has(peerBinding.prior_period))
+  ) {
+    return {
+      source: 'statements',
+      current: peerBinding.current_period,
+      prior: peerBinding.prior_period,
+      note: comparisonBasis.note,
+    };
+  }
+
+  if (comparisonBasis.effective_mode !== 'overlap_normalized') {
+    const basis = selectPeriodBasis(periodMap, facts);
+    return {
+      ...basis,
+      current: peerBinding?.current_period || basis.current,
+      prior: peerBinding?.prior_period || basis.prior,
+      note: comparisonBasis.note,
+    };
+  }
+
+  return {
+    source: 'statements',
+    current: null,
+    prior: null,
+    note: policy.comparisonRequireOverlap
+      ? 'Overlap-normalized comparison failed because one or more peers lack the required shared annual periods.'
+      : comparisonBasis.note,
+  };
+}
+
+interface AnnualPeriodDescriptor {
+  period: string;
+  fiscalYear: number | null;
+  fiscalPeriod: string | null;
+}
+
+function buildAnnualPeriodDescriptors(
+  context: AnalysisContext,
+  ticker: string,
+  periodMap: Map<string, PeriodBucket>,
+): AnnualPeriodDescriptor[] {
+  const metadata = buildCanonicalAnnualPeriodMetadataMap(context, ticker);
+  return Array.from(periodMap.keys())
+    .map(period => {
+      const meta = metadata.get(period);
+      return {
+        period,
+        fiscalYear: meta?.fiscalYear ?? extractPeriodYear(period),
+        fiscalPeriod: meta?.fiscalPeriod ?? 'FY',
+      };
+    })
+    .sort((a, b) => comparePeriodDescriptors(a, b));
+}
+
+function comparePeriodDescriptors(a: AnnualPeriodDescriptor, b: AnnualPeriodDescriptor): number {
+  const ay = a.fiscalYear ?? extractPeriodYear(a.period) ?? 0;
+  const by = b.fiscalYear ?? extractPeriodYear(b.period) ?? 0;
+  if (by !== ay) return by - ay;
+  return b.period.localeCompare(a.period);
+}
+
+function resolveExactDateOverlap(
+  tickers: string[],
+  descriptorsByTicker: Map<string, AnnualPeriodDescriptor[]>,
+  requestedMode: ReportingPolicy['comparisonBasisMode'],
+): ComparisonBasisResolution | null {
+  const tickerPeriods = tickers.map(ticker => (descriptorsByTicker.get(ticker) || []).map(entry => entry.period));
+  if (tickerPeriods.some(periods => periods.length === 0)) return null;
+
+  const overlap = tickerPeriods.reduce<string[]>(
+    (acc, periods) => acc.filter(period => periods.includes(period)),
+    [...(tickerPeriods[0] || [])],
+  ).sort((a, b) => b.localeCompare(a));
+
+  const current = overlap[0] ?? null;
+  if (!current) return null;
+  const prior = overlap.find(period => period.localeCompare(current) < 0) ?? null;
+
+  return {
+    requested_mode: requestedMode,
+    effective_mode: 'overlap_normalized',
+    status: 'resolved',
+    resolution_kind: 'exact_date_overlap',
+    comparable_current_key: current,
+    comparable_prior_key: prior,
+    max_current_spread_days: 0,
+    max_prior_spread_days: prior ? 0 : null,
+    note: `Peer metrics are overlap-normalized to ${current}${prior ? ` with ${prior} as the shared prior period` : ''}.`,
+    fallback_reason: null,
+    peer_periods: Object.fromEntries(
+      tickers.map(ticker => [ticker, { current_period: current, prior_period: prior }]),
+    ),
+  };
+}
+
+function resolveFiscalCohortOverlap(
+  tickers: string[],
+  descriptorsByTicker: Map<string, AnnualPeriodDescriptor[]>,
+  requestedMode: ReportingPolicy['comparisonBasisMode'],
+  maxSpreadDays: number,
+): ComparisonBasisResolution | null {
+  const keysByTicker = new Map<string, Map<string, AnnualPeriodDescriptor>>();
+  for (const ticker of tickers) {
+    const byKey = new Map<string, AnnualPeriodDescriptor>();
+    for (const descriptor of descriptorsByTicker.get(ticker) || []) {
+      const key = descriptorComparableKey(descriptor);
+      if (!key || byKey.has(key)) continue;
+      byKey.set(key, descriptor);
+    }
+    if (byKey.size === 0) return null;
+    keysByTicker.set(ticker, byKey);
+  }
+
+  const sharedKeys = tickers.reduce<string[]>((acc, ticker, index) => {
+    const keys = Array.from(keysByTicker.get(ticker)?.keys() || []);
+    if (index === 0) return keys;
+    return acc.filter(key => keys.includes(key));
+  }, []);
+  if (sharedKeys.length === 0) return null;
+
+  const sortedKeys = sharedKeys.sort(compareComparableKeysDesc);
+  const currentKey = sortedKeys[0] ?? null;
+  if (!currentKey) return null;
+  const priorKey = sortedKeys.find(key => key !== currentKey) ?? null;
+
+  const currentPeriods = tickers.map(ticker => keysByTicker.get(ticker)?.get(currentKey)?.period || null);
+  if (currentPeriods.some(period => !period)) return null;
+  const currentSpread = computePeriodSpreadDays(currentPeriods as string[]);
+  if (currentSpread === null || currentSpread > maxSpreadDays) return null;
+
+  const priorPeriods = priorKey
+    ? tickers.map(ticker => keysByTicker.get(ticker)?.get(priorKey)?.period || null)
+    : [];
+  const priorSpread = priorKey ? computePeriodSpreadDays(priorPeriods.filter((period): period is string => !!period)) : null;
+  if (priorKey && (priorPeriods.some(period => !period) || priorSpread === null || priorSpread > maxSpreadDays)) {
+    return null;
+  }
+
+  return {
+    requested_mode: requestedMode,
+    effective_mode: 'overlap_normalized',
+    status: 'resolved',
+    resolution_kind: 'fiscal_cohort_tolerance',
+    comparable_current_key: currentKey,
+    comparable_prior_key: priorKey,
+    max_current_spread_days: currentSpread,
+    max_prior_spread_days: priorSpread,
+    note: `Peer metrics are normalized to shared fiscal cohorts ${currentKey}${priorKey ? ` and ${priorKey}` : ''}; fiscal year-ends differ by up to ${currentSpread} days in the current cohort.`,
+    fallback_reason: null,
+    peer_periods: Object.fromEntries(
+      tickers.map(ticker => [
+        ticker,
+        {
+          current_period: keysByTicker.get(ticker)?.get(currentKey)?.period || null,
+          prior_period: priorKey ? (keysByTicker.get(ticker)?.get(priorKey)?.period || null) : null,
+        },
+      ]),
+    ),
+  };
+}
+
+function buildLatestPerPeerResolution(
+  context: AnalysisContext,
+  descriptorsByTicker: Map<string, AnnualPeriodDescriptor[]>,
+  requestedMode: ReportingPolicy['comparisonBasisMode'],
+  effectiveMode: ReportingPolicy['comparisonBasisMode'],
+  status: ComparisonBasisResolution['status'],
+  note: string,
+  fallbackReason: string | null,
+): ComparisonBasisResolution {
+  const peerPeriods = Object.fromEntries(
+    context.tickers.map(ticker => {
+      const descriptors = descriptorsByTicker.get(ticker) || [];
+      return [ticker, {
+        current_period: descriptors[0]?.period ?? null,
+        prior_period: descriptors[1]?.period ?? null,
+      }];
+    }),
+  );
+
+  const currentSpread = computePeriodSpreadDays(
+    Object.values(peerPeriods)
+      .map(binding => binding.current_period)
+      .filter((period): period is string => !!period),
+  );
+  const priorSpread = computePeriodSpreadDays(
+    Object.values(peerPeriods)
+      .map(binding => binding.prior_period)
+      .filter((period): period is string => !!period),
+  );
+
+  return {
+    requested_mode: requestedMode,
+    effective_mode: effectiveMode,
+    status,
+    resolution_kind: 'latest_per_peer',
+    comparable_current_key: null,
+    comparable_prior_key: null,
+    max_current_spread_days: currentSpread,
+    max_prior_spread_days: priorSpread,
+    note,
+    fallback_reason: fallbackReason,
+    peer_periods: peerPeriods,
+  };
+}
+
+function descriptorComparableKey(descriptor: AnnualPeriodDescriptor): string | null {
+  const year = descriptor.fiscalYear ?? extractPeriodYear(descriptor.period);
+  if (year === null) return null;
+  return `FY${year}`;
+}
+
+function compareComparableKeysDesc(a: string, b: string): number {
+  const ay = parseComparableKeyYear(a);
+  const by = parseComparableKeyYear(b);
+  if (ay !== null && by !== null && ay !== by) return by - ay;
+  return b.localeCompare(a);
+}
+
+function parseComparableKeyYear(key: string): number | null {
+  const match = key.match(/^FY(\d{4})$/);
+  return match ? Number.parseInt(match[1]!, 10) : null;
+}
+
+function extractPeriodYear(period: string): number | null {
+  const match = period.match(/^(\d{4})-/);
+  return match ? Number.parseInt(match[1]!, 10) : null;
+}
+
+function computePeriodSpreadDays(periods: string[]): number | null {
+  if (periods.length === 0) return null;
+  const timestamps = periods
+    .map(period => Date.parse(period))
+    .filter(timestamp => Number.isFinite(timestamp));
+  if (timestamps.length !== periods.length) return null;
+  const min = Math.min(...timestamps);
+  const max = Math.max(...timestamps);
+  return Math.round((max - min) / 86_400_000);
 }
 
 function buildAnnualPeriodMap(
@@ -459,37 +762,25 @@ function scorePeriodCoverage(values: Record<string, number>): number {
 
 function computeLedgerMetrics(
   periodMap: Map<string, PeriodBucket>,
-  ratios: Ratio[],
+  sourceMap: Map<string, Record<string, CanonicalFactSource>>,
   snapshotPeriod: string | null,
   priorPeriod: string | null,
+  policy: ReportingPolicy,
 ): { metrics: LedgerMetric[] } {
   const snapshotValues = snapshotPeriod ? periodMap.get(snapshotPeriod)?.values || {} : {};
   const priorValues = priorPeriod ? periodMap.get(priorPeriod)?.values || {} : {};
-
-  const ratioByPeriod = new Map<string, Map<string, number>>();
-  for (const ratio of ratios) {
-    if (!ratioByPeriod.has(ratio.period)) {
-      ratioByPeriod.set(ratio.period, new Map());
-    }
-    ratioByPeriod.get(ratio.period)!.set(ratio.name, ratio.value);
-  }
+  const snapshotSources = snapshotPeriod ? sourceMap.get(snapshotPeriod) || {} : {};
+  const priorSources = priorPeriod ? sourceMap.get(priorPeriod) || {} : {};
 
   const metrics: LedgerMetric[] = [];
   for (const def of LEDGER_DEFINITIONS) {
     const currentComputed = computeMetricFromValues(def, snapshotValues);
     const priorComputed = computeMetricFromValues(def, priorValues);
 
-    let current = currentComputed;
-    let prior = priorComputed;
+    const current = currentComputed;
+    const prior = priorComputed;
 
-    // Ratio fallback is period-locked. Never use a ratio from another period.
-    if (current === null && def.ratioFallback && snapshotPeriod) {
-      current = ratioByPeriod.get(snapshotPeriod)?.get(def.ratioFallback) ?? null;
-    }
-    if (prior === null && def.ratioFallback && priorPeriod) {
-      prior = ratioByPeriod.get(priorPeriod)?.get(def.ratioFallback) ?? null;
-    }
-
+    const basis = metricBasisUsage(def.key, snapshotValues, priorValues, policy);
     metrics.push({
       key: def.key,
       displayName: def.displayName,
@@ -497,6 +788,12 @@ function computeLedgerMetrics(
       current,
       prior,
       change: computeChange(current, prior),
+      availability: {
+        current: resolveAvailabilityReason(def, current, currentComputed, snapshotValues, snapshotSources, snapshotPeriod !== null),
+        prior: resolveAvailabilityReason(def, prior, priorComputed, priorValues, priorSources, priorPeriod !== null),
+      },
+      basis: basis ?? undefined,
+      note: metricNote(def.key, basis),
     });
   }
 
@@ -507,9 +804,71 @@ function computeLedgerMetrics(
   const priorAssets = finiteOrNull(priorValues['total_assets']);
   const currentEquity = finiteOrNull(snapshotValues['stockholders_equity']);
   const priorEquity = finiteOrNull(priorValues['stockholders_equity']);
+  const currentNetIncome = finiteOrNull(snapshotValues['net_income']);
+  const priorNetIncome = finiteOrNull(priorValues['net_income']);
 
   const avgAssetsCurrent = average(currentAssets, priorAssets);
   const avgEquityCurrent = average(currentEquity, priorEquity);
+  const roaCurrent = policy.returnMetricBasisMode === 'average_balance'
+    ? safeDivide(currentNetIncome ?? undefined, avgAssetsCurrent ?? currentAssets ?? undefined)
+    : safeDivide(currentNetIncome ?? undefined, currentAssets ?? undefined);
+  const roaPrior = policy.returnMetricBasisMode === 'average_balance'
+    ? safeDivide(priorNetIncome ?? undefined, priorAssets ?? undefined)
+    : safeDivide(priorNetIncome ?? undefined, priorAssets ?? undefined);
+  const roeCurrent = policy.returnMetricBasisMode === 'average_balance'
+    ? safeDivide(currentNetIncome ?? undefined, avgEquityCurrent ?? currentEquity ?? undefined)
+    : safeDivide(currentNetIncome ?? undefined, currentEquity ?? undefined);
+  const roePrior = policy.returnMetricBasisMode === 'average_balance'
+    ? safeDivide(priorNetIncome ?? undefined, priorEquity ?? undefined)
+    : safeDivide(priorNetIncome ?? undefined, priorEquity ?? undefined);
+
+  upsertMetric(metrics, {
+    key: 'roe',
+    displayName: 'Return on Equity',
+    unit: '%',
+    current: roeCurrent,
+    prior: roePrior,
+    change: computeChange(roeCurrent, roePrior),
+    availability: {
+      current: resolveComputedAvailability(roeCurrent, ['net_income', 'stockholders_equity'], snapshotValues),
+      prior: resolveComputedAvailability(roePrior, ['net_income', 'stockholders_equity'], priorValues),
+    },
+    basis: {
+      metric: 'roe',
+      displayName: 'Return on Equity',
+      basis: policy.returnMetricBasisMode,
+      note: policy.returnMetricBasisMode === 'average_balance'
+        ? 'ROE uses average equity over the locked current/prior annual periods.'
+        : 'ROE uses ending equity for each locked annual period.',
+    },
+    note: policy.returnMetricBasisMode === 'average_balance'
+      ? 'Average-balance return policy applied.'
+      : 'Ending-balance return policy applied.',
+  });
+
+  upsertMetric(metrics, {
+    key: 'roa',
+    displayName: 'Return on Assets',
+    unit: '%',
+    current: roaCurrent,
+    prior: roaPrior,
+    change: computeChange(roaCurrent, roaPrior),
+    availability: {
+      current: resolveComputedAvailability(roaCurrent, ['net_income', 'total_assets'], snapshotValues),
+      prior: resolveComputedAvailability(roaPrior, ['net_income', 'total_assets'], priorValues),
+    },
+    basis: {
+      metric: 'roa',
+      displayName: 'Return on Assets',
+      basis: policy.returnMetricBasisMode,
+      note: policy.returnMetricBasisMode === 'average_balance'
+        ? 'ROA uses average assets over the locked current/prior annual periods.'
+        : 'ROA uses ending assets for each locked annual period.',
+    },
+    note: policy.returnMetricBasisMode === 'average_balance'
+      ? 'Average-balance return policy applied.'
+      : 'Ending-balance return policy applied.',
+  });
 
   const assetTurnoverCurrent = currentRevenue !== null
     ? safeDivide(currentRevenue, avgAssetsCurrent ?? currentAssets ?? undefined)
@@ -517,27 +876,24 @@ function computeLedgerMetrics(
   const assetTurnoverPrior = priorRevenue !== null
     ? safeDivide(priorRevenue, priorAssets ?? undefined)
     : null;
-  metrics.push({
+  upsertMetric(metrics, {
     key: 'asset_turnover',
     displayName: 'Asset Turnover',
     unit: 'x',
     current: assetTurnoverCurrent,
     prior: assetTurnoverPrior,
     change: computeChange(assetTurnoverCurrent, assetTurnoverPrior),
-  });
-
-  const equityMultiplierCurrent = safeDivide(
-    avgAssetsCurrent ?? currentAssets ?? undefined,
-    avgEquityCurrent ?? currentEquity ?? undefined,
-  );
-  const equityMultiplierPrior = safeDivide(priorAssets ?? undefined, priorEquity ?? undefined);
-  metrics.push({
-    key: 'equity_multiplier',
-    displayName: 'Equity Multiplier',
-    unit: 'x',
-    current: equityMultiplierCurrent,
-    prior: equityMultiplierPrior,
-    change: computeChange(equityMultiplierCurrent, equityMultiplierPrior),
+    availability: {
+      current: resolveComputedAvailability(assetTurnoverCurrent, ['revenue', 'total_assets'], snapshotValues),
+      prior: resolveComputedAvailability(assetTurnoverPrior, ['revenue', 'total_assets'], priorValues),
+    },
+    basis: {
+      metric: 'asset_turnover',
+      displayName: 'Asset Turnover',
+      basis: 'average_balance',
+      note: 'Asset turnover uses average assets for the current period and prior ending assets for the prior comparison.',
+    },
+    note: 'Average-balance efficiency policy applied.',
   });
 
   return { metrics };
@@ -555,7 +911,6 @@ function computeMetricFromValues(
 function runSanityChecks(
   ledger: { metrics: LedgerMetric[] },
   periodMap: Map<string, PeriodBucket>,
-  ratios: Ratio[],
   snapshotPeriod: string | null,
 ): {
   flags: AnalysisInsights['redFlags'];
@@ -602,24 +957,6 @@ function runSanityChecks(
     });
   }
 
-  const ledgerFcf = byKey.get('fcf')?.current ?? null;
-  if (snapshotPeriod) {
-    const ratioFcf = ratios.find(r => r.name === 'fcf' && r.period === snapshotPeriod)?.value ?? null;
-    if (
-      ratioFcf !== null &&
-      ledgerFcf !== null &&
-      isFinite(ratioFcf) &&
-      isFinite(ledgerFcf) &&
-      Math.abs(ratioFcf - ledgerFcf) > Math.max(Math.abs(ledgerFcf) * 0.02, 5e6)
-    ) {
-      flags.push({
-        flag: 'FCF reconciliation mismatch',
-        severity: 'medium',
-        detail: `Computed FCF differs from ratio engine output for ${snapshotPeriod}; using deterministic CFO-CapEx computation.`,
-      });
-    }
-  }
-
   const periodLockFailures = ledger.metrics
     .filter(m => m.current === null && m.prior !== null)
     .map(m => m.displayName);
@@ -635,6 +972,43 @@ function runSanityChecks(
     flags,
     excludedMetricKeys,
   };
+}
+
+function resolveAvailabilityReason(
+  def: MetricDefinition,
+  finalValue: number | null,
+  computedValue: number | null,
+  values: Record<string, number>,
+  sources: Record<string, CanonicalFactSource>,
+  hasLockedPeriod: boolean,
+): MetricAvailabilityReasonCode {
+  if (!hasLockedPeriod) return 'comparability_policy';
+  if (finalValue !== null) {
+    if (computedValue !== null) {
+      const sourceMetric = sources[def.key];
+      if (sourceMetric?.kind === 'derived') return 'derived';
+      if (sourceMetric?.kind === 'adjusted') return 'derived';
+      if (sourceMetric?.kind === 'xbrl' || sourceMetric?.kind === 'statement') return 'reported';
+      if (def.dependencies.length > 1) return 'derived';
+      if (values[def.dependencies[0]!] !== undefined) return 'reported';
+      return 'derived';
+    }
+    return 'reported';
+  }
+  if (def.dependencies.some(dep => values[dep] === undefined || !isFinite(values[dep]!))) {
+    return 'missing_inputs';
+  }
+  return 'source_unavailable';
+}
+
+function resolveComputedAvailability(
+  value: number | null,
+  dependencies: string[],
+  values: Record<string, number>,
+): MetricAvailabilityReasonCode {
+  if (value !== null) return 'derived';
+  if (dependencies.some(dep => values[dep] === undefined || !isFinite(values[dep]!))) return 'missing_inputs';
+  return 'source_unavailable';
 }
 
 function toKeyMetricsMap(
@@ -770,15 +1144,31 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
   }
 
   const revenue = metrics['Revenue'];
-  if (revenue && revenue.change !== null && isFinite(revenue.change) && revenue.change > 0.1) {
+  const revenueChangeDisplay = revenue
+    ? formatMetricChange(revenue.change, revenue.current, revenue.prior)
+    : 'N/A';
+  if (
+    revenue
+    && revenue.change !== null
+    && isFinite(revenue.change)
+    && revenue.change > 0.1
+    && revenueChangeDisplay !== 'N/A'
+    && revenueChangeDisplay !== 'NM'
+  ) {
     strengths.push({
       metric: 'revenue_growth',
-      detail: `Revenue is up ${(revenue.change * 100).toFixed(1)}% year over year, showing strong top-line momentum.`,
+      detail: `Revenue is up ${revenueChangeDisplay} year over year, showing strong top-line momentum.`,
     });
   }
 
   const currentRatio = metrics['Current Ratio'];
-  if (currentRatio && isFinite(currentRatio.current) && currentRatio.current > 1.5) {
+  const ocf = metrics['Operating Cash Flow'];
+  const fcf = metrics['Free Cash Flow'];
+  const hasCashStress = !!(
+    (ocf && isFinite(ocf.current) && ocf.current < 0)
+    || (fcf && isFinite(fcf.current) && fcf.current < 0)
+  );
+  if (currentRatio && isFinite(currentRatio.current) && currentRatio.current > 1.5 && !hasCashStress) {
     strengths.push({
       metric: 'current_ratio',
       detail: `Current ratio of ${currentRatio.current.toFixed(2)}x indicates solid liquidity.`,
@@ -810,6 +1200,68 @@ function finiteOrNull(value: number | undefined | null): number | null {
   return isFinite(value) ? value : null;
 }
 
+/**
+ * Cross-validate shares_outstanding against EPS-implied share count.
+ * If divergence > 50%, the reported shares_outstanding is likely on a different
+ * scale (e.g., 22K vs 17M for small biotechs). In that case, fall back to
+ * weighted_avg_shares_diluted for per-share calculations.
+ */
+function crossValidatedShares(v: Record<string, number>): { value: number | null; basis: MetricBasisUsage } {
+  const shares = finiteOrNull(v['shares_outstanding']);
+  if (shares === null) {
+    return {
+      value: null,
+      basis: {
+        metric: 'shares_outstanding',
+        displayName: 'Shares Outstanding',
+        basis: 'period_end_shares',
+        note: 'Period-end shares were unavailable.',
+        disclosureText: 'Period-end shares were unavailable in the locked annual basis.',
+        alternativesConsidered: ['weighted_average_diluted'],
+      },
+    };
+  }
+
+  const netIncome = finiteOrNull(v['net_income']);
+  const epsDiluted = finiteOrNull(v['eps_diluted']);
+
+  if (netIncome !== null && epsDiluted !== null && epsDiluted !== 0) {
+    const impliedShares = netIncome / epsDiluted;
+    if (isFinite(impliedShares) && impliedShares > 0 && shares > 0) {
+      const divergence = Math.abs(impliedShares - shares) / Math.max(impliedShares, shares);
+      if (divergence > 0.50) {
+        const dilutedShares = finiteOrNull(v['weighted_avg_shares_diluted']);
+        if (dilutedShares !== null && dilutedShares > 0) {
+          return {
+            value: dilutedShares,
+            basis: {
+              metric: 'bvps',
+              displayName: 'Book Value Per Share',
+              basis: 'cross_validated_fallback',
+              fallbackUsed: true,
+              note: 'Period-end shares diverged materially from EPS-implied diluted shares; BVPS uses diluted weighted-average shares as a governed fallback.',
+              disclosureText: 'Book Value Per Share uses diluted weighted-average shares because reported period-end shares diverged materially from EPS-implied diluted shares.',
+              alternativesConsidered: ['period_end_shares', 'weighted_average_diluted'],
+            },
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    value: shares,
+    basis: {
+      metric: 'bvps',
+      displayName: 'Book Value Per Share',
+      basis: 'period_end_shares',
+      note: 'BVPS uses period-end shares outstanding.',
+      disclosureText: 'Book Value Per Share uses period-end shares outstanding.',
+      alternativesConsidered: ['weighted_average_diluted'],
+    },
+  };
+}
+
 function computeChange(current: number | null, prior: number | null): number | null {
   if (current === null || prior === null || !isFinite(current) || !isFinite(prior) || prior === 0) {
     return null;
@@ -821,6 +1273,80 @@ function average(a: number | null, b: number | null): number | null {
   if (a === null && b === null) return null;
   if (a !== null && b !== null) return (a + b) / 2;
   return a ?? b;
+}
+
+function metricBasisUsage(
+  key: string,
+  snapshotValues: Record<string, number>,
+  _priorValues: Record<string, number>,
+  policy: ReportingPolicy,
+): MetricBasisUsage | null {
+  switch (key) {
+    case 'eps':
+      return {
+        metric: key,
+        displayName: 'Earnings Per Share (Diluted)',
+        basis: 'weighted_average_diluted',
+        note: 'EPS uses diluted weighted-average shares from the income statement.',
+        disclosureText: 'Earnings Per Share (Diluted) uses diluted weighted-average shares from the income statement.',
+        alternativesConsidered: ['weighted_average_basic', 'period_end_shares'],
+      };
+    case 'bvps':
+      return crossValidatedShares(snapshotValues).basis;
+    case 'roe':
+      return {
+        metric: key,
+        displayName: 'Return on Equity',
+        basis: policy.returnMetricBasisMode,
+        note: policy.returnMetricBasisMode === 'average_balance'
+          ? 'ROE uses average equity.'
+          : 'ROE uses ending equity.',
+        disclosureText: policy.returnMetricBasisMode === 'average_balance'
+          ? 'Return on Equity uses average equity in the locked current and prior annual periods.'
+          : 'Return on Equity uses ending equity in the locked annual period.',
+        alternativesConsidered: ['average_balance', 'ending_balance'],
+      };
+    case 'roa':
+      return {
+        metric: key,
+        displayName: 'Return on Assets',
+        basis: policy.returnMetricBasisMode,
+        note: policy.returnMetricBasisMode === 'average_balance'
+          ? 'ROA uses average assets.'
+          : 'ROA uses ending assets.',
+        disclosureText: policy.returnMetricBasisMode === 'average_balance'
+          ? 'Return on Assets uses average assets in the locked current and prior annual periods.'
+          : 'Return on Assets uses ending assets in the locked annual period.',
+        alternativesConsidered: ['average_balance', 'ending_balance'],
+      };
+    case 'asset_turnover':
+      return {
+        metric: key,
+        displayName: 'Asset Turnover',
+        basis: 'average_balance',
+        note: 'Asset turnover uses average assets.',
+        disclosureText: 'Asset Turnover uses average assets across the locked annual comparison window.',
+        alternativesConsidered: ['average_balance'],
+      };
+    default:
+      return null;
+  }
+}
+
+function metricNote(key: string, basis?: MetricBasisUsage | null): string | undefined {
+  if (key === 'total_debt') {
+    return 'Total Debt uses reported total debt when available, otherwise long-term debt plus short-term debt.';
+  }
+  return basis?.note;
+}
+
+function upsertMetric(metrics: LedgerMetric[], next: LedgerMetric): void {
+  const index = metrics.findIndex(metric => metric.key === next.key);
+  if (index >= 0) {
+    metrics[index] = next;
+    return;
+  }
+  metrics.push(next);
 }
 
 function dedupeFlags(flags: AnalysisInsights['redFlags']): AnalysisInsights['redFlags'] {
@@ -841,6 +1367,7 @@ function detectLatestAnnualPeriod(facts?: CompanyFacts): string | null {
   for (const fact of facts.facts) {
     for (const p of fact.periods) {
       if (!ANNUAL_FORMS.has(p.form)) continue;
+      if (p.fiscal_period && p.fiscal_period !== 'FY') continue;
       if (!latest || p.period.localeCompare(latest) > 0) {
         latest = p.period;
       }

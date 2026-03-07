@@ -1,0 +1,10 @@
+{
+  "warnings": [
+    {
+      "section": "trend_analysis",
+      "issue": "Cited figure $166M not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    }
+  ],
+  "mappingFixes": []
+}

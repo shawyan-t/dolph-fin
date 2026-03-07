@@ -1,0 +1,128 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "AMG posted $2.07B in revenue (1.6% YoY) and $717M in net income (40.1% YoY) for 2025-12-31. The profitability profile is defined by net margin of 34.5%, framing the earnings quality behind the headline figures.\n\nCash generation is anchored by $973M in operating cash flow (4.4% YoY), which converts to $967M in free cash flow (4.1% YoY). Capital expenditures of $6.1M (0.3% of revenue) show the reinvestment burden required to sustain the current operating base. The conversion of earnings into operating cash flow suggests the reported result is supported by cash generation rather than dominated by accruals.",
+      "paragraphs": [
+        {
+          "text": "AMG posted $2.07B in revenue (1.6% YoY) and $717M in net income (40.1% YoY) for 2025-12-31. The profitability profile is defined by net margin of 34.5%, framing the earnings quality behind the headline figures.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin"
+          ]
+        },
+        {
+          "text": "Cash generation is anchored by $973M in operating cash flow (4.4% YoY), which converts to $967M in free cash flow (4.1% YoY). Capital expenditures of $6.1M (0.3% of revenue) show the reinvestment burden required to sustain the current operating base. The conversion of earnings into operating cash flow suggests the reported result is supported by cash generation rather than dominated by accruals.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "fcf",
+            "capex",
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "rendered_content": "### Capital Expenditures\nCapital Expenditures is currently $6.1M with -12.5% CAGR. Capital Expenditures has declined at a -12.5% CAGR.\n\n### Net Income\nNet Income is currently $717M with 4.7% CAGR. Net Income has grown at a 4.7% CAGR.\n\n### Total Liabilities\nTotal Liabilities is currently $4.79B with 3.1% CAGR. Total Liabilities has grown at a 3.1% CAGR.\n\n### Total Stockholders' Equity\nTotal Stockholders' Equity is currently $4.18B with -0.7% CAGR. Total Stockholders' Equity has been roughly flat.",
+      "paragraphs": [
+        {
+          "text": "Capital Expenditures is currently $6.1M with -12.5% CAGR. Capital Expenditures has declined at a -12.5% CAGR.",
+          "fact_ids": [
+            "capex"
+          ]
+        },
+        {
+          "text": "Net Income is currently $717M with 4.7% CAGR. Net Income has grown at a 4.7% CAGR.",
+          "fact_ids": [
+            "net_income"
+          ]
+        },
+        {
+          "text": "Total Liabilities is currently $4.79B with 3.1% CAGR. Total Liabilities has grown at a 3.1% CAGR.",
+          "fact_ids": [
+            "total_liabilities"
+          ]
+        },
+        {
+          "text": "Total Stockholders' Equity is currently $4.18B with -0.7% CAGR. Total Stockholders' Equity has been roughly flat.",
+          "fact_ids": [
+            "stockholders_equity"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "rendered_content": "### Watch Items\n- The following governed risk signals are active in the locked annual basis.\n\n- **Anomaly in Revenue:** Significant spike: 19.0% YoY change (2.1σ from mean) (period: 2021-12-31)\n- **Anomaly in Total Assets:** Significant spike: 12.5% YoY change (2.0σ from mean) (period: 2021-12-31)",
+      "paragraphs": [
+        {
+          "text": "- The following governed risk signals are active in the locked annual basis.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Anomaly in Revenue:** Significant spike: 19.0% YoY change (2.1σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- **Anomaly in Total Assets:** Significant spike: 12.5% YoY change (2.0σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "### What Stands Out\n- ROE of 16.9% indicates efficient use of shareholder capital.\n\n### Watch Items\n- Significant spike: 19.0% YoY change (2.1σ from mean) (period: 2021-12-31)\n\n- Significant spike: 12.5% YoY change (2.0σ from mean) (period: 2021-12-31)\n### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2025-12-31).\n\n- Prior comparisons use 2024-12-31; metrics without required inputs remain intentionally unfilled.",
+      "paragraphs": [
+        {
+          "text": "- ROE of 16.9% indicates efficient use of shareholder capital.",
+          "fact_ids": [
+            "roe"
+          ]
+        },
+        {
+          "text": "- Significant spike: 19.0% YoY change (2.1σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- Significant spike: 12.5% YoY change (2.0σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Current conclusions are anchored to a period-locked annual basis (2025-12-31).",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Prior comparisons use 2024-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    }
+  ]
+}

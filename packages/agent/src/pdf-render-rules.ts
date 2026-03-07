@@ -37,10 +37,15 @@ export function normalizeMissingDataMarkdown(markdown: string): string {
 
 export function stripMarkdown(markdown: string): string {
   return markdown
+    .replace(/<!--[\s\S]*?-->/g, '')
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`([^`]+)`/g, '$1')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-    .replace(/[*_>#-]/g, ' ')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/^\s*>+\s?/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/[*_~]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -93,6 +98,18 @@ export function normalizeDisplayCell(value: string): string {
   if (trimmed === '—' || trimmed === '-') return 'N/A';
   if (!trimmed) return 'N/A';
   return trimmed;
+}
+
+export function isUnavailableDisplay(value: string): boolean {
+  const normalized = normalizeDisplayCell(value).toLowerCase();
+  return normalized === 'n/a'
+    || normalized === 'unavailable'
+    || normalized === 'policy-excluded'
+    || normalized === 'basis conflict'
+    || normalized === 'qa-excluded'
+    || normalized === 'statement gap'
+    || normalized === 'derived unavailable'
+    || normalized === 'not reported';
 }
 
 export function clampWords(text: string, maxWords: number): string {

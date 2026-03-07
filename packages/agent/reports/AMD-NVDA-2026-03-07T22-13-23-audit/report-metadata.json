@@ -1,0 +1,16 @@
+{
+  "id": "fl_mmgvqwsc_ao7vu8",
+  "type": "comparison",
+  "tickers": [
+    "AMD",
+    "NVDA"
+  ],
+  "generated_at": "2026-03-07T22:13:23.964Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 376,
+    "data_points_used": 6547,
+    "policy_mode": "screening",
+    "comparison_basis_mode": "latest_per_peer_with_prominent_disclosure"
+  }
+}

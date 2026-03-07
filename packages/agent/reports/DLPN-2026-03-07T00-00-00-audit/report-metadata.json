@@ -1,0 +1,16 @@
+{
+  "id": "snap_2026-03-07_1twubcr",
+  "type": "single",
+  "tickers": [
+    "DLPN"
+  ],
+  "generated_at": "2026-03-07T00:00:00.000Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 66,
+    "data_points_used": 2013,
+    "snapshot_id": "snap_2026-03-07_1twubcr",
+    "policy_mode": "institutional",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [],
+  "recomputedMetrics": {
+    "AMG": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "CEG": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "AMG": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period."
+    },
+    "CEG": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period."
+    }
+  }
+}

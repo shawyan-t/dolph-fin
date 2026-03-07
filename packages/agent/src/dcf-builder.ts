@@ -14,6 +14,7 @@ import { resolve } from 'node:path';
 import ExcelJS from 'exceljs';
 import type { AnalysisContext, CompanyFacts, Ratio, TrendData, ProvenanceReceipt } from '@dolph/shared';
 import { formatCompactCurrency } from '@dolph/shared';
+import { defaultReportsDir } from './report-paths.js';
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -269,7 +270,7 @@ export async function generateDCFPackage(
   ticker: string,
   outputDir?: string,
 ): Promise<{ xlsxPath: string; jsonPath: string; provenancePath: string }> {
-  const dir = outputDir || resolve(process.cwd(), 'reports');
+  const dir = outputDir || defaultReportsDir();
   await mkdir(dir, { recursive: true });
 
   const assumptions = buildDCFAssumptions(context, ticker);

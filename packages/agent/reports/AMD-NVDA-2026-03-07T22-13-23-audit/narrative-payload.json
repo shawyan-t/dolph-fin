@@ -1,0 +1,159 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison evaluates AMD, NVDA across their locked annual filing periods, examining revenue scale, profitability, leverage, and cash generation to surface relative positioning within the peer set.\n\nAMD reports $34.6B in revenue (34.3% YoY) and $4.33B in net income for period 2025-12-27. Key profile markers include net margin of 12.5%, debt-to-equity of 0.05x, free cash flow of $6.74B.\n\nNVDA reports $216B in revenue (65.5% YoY) and $120B in net income for period 2026-01-25. Key profile markers include net margin of 55.6%, debt-to-equity of 0.06x, free cash flow of $96.7B.\n\nNVDA leads the peer set in annual revenue, anchoring the scale dimension of the comparison.",
+      "paragraphs": [
+        {
+          "text": "This comparison evaluates AMD, NVDA across their locked annual filing periods, examining revenue scale, profitability, leverage, and cash generation to surface relative positioning within the peer set.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMD reports $34.6B in revenue (34.3% YoY) and $4.33B in net income for period 2025-12-27. Key profile markers include net margin of 12.5%, debt-to-equity of 0.05x, free cash flow of $6.74B.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "NVDA reports $216B in revenue (65.5% YoY) and $120B in net income for period 2026-01-25. Key profile markers include net margin of 55.6%, debt-to-equity of 0.06x, free cash flow of $96.7B.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "NVDA leads the peer set in annual revenue, anchoring the scale dimension of the comparison.",
+          "fact_ids": [
+            "revenue"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "### AMD — What Stands Out\n- Revenue is up 34.3% year over year, showing strong top-line momentum.\n\n- Current ratio of 2.85x indicates solid liquidity.\n### NVDA — What Stands Out\n- Gross margin of 71.1% indicates strong pricing power.\n\n- ROE of 101.5% indicates efficient use of shareholder capital.\n- Revenue is up 65.5% year over year, showing strong top-line momentum.\n- Current ratio of 3.91x indicates solid liquidity.",
+      "paragraphs": [
+        {
+          "text": "- Revenue is up 34.3% year over year, showing strong top-line momentum.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- Current ratio of 2.85x indicates solid liquidity.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "- Gross margin of 71.1% indicates strong pricing power.",
+          "fact_ids": [
+            "gross_margin"
+          ]
+        },
+        {
+          "text": "- ROE of 101.5% indicates efficient use of shareholder capital.",
+          "fact_ids": [
+            "roe"
+          ]
+        },
+        {
+          "text": "- Revenue is up 65.5% year over year, showing strong top-line momentum.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- Current ratio of 3.91x indicates solid liquidity.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "### Watch Items\n- Relative risk is assessed only on surfaced, period-locked peer metrics and does not force false comparability.\n\n- **AMD:** Significant spike: 373.8% YoY change (2.0σ from mean) (period: 2024-12-28) Significant spike: 444.2% YoY change (2.6σ from mean) (period: 2022-12-31)\n- **NVDA:** Significant spike: 581.3% YoY change (2.5σ from mean) (period: 2024-01-28) Significant spike: 680.6% YoY change (2.5σ from mean) (period: 2024-01-28)",
+      "paragraphs": [
+        {
+          "text": "- Relative risk is assessed only on surfaced, period-locked peer metrics and does not force false comparability.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "- **AMD:** Significant spike: 373.8% YoY change (2.0σ from mean) (period: 2024-12-28) Significant spike: 444.2% YoY change (2.6σ from mean) (period: 2022-12-31)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **NVDA:** Significant spike: 581.3% YoY change (2.5σ from mean) (period: 2024-01-28) Significant spike: 680.6% YoY change (2.5σ from mean) (period: 2024-01-28)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "### Analyst Follow-Up\n- Peer conclusions should be read through the locked annual basis, surfaced metric coverage, and explicit comparison-governance policy.\n\n- **AMD:** 2 strength signals and 4 active risk signals in the locked annual basis.\n- **NVDA:** 4 strength signals and 5 active risk signals in the locked annual basis.\n- Prioritize next-pass work on margin durability, balance-sheet flexibility, and cash conversion differentials across the peer set.",
+      "paragraphs": [
+        {
+          "text": "- Peer conclusions should be read through the locked annual basis, surfaced metric coverage, and explicit comparison-governance policy.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "- **AMD:** 2 strength signals and 4 active risk signals in the locked annual basis.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **NVDA:** 4 strength signals and 5 active risk signals in the locked annual basis.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Prioritize next-pass work on margin durability, balance-sheet flexibility, and cash conversion differentials across the peer set.",
+          "fact_ids": [
+            "operating_margin",
+            "de",
+            "fcf"
+          ]
+        }
+      ]
+    }
+  ]
+}

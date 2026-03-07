@@ -13,7 +13,7 @@
 
 import type { AnalysisContext } from '@dolph/shared';
 import type { AnalysisInsights } from '../analyzer.js';
-import { formatCompactCurrency } from '@dolph/shared';
+import { formatCompactCurrency, formatMetricChange } from '@dolph/shared';
 
 // ── Section Definitions ─────────────────────────────────────────
 
@@ -33,6 +33,19 @@ export interface SectionData {
   dataBlock: string;
   context: AnalysisContext;
   insights: Record<string, AnalysisInsights>;
+  /** Previously generated section content for narrative coherence (LLM mode only) */
+  priorSections?: Array<{ id: string; title: string; content: string }>;
+}
+
+/**
+ * Build a context block from previously generated sections for LLM coherence.
+ */
+function buildPriorContext(data: SectionData): string {
+  if (!data.priorSections || data.priorSections.length === 0) return '';
+  const prior = data.priorSections
+    .map(s => `### ${s.title}\n${s.content}`)
+    .join('\n\n');
+  return `\nPRIOR SECTIONS (for coherence — do not repeat, but build on this analysis):\n${prior}\n`;
 }
 
 /**
@@ -50,14 +63,24 @@ DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Write exactly 3-4 sentences that a non-finance person could understand
-- Include the most important headline numbers (revenue, net income, key ratios)
-- Reference specific dollar amounts and percentages from the DATA
-- Do NOT use any headings or section titles — write only the paragraph content
-- Do NOT use vague phrases like "growing steadily" or "performing well"
+- Write 3-5 paragraphs of flowing narrative analysis, as if you are a senior analyst briefing a portfolio manager
+- Paragraph 1: Open with the company's financial headline — revenue, net income, and the most striking change year-over-year. Set the scene.
+- Paragraph 2: Dig into profitability and margins. What do operating margin and net margin tell us about the business model? Connect to any notable cost or revenue drivers visible in the data.
+- Paragraph 3: Assess the balance sheet and liquidity posture. Is the company conservatively financed or levered? What do the current ratio and debt-to-equity signal about financial flexibility?
+- Paragraph 4: Cash flow story — operating cash flow, free cash flow, and capex. What is the reinvestment profile? Is the business self-funding?
+- Paragraph 5 (optional): If risk factors or filing excerpts are available, connect the numbers to real-world context — regulatory risk, competitive dynamics, macroeconomic exposure, recent acquisitions, or industry shifts. Synthesize the overall picture.
+- Every paragraph must reference specific dollar amounts and percentages from the AUTHORITATIVE METRICS in the DATA
+- Write in a natural, professional tone — like a well-crafted research note, not a template
+- Connect the financial data points into a coherent narrative arc — do not merely list facts
+- Do NOT use bullet points, numbered lists, or markdown formatting
+- Do NOT use headings or section titles
 - Format large numbers as $X.XB (billions) or $X.XM (millions)
+- Return JSON ONLY using this schema:
+  {"paragraphs":[{"text":"paragraph text","fact_ids":["metric_key_1","metric_key_2"]}]}
+- fact_ids must reference only canonical metric keys present in the DATA
+- Every paragraph must include at least 2 fact_ids
 
-Output ONLY the paragraph text. No headings, no bullet points, no markdown formatting.`,
+Output ONLY the JSON object.`,
   },
   // key_metrics is deterministic (table built in code)
   {
@@ -69,8 +92,10 @@ Output ONLY the paragraph text. No headings, no bullet points, no markdown forma
     id: 'trend_analysis',
     title: 'Trend Analysis',
     deterministic: false,
-    buildPrompt: (data) => `Write a trend analysis for ${data.companyName} (${data.ticker}).
-
+    buildPrompt: (data) => {
+      const priorContext = buildPriorContext(data);
+      return `Write a trend analysis for ${data.companyName} (${data.ticker}).
+${priorContext}
 DATA:
 ${data.dataBlock}
 
@@ -80,29 +105,35 @@ INSTRUCTIONS:
 - Reference specific numbers, time periods, and growth rates
 - Use ### subheadings for each trend (e.g., "### Revenue Growth")
 - Do NOT start with a top-level ## heading — write the content directly
-- Every sentence must cite a specific figure from the DATA
+- Every sentence must cite a specific figure from the AUTHORITATIVE METRICS in the DATA
+- Maintain coherence with the executive summary above — build on its themes, do not contradict
 
-Output the trend analysis content only. No section title.`,
+Output the trend analysis content only. No section title.`;
+    },
   },
   {
     id: 'risk_factors',
     title: 'Risk Factors',
     deterministic: false,
-    buildPrompt: (data) => `Write a risk factors section for ${data.companyName} (${data.ticker}).
-
+    buildPrompt: (data) => {
+      const priorContext = buildPriorContext(data);
+      return `Write a risk factors section for ${data.companyName} (${data.ticker}).
+${priorContext}
 DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
 - Summarize the top 3-5 risks in 1-2 sentences each
 - If red flags are listed in the data, incorporate them with specific numbers
-- If 10-K risk factor text is available in the data, synthesize those
+- If 10-K risk factor text is available in the data, synthesize and connect those risks to the financial metrics
 - Otherwise derive risks from the financial metrics and trends
-- Use a numbered list (1. 2. 3.) for each risk
+- Write in flowing prose paragraphs grouped by risk theme, not a numbered list
 - Do NOT start with a top-level heading — write the content directly
-- Every risk must reference a specific number or metric
+- Every risk must reference a specific number or metric from the AUTHORITATIVE METRICS
+- Connect risk factors to the financial narrative established in prior sections
 
-Output the risk factors content only. No section title.`,
+Output the risk factors content only. No section title.`;
+    },
   },
   // financial_statements is deterministic (tables built in code)
   {
@@ -114,22 +145,27 @@ Output the risk factors content only. No section title.`,
     id: 'analyst_notes',
     title: 'Analyst Notes',
     deterministic: false,
-    buildPrompt: (data) => `Write analyst notes for ${data.companyName} (${data.ticker}).
-
+    buildPrompt: (data) => {
+      const priorContext = buildPriorContext(data);
+      return `Write analyst notes for ${data.companyName} (${data.ticker}).
+${priorContext}
 DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Write exactly 2-3 paragraphs of synthesis
-- Paragraph 1: What story do the numbers tell? What is the company's financial narrative?
-- Paragraph 2: What questions should an analyst investigate further?
-- Paragraph 3 (optional): Forward-looking considerations based on the data
-- Every paragraph must reference specific numbers from the DATA
-- Do NOT use any headings — write only paragraphs
+- Write 3-4 paragraphs of synthesis that tie together the entire analysis
+- Paragraph 1: What story do the numbers tell? What is the company's financial narrative arc — growth, maturity, turnaround, or decline?
+- Paragraph 2: Connect the financial data to broader context. What industry dynamics, competitive pressures, or macroeconomic factors might explain the patterns in the data?
+- Paragraph 3: What questions should an analyst investigate further? What gaps in the data deserve deeper diligence?
+- Paragraph 4 (optional): Forward-looking considerations — what would confirmation or deterioration in key metrics signal?
+- Every paragraph must reference specific numbers from the AUTHORITATIVE METRICS in the DATA
+- Do NOT use any headings or bullet points — write only flowing paragraphs
 - Do NOT use vague language — every claim needs a number
 - Do NOT hallucinate numbers not in the DATA
+- This section should read as the culminating synthesis of the entire report
 
-Output the paragraphs only. No section title, no bullet points.`,
+Output the paragraphs only. No section title, no bullet points.`;
+    },
   },
   // data_sources is deterministic (built in code)
   {
@@ -155,13 +191,20 @@ DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Write exactly 3-4 sentences comparing these companies at a high level
-- Include the most important differentiating metrics
-- Reference specific dollar amounts and percentages from the DATA
-- Do NOT use any headings — write only the paragraph content
+- Write 3-5 paragraphs comparing these companies
+- Paragraph 1: Frame the comparison — what do these companies have in common and what differentiates them at a high level?
+- Subsequent paragraphs: Devote at least one paragraph to each company's standout financial characteristics, referencing revenue, margins, leverage, and cash generation
+- Final paragraph: Comparative synthesis — who leads on scale, profitability, financial flexibility, and cash conversion? What tradeoffs define this peer set?
+- Reference specific dollar amounts and percentages from the AUTHORITATIVE METRICS in the DATA throughout
+- Write in flowing narrative prose — do not merely list metrics for each company
+- Do NOT use any headings, bullet points, or markdown formatting
 - Format large numbers as $X.XB (billions) or $X.XM (millions)
+- Return JSON ONLY using this schema:
+  {"paragraphs":[{"text":"paragraph text","fact_ids":["metric_key_1","metric_key_2"]}]}
+- fact_ids must reference only canonical metric keys present in the DATA
+- Every paragraph must include at least 2 fact_ids
 
-Output ONLY the paragraph text.`;
+Output ONLY the JSON object.`;
     },
   },
   {
@@ -175,17 +218,19 @@ Output ONLY the paragraph text.`;
     deterministic: false,
     buildPrompt: (data) => {
       const tickers = data.context.tickers;
+      const priorContext = buildPriorContext(data);
       return `Write a relative strengths analysis for ${tickers.join(' vs ')}.
-
+${priorContext}
 DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
 - For each company, write one concise paragraph on competitive advantages
-- Base every point on specific numbers from the DATA
+- Base every point on specific numbers from the AUTHORITATIVE METRICS in the DATA
 - Use markdown subheadings for each company (e.g., "### AAPL", "### MSFT")
 - Do NOT start with a top-level heading
 - Do NOT use vague language — every claim must cite a specific number
+- Build on the executive summary's comparative framework
 
 Output the relative strengths content only.`;
     },
@@ -196,15 +241,16 @@ Output the relative strengths content only.`;
     deterministic: false,
     buildPrompt: (data) => {
       const tickers = data.context.tickers;
+      const priorContext = buildPriorContext(data);
       return `Write a risk comparison for ${tickers.join(' vs ')}.
-
+${priorContext}
 DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Compare financial risk between the companies
-- Reference specific ratios, margins, and trends from the DATA
-- Write 2-3 paragraphs
+- Compare financial risk between the companies in flowing prose
+- Reference specific ratios, margins, and trends from the AUTHORITATIVE METRICS in the DATA
+- Write 2-3 paragraphs that contrast risk profiles, not just list them side by side
 - Do NOT start with a top-level heading
 - Every claim must cite a specific figure
 
@@ -222,17 +268,20 @@ Output the risk comparison content only.`;
     deterministic: false,
     buildPrompt: (data) => {
       const tickers = data.context.tickers;
+      const priorContext = buildPriorContext(data);
       return `Write analyst notes comparing ${tickers.join(' vs ')}.
-
+${priorContext}
 DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Write 2-3 paragraphs of synthesis on how these companies compare
-- What does the data tell us about their relative positions?
-- What should an analyst investigate further?
-- Reference specific numbers throughout
-- Do NOT use headings — write only paragraphs
+- Write 3-4 paragraphs of synthesis that tie together the entire comparative analysis
+- What does the data tell us about their relative competitive positions?
+- What industry or macro context might explain the differences?
+- What should an analyst investigate further in each company?
+- Reference specific numbers from the AUTHORITATIVE METRICS throughout
+- Do NOT use headings — write only flowing paragraphs
+- This section should read as the culminating synthesis of the comparison
 
 Output the paragraphs only.`;
     },
@@ -249,6 +298,13 @@ Output the paragraphs only.`;
 /**
  * Build the structured data block that gets included in every LLM prompt.
  * This is the same data for all sections — consistent context.
+ *
+ * Data hierarchy:
+ * 1. AUTHORITATIVE METRICS — canonical ledger values (the LLM should cite ONLY these)
+ * 2. Trends — time-series context for narrative
+ * 3. Red Flags / Strengths — qualitative signals
+ * 4. Filing excerpts — real-world context
+ * 5. Supplementary ratios — filtered to snapshot period, subordinate to authoritative metrics
  */
 export function buildDataBlock(
   context: AnalysisContext,
@@ -259,31 +315,52 @@ export function buildDataBlock(
   for (const ticker of context.tickers) {
     const tickerInsights = insights[ticker];
     const facts = context.facts[ticker];
-    const ratios = context.ratios[ticker] || [];
     const trends = context.trends[ticker] || [];
     const filingContent = context.filing_content[ticker];
+    const snapshotPeriod = tickerInsights?.snapshotPeriod;
 
     parts.push(`# ${ticker} — ${facts?.company_name || ticker}`);
     if (facts?.fx_note) {
       parts.push(`Note: All values converted to USD (${facts.fx_note})`);
     }
+    if (snapshotPeriod) {
+      parts.push(`Snapshot period: ${snapshotPeriod}`);
+    }
     parts.push('');
 
-    // Key metrics
+    // AUTHORITATIVE canonical ledger — the single source of truth for citations
+    if (tickerInsights?.canonicalFacts && Object.keys(tickerInsights.canonicalFacts).length > 0) {
+      parts.push('## AUTHORITATIVE METRICS — Cite ONLY these figures');
+      parts.push('These are the period-locked, reconciled values from SEC XBRL filings.');
+      for (const [, m] of Object.entries(tickerInsights.canonicalFacts)) {
+        if (m.current === null) continue;
+        const fmtCurrent = formatValue(m.current, m.unit);
+        const changeDisplay = formatMetricChange(m.change, m.current, m.prior);
+        const changeStr = changeDisplay !== 'N/A' ? ` (YoY: ${changeDisplay})` : '';
+        const priorStr = m.prior !== null ? ` | Prior: ${formatValue(m.prior, m.unit)}` : '';
+        parts.push(`- ${m.displayName}: ${fmtCurrent}${changeStr}${priorStr}`);
+      }
+      parts.push('');
+    }
+
+    // Key metrics (legacy block — kept for backwards compatibility but subordinate)
     if (tickerInsights?.keyMetrics && Object.keys(tickerInsights.keyMetrics).length > 0) {
       parts.push('## Key Metrics');
       for (const [name, data] of Object.entries(tickerInsights.keyMetrics)) {
-        const changeStr = data.change !== null
-          ? ` (YoY: ${(data.change * 100).toFixed(1)}%)`
+        const changeDisplay = formatMetricChange(data.change, data.current, data.prior);
+        const changeStr = changeDisplay !== 'N/A'
+          ? ` (YoY: ${changeDisplay})`
           : '';
         parts.push(`- ${name}: ${formatValue(data.current, data.unit)}${changeStr}`);
       }
       parts.push('');
     }
 
-    // Ratios
+    // Supplementary ratios — filtered to snapshot period only
+    const ratios = (context.ratios[ticker] || [])
+      .filter(r => !snapshotPeriod || r.period === snapshotPeriod);
     if (ratios.length > 0) {
-      parts.push('## Financial Ratios');
+      parts.push('## Supplementary Ratios (do not cite if an authoritative metric exists above)');
       for (const r of ratios) {
         parts.push(`- ${r.display_name}: ${r.value.toFixed(4)} (${r.formula}) [period: ${r.period}]`);
       }
@@ -333,14 +410,30 @@ export function buildDataBlock(
       }
     }
 
-    // Comparison data
-    if (context.comparison) {
+    // Comparison data derived from the same locked canonical metrics as the PDF.
+    if (context.type === 'comparison') {
+      const comparisonMetrics = [
+        'Revenue',
+        'Net Income',
+        'Operating Income',
+        'Operating Cash Flow',
+        'Total Assets',
+        "Stockholders' Equity",
+        'Total Debt',
+        'Debt-to-Equity',
+        'Current Ratio',
+        'Quick Ratio',
+      ];
       parts.push('## Comparison Matrix');
-      for (const m of context.comparison.metrics) {
+      for (const metricName of comparisonMetrics) {
         const values = context.tickers
-          .map(t => `${t}: ${m.values[t] !== null && m.values[t] !== undefined ? formatLargeNumber(m.values[t]!) : 'N/A'}`)
+          .map(t => {
+            const metric = insights[t]?.keyMetrics?.[metricName];
+            if (!metric || metric.current === null || metric.current === undefined) return `${t}: N/A`;
+            return `${t}: ${formatValue(metric.current, metric.unit)}`;
+          })
           .join(', ');
-        parts.push(`- ${m.metric}: ${values}`);
+        parts.push(`- ${metricName}: ${values}`);
       }
       parts.push('');
     }
@@ -360,5 +453,5 @@ function formatValue(value: number, unit: string): string {
 }
 
 function formatLargeNumber(n: number): string {
-  return formatCompactCurrency(n, { smallDecimals: 2, compactDecimals: 1 });
+  return formatCompactCurrency(n, { smallDecimals: 2, smartDecimals: true });
 }

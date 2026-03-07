@@ -1,0 +1,12 @@
+{
+  "report_type": "single",
+  "basis_mode": "overlap_normalized",
+  "companies": [
+    {
+      "ticker": "BDCO",
+      "snapshot_period": "2024-12-31",
+      "prior_period": "2023-12-31",
+      "note": null
+    }
+  ]
+}

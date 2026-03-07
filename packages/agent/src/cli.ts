@@ -24,7 +24,9 @@ import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
 import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
 import { resolveTickerWithConfidence } from '@dolph/mcp-sec-server/edgar/cik-lookup.js';
 import type { PipelineConfig, PipelineCallbacks } from './types.js';
-import type { Report, AnalysisContext } from '@dolph/shared';
+import type { CanonicalReportPackage } from './canonical-report-package.js';
+import type { Report, AnalysisContext, ReportingPolicy } from '@dolph/shared';
+import { defaultFilingsDir } from './report-paths.js';
 
 // ── ANSI helpers ──────────────────────────────────────────────
 
@@ -160,7 +162,7 @@ function buildCallbacks(outputFormat: 'terminal' | 'pdf' | 'both'): PipelineCall
     onPartialReport(sectionId) {
       console.log(`  ${CYAN}📄${RESET} Generated: ${sectionId}`);
     },
-    async onComplete(report: Report, context?: AnalysisContext) {
+    async onComplete(report: Report, context?: AnalysisContext, canonicalPackage?: CanonicalReportPackage) {
       // Terminal output
       if (outputFormat === 'terminal' || outputFormat === 'both') {
         printReportToTerminal(report);
@@ -171,7 +173,7 @@ function buildCallbacks(outputFormat: 'terminal' | 'pdf' | 'both'): PipelineCall
         console.log('');
         console.log(`  ${YELLOW}⟳${RESET} Generating PDF...`);
         try {
-          const pdfPath = await generatePDF(report, undefined, context);
+          const pdfPath = await generatePDF(report, undefined, context, canonicalPackage);
           console.log(`  ${GREEN}✓${RESET} PDF saved: ${BOLD}${pdfPath}${RESET}`);
         } catch (err) {
           console.error(`  ${RED}✗${RESET} PDF generation failed: ${err instanceof Error ? err.message : err}`);
@@ -296,6 +298,7 @@ async function handleCompare(): Promise<void> {
   });
   const snapshotDate = snapshotInput.trim() || undefined;
   const narrativeMode = getNarrativeModeFromEnv();
+  const comparisonPolicy = await promptComparisonPolicy();
 
   const config: PipelineConfig = {
     tickers,
@@ -305,6 +308,7 @@ async function handleCompare(): Promise<void> {
     narrativeMode,
     outputFormat,
     snapshotDate,
+    policy: comparisonPolicy,
   };
 
   console.log('');
@@ -327,6 +331,48 @@ async function handleCompare(): Promise<void> {
     await runPipeline({ ...config, abortSignal: controller.signal }, llm, buildCallbacks(outputFormat));
   } finally {
     if (activeAbortController === controller) activeAbortController = null;
+  }
+}
+
+async function promptComparisonPolicy(): Promise<Partial<ReportingPolicy>> {
+  const mode = await select({
+    message: 'Comparison basis mode:',
+    choices: [
+      {
+        name: 'Institutional (overlap-normalized annual periods; strict, may fail if no governed shared basis exists)',
+        value: 'institutional_strict' as const,
+      },
+      {
+        name: 'Latest annual per peer with prominent disclosure (governed non-overlap mode)',
+        value: 'latest_disclosed' as const,
+      },
+      {
+        name: 'Latest annual per peer screening (loosest governed comparison mode)',
+        value: 'screening' as const,
+      },
+    ],
+    default: 'institutional_strict',
+  });
+
+  switch (mode) {
+    case 'latest_disclosed':
+      return {
+        mode: 'screening',
+        comparisonBasisMode: 'latest_per_peer_with_prominent_disclosure',
+        comparisonRequireOverlap: false,
+      };
+    case 'screening':
+      return {
+        mode: 'screening',
+        comparisonBasisMode: 'latest_per_peer_screening',
+        comparisonRequireOverlap: false,
+      };
+    default:
+      return {
+        mode: 'institutional',
+        comparisonBasisMode: 'overlap_normalized',
+        comparisonRequireOverlap: true,
+      };
   }
 }
 
@@ -504,7 +550,7 @@ async function handleSearch(): Promise<void> {
               .replace(/[^a-zA-Z0-9_-]+/g, '_')
               .replace(/^_+|_+$/g, '')
               .slice(0, 40) || 'filing';
-            const outDir = resolve(process.cwd(), 'reports', 'filings');
+            const outDir = defaultFilingsDir();
             await mkdir(outDir, { recursive: true });
             const path = resolve(outDir, `${safeTicker}-${filing.filing_type}-${filing.date_filed}-${filing.accession_number}.txt`);
             await writeFile(path, content.raw_text, 'utf-8');

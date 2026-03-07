@@ -124,8 +124,10 @@ const RATIO_DEFINITIONS: RatioDefinition[] = [
     formula: 'stockholders_equity / shares_outstanding',
     metrics: ['stockholders_equity', 'shares_outstanding'],
     compute: (v) => {
-      if (!v['shares_outstanding'] || v['shares_outstanding'] === 0) return null;
-      return v['stockholders_equity']! / v['shares_outstanding']!;
+      if (!v['stockholders_equity']) return null;
+      const shares = crossValidatedShares(v);
+      if (!shares || shares === 0) return null;
+      return v['stockholders_equity']! / shares;
     },
   },
   {
@@ -139,6 +141,33 @@ const RATIO_DEFINITIONS: RatioDefinition[] = [
     },
   },
 ];
+
+/**
+ * Cross-validate shares_outstanding against EPS-implied share count.
+ * If divergence > 50%, fall back to weighted_avg_shares_diluted.
+ */
+function crossValidatedShares(v: Record<string, number>): number | null {
+  const shares = v['shares_outstanding'];
+  if (!shares || !isFinite(shares)) return null;
+
+  const netIncome = v['net_income'];
+  const epsDiluted = v['eps_diluted'];
+
+  if (netIncome != null && epsDiluted != null && isFinite(netIncome) && isFinite(epsDiluted) && epsDiluted !== 0) {
+    const impliedShares = netIncome / epsDiluted;
+    if (isFinite(impliedShares) && impliedShares > 0 && shares > 0) {
+      const divergence = Math.abs(impliedShares - shares) / Math.max(impliedShares, shares);
+      if (divergence > 0.50) {
+        const dilutedShares = v['weighted_avg_shares_diluted'];
+        if (dilutedShares != null && isFinite(dilutedShares) && dilutedShares > 0) {
+          return dilutedShares;
+        }
+      }
+    }
+  }
+
+  return shares;
+}
 
 /**
  * Build a period-coherent data map: for each annual period, collect all

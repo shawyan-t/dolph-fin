@@ -1,0 +1,14 @@
+{
+  "id": "fl_mmgkpg44_1rl9di",
+  "type": "single",
+  "tickers": [
+    "REAX"
+  ],
+  "generated_at": "2026-03-07T17:04:19.924Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 933,
+    "data_points_used": 442,
+    "policy_mode": "institutional"
+  }
+}

@@ -60,6 +60,8 @@ export interface FinancialFact {
     value: number;
     unit: string;
     form: string;        // e.g., "10-K", "10-Q"
+    fiscal_year?: number;
+    fiscal_period?: string;
     filed: string;       // filing date
     /** Provenance tracking — traces this value to its SEC source */
     provenance?: ProvenanceReceipt;
@@ -82,6 +84,9 @@ export interface FinancialStatement {
   periods: Array<{
     period: string;
     filed: string;
+    form?: string;
+    fiscal_year?: number;
+    fiscal_period?: string;
     data: Record<string, number>;
   }>;
 }
@@ -135,6 +140,116 @@ export interface CompanyComparison {
 }
 
 // ============================================================
+// Reporting Governance Types
+// ============================================================
+
+export type ReportingMode = 'institutional' | 'screening';
+export type ComparisonBasisMode =
+  | 'overlap_normalized'
+  | 'latest_per_peer_screening'
+  | 'latest_per_peer_with_prominent_disclosure';
+export type ReturnMetricBasisMode = 'average_balance' | 'ending_balance';
+export type SparseDerivationMode = 'standard' | 'expanded';
+export type NarrativeGovernanceMode = 'deterministic' | 'structured_llm';
+export type ComparisonFallbackMode =
+  | 'latest_per_peer_screening'
+  | 'latest_per_peer_with_prominent_disclosure';
+export type ShareBasisKind =
+  | 'period_end_shares'
+  | 'ending_diluted_shares'
+  | 'weighted_average_basic'
+  | 'weighted_average_diluted'
+  | 'cross_validated_fallback';
+export type MetricAvailabilityReasonCode =
+  | 'reported'
+  | 'derived'
+  | 'ratio_fallback'
+  | 'missing_inputs'
+  | 'policy_disallowed'
+  | 'sanity_excluded'
+  | 'basis_conflict'
+  | 'comparability_policy'
+  | 'source_unavailable'
+  | 'statement_gap';
+
+export interface ReportingPolicy {
+  mode: ReportingMode;
+  comparisonBasisMode: ComparisonBasisMode;
+  requestedComparisonBasisMode?: ComparisonBasisMode;
+  statementHistoryPeriods: number;
+  trendHistoryPeriods: number;
+  returnMetricBasisMode: ReturnMetricBasisMode;
+  sparseDerivationMode: SparseDerivationMode;
+  strictLayoutQA: boolean;
+  persistAuditArtifacts: boolean;
+  narrativeGovernanceMode: NarrativeGovernanceMode;
+  allowExternalContext: boolean;
+  comparisonRequireOverlap: boolean;
+  comparisonFallbackMode?: ComparisonFallbackMode | null;
+  comparisonMaxPeriodSpreadDays: number;
+  metricNAInference: 'governed' | 'minimal';
+  displayDerivedLabels: boolean;
+  percentMeaningfulBase: number;
+}
+
+export interface MetricBasisUsage {
+  metric: string;
+  displayName: string;
+  basis: ShareBasisKind | ReturnMetricBasisMode | 'reported' | 'derived';
+  note?: string;
+  disclosureText?: string;
+  alternativesConsidered?: string[];
+  fallbackUsed?: boolean;
+}
+
+export interface AuditArtifactManifest {
+  directory: string;
+  generated_at: string;
+  files: Record<string, string>;
+}
+
+export interface StructuredNarrativeParagraph {
+  text: string;
+  fact_ids: string[];
+}
+
+export interface StructuredNarrativeSection {
+  id: string;
+  title: string;
+  rendered_content?: string;
+  paragraphs: StructuredNarrativeParagraph[];
+  warnings?: string[];
+}
+
+export interface StructuredNarrativePayload {
+  mode: NarrativeGovernanceMode;
+  sections: StructuredNarrativeSection[];
+}
+
+export interface ComparisonPeerPeriodBinding {
+  current_period: string | null;
+  prior_period: string | null;
+}
+
+export interface ComparisonBasisResolution {
+  requested_mode: ComparisonBasisMode;
+  effective_mode: ComparisonBasisMode;
+  status: 'resolved' | 'downgraded' | 'unavailable';
+  resolution_kind:
+    | 'none'
+    | 'exact_date_overlap'
+    | 'fiscal_cohort_tolerance'
+    | 'latest_per_peer';
+  comparable_current_key: string | null;
+  comparable_prior_key: string | null;
+  max_current_spread_days: number | null;
+  max_prior_spread_days: number | null;
+  note: string;
+  fallback_reason?: string | null;
+  peer_periods: Record<string, ComparisonPeerPeriodBinding>;
+}
+
+// ============================================================
 // Agent Types
 // ============================================================
 
@@ -163,6 +278,8 @@ export interface StepResult {
 export interface AnalysisContext {
   tickers: string[];
   type: AnalysisType;
+  policy?: ReportingPolicy;
+  comparison_basis?: ComparisonBasisResolution | null;
   plan: AgentPlan;
   results: StepResult[];
   filings: Record<string, Filing[]>;
@@ -217,6 +334,8 @@ export interface Report {
   tickers: string[];
   type: AnalysisType;
   generated_at: string;
+  policy?: ReportingPolicy;
+  comparison_basis?: ComparisonBasisResolution | null;
   sections: ReportSection[];
   sources: Array<{
     url: string;
@@ -230,9 +349,13 @@ export interface Report {
     data_points_used: number;
     /** Snapshot ID for reproducibility (set if snapshot_date was provided) */
     snapshot_id?: string;
+    policy_mode?: ReportingMode;
+    comparison_basis_mode?: ComparisonBasisMode;
   };
   /** Provenance manifest: maps "ticker:metric:period" → provenance receipt */
   provenance?: Record<string, ProvenanceReceipt>;
+  audit?: AuditArtifactManifest;
+  narrative?: StructuredNarrativePayload;
 }
 
 // ============================================================
@@ -315,6 +438,6 @@ export interface LLMProvider {
   generate(
     prompt: string,
     systemPrompt?: string,
-    options?: { temperature?: number; signal?: AbortSignal },
+    options?: { temperature?: number; signal?: AbortSignal; maxTokens?: number; jsonMode?: boolean },
   ): Promise<LLMResponse>;
 }

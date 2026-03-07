@@ -1,0 +1,15 @@
+{
+  "id": "fl_mmgx4q0i_px8m3j",
+  "type": "single",
+  "tickers": [
+    "SKIN"
+  ],
+  "generated_at": "2026-03-07T22:52:07.986Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 1061,
+    "data_points_used": 1073,
+    "policy_mode": "institutional",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

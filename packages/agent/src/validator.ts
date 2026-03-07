@@ -1,6 +1,7 @@
 /**
- * CODE-BASED validator — no LLM call.
- * Programmatic checks for report quality.
+ * Structural/content validator — no LLM call.
+ * This validator checks report shape and basic prose hygiene only.
+ * Deterministic factual correctness is enforced separately by deterministic QA.
  *
  * Design:
  * - Uses EXACT section ID matching (section.id === required)

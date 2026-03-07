@@ -453,6 +453,10 @@ const CSS = `
     grid-auto-flow: row dense;
   }
 
+  .metrics-grid.stacked {
+    grid-template-columns: 1fr;
+  }
+
   /* Dashboard / appendix tables */
   table {
     width: 100%;

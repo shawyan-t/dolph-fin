@@ -15,6 +15,21 @@ import { getMappingsForStatement, getMappingByName } from '@dolph/shared';
 const ANNUAL_FORMS = ['10-K', '20-F', '40-F'];
 const QUARTERLY_FORMS = ['10-Q', '6-K'];
 
+function yearFromPeriod(period: string): number | null {
+  const match = period.match(/^(\d{4})-/);
+  return match ? Number.parseInt(match[1]!, 10) : null;
+}
+
+function isAnnualFactPeriod(period: CompanyFacts['facts'][number]['periods'][number]): boolean {
+  if (!ANNUAL_FORMS.includes(period.form)) return false;
+  return period.fiscal_period ? period.fiscal_period === 'FY' : true;
+}
+
+function isQuarterlyFactPeriod(period: CompanyFacts['facts'][number]['periods'][number]): boolean {
+  if (!QUARTERLY_FORMS.includes(period.form)) return false;
+  return period.fiscal_period ? period.fiscal_period !== 'FY' : true;
+}
+
 /**
  * Detect which annual form type a company uses by checking their filing data.
  */
@@ -23,7 +38,7 @@ function detectAnnualForm(facts: CompanyFacts): string[] {
 
   for (const fact of facts.facts) {
     for (const period of fact.periods) {
-      if (ANNUAL_FORMS.includes(period.form)) {
+      if (isAnnualFactPeriod(period)) {
         formCounts[period.form] = (formCounts[period.form] || 0) + 1;
       }
     }
@@ -53,18 +68,40 @@ export function normalizeToStatements(
 
   // Collect all periods across all metrics
   const periodSet = new Set<string>();
-  const metricData = new Map<string, Map<string, { value: number; filed: string }>>();
+  const metricData = new Map<string, Map<string, {
+    value: number;
+    filed: string;
+    form: string;
+    fiscal_year?: number;
+    fiscal_period?: string;
+  }>>();
 
   for (const mapping of mappings) {
     const fact = facts.facts.find(f => f.metric === mapping.standardName);
     if (!fact) continue;
 
-    const periodMap = new Map<string, { value: number; filed: string }>();
+    const periodMap = new Map<string, {
+      value: number;
+      filed: string;
+      form: string;
+      fiscal_year?: number;
+      fiscal_period?: string;
+    }>();
 
     for (const period of fact.periods) {
-      if (!formFilters.includes(period.form)) continue;
+      if (periodType === 'annual') {
+        if (!formFilters.includes(period.form) || !isAnnualFactPeriod(period)) continue;
+      } else if (!formFilters.includes(period.form) || !isQuarterlyFactPeriod(period)) {
+        continue;
+      }
       periodSet.add(period.period);
-      periodMap.set(period.period, { value: period.value, filed: period.filed });
+      periodMap.set(period.period, {
+        value: period.value,
+        filed: period.filed,
+        form: period.form,
+        fiscal_year: period.fiscal_year,
+        fiscal_period: period.fiscal_period,
+      });
     }
 
     if (periodMap.size > 0) {
@@ -73,24 +110,41 @@ export function normalizeToStatements(
   }
 
   // Sort periods descending and take the most recent N
-  const sortedPeriods = Array.from(periodSet)
-    .sort((a, b) => b.localeCompare(a))
-    .slice(0, limit);
+  let sortedPeriods = Array.from(periodSet)
+    .sort((a, b) => b.localeCompare(a));
+
+  if (periodType === 'annual') {
+    const byYear = new Map<number, string>();
+    for (const period of sortedPeriods) {
+      const year = yearFromPeriod(period);
+      if (year === null || byYear.has(year)) continue;
+      byYear.set(year, period);
+    }
+    sortedPeriods = Array.from(byYear.values()).sort((a, b) => b.localeCompare(a));
+  }
+
+  sortedPeriods = sortedPeriods.slice(0, limit);
 
   // Build output periods
   const periods = sortedPeriods.map(period => {
     const data: Record<string, number> = {};
     let filed = '';
+    let form: string | undefined;
+    let fiscal_year: number | undefined;
+    let fiscal_period: string | undefined;
 
     for (const [metric, periodMap] of metricData) {
       const entry = periodMap.get(period);
       if (entry) {
         data[metric] = entry.value;
         if (!filed) filed = entry.filed;
+        if (!form) form = entry.form;
+        if (fiscal_year === undefined && entry.fiscal_year !== undefined) fiscal_year = entry.fiscal_year;
+        if (!fiscal_period && entry.fiscal_period) fiscal_period = entry.fiscal_period;
       }
     }
 
-    return { period, filed, data };
+    return { period, filed, form, fiscal_year, fiscal_period, data };
   });
 
   return {
@@ -121,7 +175,10 @@ export function getLatestValue(
         : [form];
 
     for (const f of formsToTry) {
-      const match = fact.periods.find(p => p.form === f);
+      const match = fact.periods.find(p => (
+        p.form === f
+        && (f === '10-K' || f === '20-F' || f === '40-F' ? isAnnualFactPeriod(p) : isQuarterlyFactPeriod(p))
+      ));
       if (match) return match.value;
     }
     return null;
@@ -147,7 +204,9 @@ export function getMetricTimeSeries(
     ? detectAnnualForm(facts)
     : QUARTERLY_FORMS;
   const filtered = fact.periods
-    .filter(p => formFilters.includes(p.form))
+    .filter(p => periodType === 'annual'
+      ? formFilters.includes(p.form) && isAnnualFactPeriod(p)
+      : formFilters.includes(p.form) && isQuarterlyFactPeriod(p))
     .map(p => ({ period: p.period, value: p.value }));
 
   if (periodType !== 'annual') {

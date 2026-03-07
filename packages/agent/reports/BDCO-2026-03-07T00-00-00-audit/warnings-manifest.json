@@ -1,0 +1,37 @@
+{
+  "warnings": [
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $31M not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $20M not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $20M not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $46K not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "trend_analysis",
+      "issue": "Cited figure $45M not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "trend_analysis",
+      "issue": "Cited figure $46K not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    }
+  ],
+  "mappingFixes": [
+    "BDCO: Anomaly in Gross Profit — Significant spike: 4940.6% YoY change (2.0σ from mean) (period: 2022-12-31)"
+  ]
+}

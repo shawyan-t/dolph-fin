@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [
+    "NVDA: Anomaly in Gross Profit — Significant spike: 188.5% YoY change (2.1σ from mean) (period: 2024-01-28)"
+  ],
+  "recomputedMetrics": {
+    "NVDA": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "NVDA": {
+      "current": "2026-01-25",
+      "prior": "2025-01-26"
+    }
+  }
+}

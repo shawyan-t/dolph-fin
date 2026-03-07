@@ -1,0 +1,14 @@
+{
+  "AMD": {
+    "current": "2025-12-27",
+    "prior": "2024-12-28",
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "comparison_basis_mode": "latest_per_peer_with_prominent_disclosure"
+  },
+  "NVDA": {
+    "current": "2026-01-25",
+    "prior": "2025-01-26",
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "comparison_basis_mode": "latest_per_peer_with_prominent_disclosure"
+  }
+}

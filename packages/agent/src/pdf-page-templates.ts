@@ -4,12 +4,15 @@ import {
   getMappingsForStatement,
   formatCompactCurrency,
   formatCompactShares,
+  formatFiscalPeriodLabel,
+  formatMetricChange,
 } from '@dolph/shared';
 import {
   PDF_RENDER_RULES,
   clampWords,
   clipBullets,
   extractBullets,
+  isUnavailableDisplay,
   normalizeDisplayCell,
   normalizeMissingDataMarkdown,
   parseMetricRows,
@@ -17,8 +20,14 @@ import {
 } from './pdf-render-rules.js';
 import { generateChartsWithLocks, type ChartPeriodLock } from './charts.js';
 import { packDeterministicPages, type LayoutModule } from './layout-packer.js';
-import { buildCanonicalAnnualPeriodMap, normalizeMetricValue } from './report-facts.js';
-import { analyzeData, type AnalysisInsights } from './analyzer.js';
+import {
+  type CanonicalMetricCell,
+  type CompanyReportModel,
+  type ReportModel,
+} from './report-model.js';
+import { comparisonBasisDescription, comparisonBasisLabel } from './report-policy.js';
+import { requireCanonicalReportPackage, type CanonicalReportPackage } from './canonical-report-package.js';
+import type { AnalysisInsights } from './analyzer.js';
 
 export interface PdfPageBuildResult {
   bodyHTML: string;
@@ -45,12 +54,19 @@ interface MetricRow {
   change: string;
 }
 
-export function buildPdfPages(report: Report, context?: AnalysisContext): PdfPageBuildResult {
+export function buildPdfPages(
+  report: Report,
+  context?: AnalysisContext,
+  canonicalPackage?: CanonicalReportPackage,
+): PdfPageBuildResult {
   const sections = indexSections(report.sections);
   const keyMetricsMarkdown = normalizeMissingDataMarkdown(sections['key_metrics']?.content || '');
-  const insights = context ? analyzeData(context) : {};
-  const metricRows = context?.type === 'single' && context.tickers[0]
-    ? metricRowsFromInsights(insights[context.tickers[0]!] || null)
+  const pkg = context ? requireCanonicalReportPackage(canonicalPackage, 'buildPdfPages') : null;
+  const insights = pkg?.insights || {};
+  const reportModel = pkg?.reportModel || null;
+  const primaryCompany = reportModel?.companies[0] || null;
+  const metricRows = primaryCompany
+    ? metricRowsFromCompany(primaryCompany)
     : parseMetricRows(keyMetricsMarkdown);
   const periodLocks: Record<string, ChartPeriodLock> = context
     ? Object.fromEntries(
@@ -62,13 +78,13 @@ export function buildPdfPages(report: Report, context?: AnalysisContext): PdfPag
     : {};
   const pages: string[] = [];
 
-  pages.push(buildCoverPage(report, sections, metricRows, context, insights));
-  pages.push(buildExecutivePage(report, sections, metricRows, context));
-  pages.push(...buildVisualPages(context, periodLocks));
-  pages.push(...buildDashboardPages(keyMetricsMarkdown, context, metricRows, periodLocks));
-  pages.push(buildCommentaryPage(report, sections, context, metricRows, periodLocks));
-  pages.push(...buildAppendixPages(report, context, sections, insights));
-  pages.push(buildSourcesPage(context, sections, report));
+  pages.push(buildCoverPage(report, sections, metricRows, context, insights, reportModel));
+  pages.push(buildExecutivePage(report, sections, metricRows, context, reportModel));
+  pages.push(...buildVisualPages(context, periodLocks, reportModel));
+  pages.push(...buildDashboardPages(keyMetricsMarkdown, context, metricRows, periodLocks, reportModel));
+  pages.push(buildCommentaryPage(report, sections, context, metricRows, periodLocks, reportModel));
+  pages.push(...buildAppendixPages(report, context, sections, insights, reportModel, pkg || undefined));
+  pages.push(buildSourcesPage(context, sections, report, reportModel, pkg || undefined));
 
   return { bodyHTML: pages.filter(Boolean).join('\n') };
 }
@@ -85,6 +101,7 @@ function buildCoverPage(
   metricRows: MetricRow[],
   context?: AnalysisContext,
   insights: Record<string, AnalysisInsights> = {},
+  reportModel: ReportModel | null = null,
 ): string {
   const kpiPriority = [
     'Revenue',
@@ -97,19 +114,22 @@ function buildCoverPage(
   ];
   const cards: MetricRow[] = [];
   for (const metric of kpiPriority) {
-    const row = metricRows.find(r => r.metric === metric && normalizeDisplayCell(r.current) !== 'N/A');
+    const row = metricRows.find(r => r.metric === metric && !isUnavailableDisplay(r.current));
     if (!row) continue;
     cards.push(row);
     if (cards.length >= PDF_RENDER_RULES.cover.maxKpis) break;
   }
 
   const thesis = composeCoverThesis(report, metricRows);
-  const glance = composeCoverBullets(metricRows, sections, report, context, insights);
+  const glance = composeCoverBullets(metricRows, sections, report, context, insights, reportModel);
   const companyTitle = report.type === 'single'
     ? (context?.facts?.[report.tickers[0] || '']?.company_name || report.tickers[0] || 'N/A')
     : report.tickers.join(' vs ');
   const peerKpiStrip = report.type === 'comparison'
     ? buildComparisonCoverStrip(context, insights)
+    : '';
+  const comparisonDisclosure = report.type === 'comparison'
+    ? buildComparisonGovernanceNotice(reportModel)
     : '';
   const singleKpis = report.type === 'comparison'
     ? ''
@@ -138,6 +158,7 @@ function buildCoverPage(
       </div>
       ${singleKpis}
       ${peerKpiStrip}
+      ${comparisonDisclosure}
       <div class="cover-glance">
         <h3>At a glance</h3>
         <ul>
@@ -150,9 +171,9 @@ function buildCoverPage(
 
 function formatKpiNote(kpi: MetricRow): string {
   const change = normalizeDisplayCell(kpi.change);
-  if (change !== 'N/A') return change;
+  if (!isUnavailableDisplay(change)) return change;
   const prior = normalizeDisplayCell(kpi.prior);
-  if (prior !== 'N/A') return `Prior: ${prior}`;
+  if (!isUnavailableDisplay(prior)) return `Prior: ${prior}`;
   return 'Latest annual snapshot';
 }
 
@@ -180,9 +201,18 @@ function composeCoverBullets(
   report: Report,
   context?: AnalysisContext,
   insights: Record<string, AnalysisInsights> = {},
+  reportModel: ReportModel | null = null,
 ): string[] {
   if (report.type === 'comparison' && context) {
     const bullets = buildComparisonCoverBullets(context, insights);
+    if (reportModel) {
+      const completenessNotes = reportModel.companies
+        .filter(company => isUnavailableDisplay(company.metricsByLabel.get('Debt-to-Equity')?.currentDisplay || 'N/A'))
+        .map(company => company.ticker);
+      if (completenessNotes.length > 0 && bullets.length < PDF_RENDER_RULES.cover.maxBullets) {
+        bullets.push(`Leverage comparisons exclude missing debt mappings for ${completenessNotes.join(', ')}.`);
+      }
+    }
     if (bullets.length >= 3) return clipBullets(bullets, PDF_RENDER_RULES.cover.maxBullets);
   }
 
@@ -194,21 +224,21 @@ function composeCoverBullets(
   const fcf = rows.find(r => r.metric === 'Free Cash Flow');
   const opMargin = rows.find(r => r.metric === 'Operating Margin');
 
-  if (revenue && normalizeDisplayCell(revenue.current) !== 'N/A') {
+  if (revenue && !isUnavailableDisplay(revenue.current)) {
     const ch = normalizeDisplayCell(revenue.change);
-    out.push(ch !== 'N/A'
+    out.push(!isUnavailableDisplay(ch)
       ? `Revenue is ${revenue.current} with ${ch} change versus the prior period.`
       : `Revenue is currently ${revenue.current} on the latest annual filing.`);
   }
-  if (netIncome && normalizeDisplayCell(netIncome.current) !== 'N/A') {
+  if (netIncome && !isUnavailableDisplay(netIncome.current)) {
     out.push(`Net income is ${netIncome.current}, indicating current earnings scale.`);
   }
-  if (de && current && normalizeDisplayCell(de.current) !== 'N/A') {
+  if (de && current && !isUnavailableDisplay(de.current) && !isUnavailableDisplay(current.current)) {
     out.push(`Balance sheet reads at ${de.current} debt-to-equity and ${normalizeDisplayCell(current.current)} current ratio.`);
   } else if (opMargin) {
     out.push(`Operating margin is ${normalizeDisplayCell(opMargin.current)}, supporting the current profitability profile.`);
   }
-  if (fcf && normalizeDisplayCell(fcf.current) !== 'N/A') {
+  if (fcf && !isUnavailableDisplay(fcf.current)) {
     out.push(`Free cash flow is ${fcf.current}, a key check on earnings conversion quality.`);
   }
 
@@ -290,7 +320,7 @@ function buildComparisonCoverBullets(
     const lead = revenueRank[0]!;
     const lag = revenueRank[1]!;
     bullets.push(
-      `${lead.ticker} leads on revenue scale (${formatCompactCurrency(lead.revenue!, { smallDecimals: 0, compactDecimals: 1 })} vs ${lag.ticker} at ${formatCompactCurrency(lag.revenue!, { smallDecimals: 0, compactDecimals: 1 })}).`,
+      `${lead.ticker} leads on revenue scale (${formatCompactCurrency(lead.revenue!, { smallDecimals: 0, smartDecimals: true })} vs ${lag.ticker} at ${formatCompactCurrency(lag.revenue!, { smallDecimals: 0, smartDecimals: true })}).`,
     );
   }
 
@@ -301,17 +331,47 @@ function buildComparisonCoverBullets(
   }
 
   const leverageRank = byTicker.filter(x => x.de !== null).sort((a, b) => (a.de ?? 99) - (b.de ?? 99));
-  if (leverageRank.length >= 1) {
+  if (leverageRank.length === byTicker.length && leverageRank.length >= 2) {
     const conservative = leverageRank[0]!;
     bullets.push(`${conservative.ticker} has the most conservative leverage profile at ${(conservative.de || 0).toFixed(2)}x debt-to-equity.`);
   }
 
   const fcfRank = byTicker.filter(x => x.fcf !== null).sort((a, b) => (b.fcf ?? 0) - (a.fcf ?? 0));
-  if (fcfRank.length >= 1 && bullets.length < 3) {
-    bullets.push(`${fcfRank[0]!.ticker} leads current free cash generation at ${formatCompactCurrency(fcfRank[0]!.fcf!, { smallDecimals: 0, compactDecimals: 1 })}.`);
+  if (fcfRank.length >= 2 && bullets.length < 3) {
+    bullets.push(`${fcfRank[0]!.ticker} leads current free cash generation at ${formatCompactCurrency(fcfRank[0]!.fcf!, { smallDecimals: 0, smartDecimals: true })}.`);
   }
 
   return bullets;
+}
+
+function buildComparisonGovernanceNotice(reportModel: ReportModel | null): string {
+  if (!reportModel || reportModel.type !== 'comparison') return '';
+  const policy = reportModel.companies[0]?.policy;
+  if (!policy) return '';
+  const effectiveMode = reportModel.comparisonBasis?.effective_mode || policy.comparisonBasisMode;
+  const note = reportModel.comparisonBasis?.note || comparisonBasisDescription(policy);
+  return `
+    <div class="cover-governance-note">
+      <strong>${escapeHTML(comparisonBasisLabel(effectiveMode))}</strong>
+      <span>${escapeHTML(note)}</span>
+    </div>
+  `;
+}
+
+function metricRowsFromCompany(company: CompanyReportModel): MetricRow[] {
+  return company.metrics.map(metric => ({
+    metric: metric.label,
+    current: metric.currentDisplay,
+    prior: metric.priorDisplay,
+    change: metric.changeDisplay,
+  }));
+}
+
+function metricCell(
+  company: CompanyReportModel,
+  label: string,
+): CanonicalMetricCell | null {
+  return company.metricsByLabel.get(label) || null;
 }
 
 function metricRowsFromInsights(insight: AnalysisInsights | null): MetricRow[] {
@@ -320,7 +380,7 @@ function metricRowsFromInsights(insight: AnalysisInsights | null): MetricRow[] {
     metric,
     current: formatMetricDatumValue(datum.current, datum.unit),
     prior: datum.prior !== null ? formatMetricDatumValue(datum.prior, datum.unit) : 'N/A',
-    change: datum.change !== null ? `${(datum.change * 100).toFixed(1)}%` : 'N/A',
+    change: formatMetricChange(datum.change, datum.current, datum.prior),
   }));
 }
 
@@ -338,54 +398,71 @@ function buildExecutivePage(
   sections: Record<string, ReportSection>,
   metricRows: MetricRow[],
   context?: AnalysisContext,
+  reportModel: ReportModel | null = null,
 ): string {
   const byMetric = new Map(metricRows.map(r => [r.metric, r]));
   const executiveSection = sections['executive_summary']?.content || '';
-  const sectionSummary = isSectionSummaryUsable(executiveSection)
-    ? summarizeSectionParagraph(executiveSection, 110)
-    : '';
-  const thesis = clampWords(
-    sectionSummary || composeExecutiveThesis(report, byMetric),
-    PDF_RENDER_RULES.executive.maxWords,
-  );
-  const secondary = composeExecutiveSecondaryLine(report, byMetric, context);
-
-  const profitability = clipBullets(withSectionBackfill(composeMetricImplicationBullets(byMetric, [
-    ['Operating Margin', 'Operating margin', 'defines current earnings conversion on sales.'],
-    ['Net Margin', 'Net margin', 'captures current bottom-line efficiency.'],
-    ['Return on Equity', 'Return on equity', 'indicates shareholder-capital productivity.'],
-  ]), deriveBulletsByKeyword(sections['trend_analysis']?.content || '', ['margin', 'return', 'profit']), 2), PDF_RENDER_RULES.executive.maxBulletsPerBlock);
-
-  const balance = clipBullets(withSectionBackfill(composeMetricImplicationBullets(byMetric, [
-    ['Debt-to-Equity', 'Debt-to-equity', 'frames leverage sensitivity and refinancing exposure.'],
-    ['Current Ratio', 'Current ratio', 'measures near-term liquidity headroom.'],
-    ['Quick Ratio', 'Quick ratio', 'shows liquidity strength without inventory support.'],
-  ]), deriveBulletsByKeyword(sections['risk_factors']?.content || '', ['liquidity', 'leverage', 'debt']), 2), PDF_RENDER_RULES.executive.maxBulletsPerBlock);
-
-  const cash = clipBullets(withSectionBackfill(composeMetricImplicationBullets(byMetric, [
-    ['Free Cash Flow', 'Free cash flow', 'tests earnings quality and funding flexibility.'],
-    ['Operating Cash Flow', 'Operating cash flow', 'shows internal cash generation capacity.'],
-    ['Capital Expenditures', 'Capital expenditures', 'signals reinvestment intensity and cash demand.'],
-  ]), deriveBulletsByKeyword(sections['analyst_notes']?.content || '', ['cash', 'capex', 'fund']), 2), PDF_RENDER_RULES.executive.maxBulletsPerBlock);
-
-  const watch = sanitizeBullets(extractBullets(sections['risk_factors']?.content || ''));
-  if (cash.length < 2 && watch.length > 0) cash.push(watch[0]!);
+  const sectionSummary = isSectionSummaryUsable(executiveSection) ? executiveSection.trim() : '';
+  const thesis = sectionSummary
+    ? ''
+    : clampWords(composeExecutiveThesis(report, byMetric), PDF_RENDER_RULES.executive.maxWords);
+  const secondary = composeExecutiveSecondaryLine(report, byMetric, context, reportModel);
+  const executiveBody = sectionSummary
+    ? renderNarrativeParagraphs(sectionSummary, 5)
+    : `<p class="thesis">${escapeHTML(thesis)}</p>`;
+  const executiveSupport = report.type === 'comparison'
+    ? buildComparisonExecutiveScorecard(reportModel)
+    : `${buildExecutiveScorecard(byMetric)}${buildExecutiveStrip(byMetric)}`;
 
   return `
     <section class="report-page page-executive">
       <div class="page-header"><h2>Executive Summary</h2></div>
       ${PERIOD_BANNER_SLOT}
       <div class="module executive-copy">
-        <p class="thesis">${escapeHTML(thesis)}</p>
+        ${executiveBody}
         ${secondary ? `<p class="thesis-secondary">${escapeHTML(secondary)}</p>` : ''}
       </div>
-      <div class="exec-grid">
-        ${buildProseBlock('Profitability', profitability)}
-        ${buildProseBlock('Balance Sheet & Liquidity', balance)}
-        ${buildProseBlock('Cash Flow & Risk', cash)}
-      </div>
-      ${buildExecutiveScorecard(byMetric)}
-      ${buildExecutiveStrip(byMetric)}
+      ${executiveSupport}
+    </section>
+  `;
+}
+
+function renderNarrativeParagraphs(markdown: string, maxParagraphs: number): string {
+  const paragraphs = markdown
+    .split(/\n{2,}/)
+    .map(p => stripMarkdown(p).trim())
+    .filter(Boolean)
+    .slice(0, maxParagraphs);
+  if (paragraphs.length === 0) return '';
+  return paragraphs.map((paragraph, idx) => {
+    const cls = idx === 0 ? 'thesis narrative-paragraph' : 'narrative-paragraph';
+    return `<p class="${cls}">${escapeHTML(paragraph)}</p>`;
+  }).join('\n');
+}
+
+function buildComparisonExecutiveScorecard(reportModel: ReportModel | null): string {
+  if (!reportModel || reportModel.type !== 'comparison' || reportModel.companies.length < 2) return '';
+  const tickers = reportModel.companies.map(company => company.ticker);
+  const metrics = [
+    'Revenue',
+    'Net Income',
+    'Operating Margin',
+    'Debt-to-Equity',
+    'Current Ratio',
+    'Free Cash Flow',
+  ];
+  const rows = metrics
+    .map(label => {
+      const cells = reportModel.companies.map(company => company.metricsByLabel.get(label)?.currentDisplay || 'N/A');
+      if (cells.every(cell => isUnavailableDisplay(cell))) return null;
+      return [label, ...cells];
+    })
+    .filter((row): row is string[] => !!row);
+  if (rows.length < 3) return '';
+  return `
+    <section class="module executive-scorecard">
+      <h3>Snapshot Scorecard</h3>
+      ${renderTable(['Metric', ...tickers], rows)}
     </section>
   `;
 }
@@ -423,21 +500,34 @@ function composeExecutiveSecondaryLine(
   report: Report,
   byMetric: Map<string, MetricRow>,
   context?: AnalysisContext,
+  reportModel: ReportModel | null = null,
 ): string {
   if (!context) return '';
   if (report.type === 'comparison') {
-    const periods = context.tickers.map(t => formatPeriodLabel(latestTrendPeriod(context, t, 'revenue') || ''));
+    const policy = reportModel?.companies[0]?.policy;
+    const basis = reportModel?.comparisonBasis;
+    const periods = (reportModel?.companies || []).map(company => company.snapshotLabel);
     const pairs = context.tickers.map((t, i) => `${t}: ${periods[i] || 'N/A'}`);
-    return `Peer figures reflect each company’s latest annual filing period (${pairs.join('; ')}), so fiscal year-ends are not always synchronized.`;
+    const unique = new Set(periods.filter(Boolean));
+    if ((basis?.effective_mode || policy?.comparisonBasisMode) === 'overlap_normalized' && basis?.note) {
+      return basis.note;
+    }
+    if ((basis?.effective_mode || policy?.comparisonBasisMode) === 'overlap_normalized' && unique.size <= 1) {
+      return `Peer figures are aligned to the same reported annual period (${pairs.join('; ')}).`;
+    }
+    if ((basis?.effective_mode || policy?.comparisonBasisMode) === 'latest_per_peer_screening') {
+      return basis?.note || `Screening comparison mode is active: ${pairs.join('; ')}. These figures are not normalized to a shared annual period.`;
+    }
+    return basis?.note || `Peer figures reflect each company’s latest annual filing period (${pairs.join('; ')}), so fiscal year-ends are not fully synchronized.`;
   }
 
   const de = byMetric.get('Debt-to-Equity')?.current;
   const cr = byMetric.get('Current Ratio')?.current;
   const fcf = byMetric.get('Free Cash Flow')?.current;
   const parts: string[] = [];
-  if (de && normalizeDisplayCell(de) !== 'N/A') parts.push(`leverage at ${de}`);
-  if (cr && normalizeDisplayCell(cr) !== 'N/A') parts.push(`current ratio ${cr}`);
-  if (fcf && normalizeDisplayCell(fcf) !== 'N/A') parts.push(`free cash flow ${fcf}`);
+  if (de && !isUnavailableDisplay(de)) parts.push(`leverage at ${de}`);
+  if (cr && !isUnavailableDisplay(cr)) parts.push(`current ratio ${cr}`);
+  if (fcf && !isUnavailableDisplay(fcf)) parts.push(`free cash flow ${fcf}`);
   if (parts.length === 0) return '';
   return `Current balance-sheet and cash profile: ${parts.join(', ')}.`;
 }
@@ -451,9 +541,9 @@ function composeMetricImplicationBullets(
     const row = byMetric.get(metric);
     if (!row) continue;
     const current = normalizeDisplayCell(row.current);
-    if (current === 'N/A') continue;
+    if (isUnavailableDisplay(current)) continue;
     const change = normalizeDisplayCell(row.change);
-    const delta = change !== 'N/A' ? ` (${change} vs prior)` : '';
+    const delta = !isUnavailableDisplay(change) ? ` (${change} vs prior)` : '';
     out.push(`${label} is ${current}${delta}; this ${implication}`);
   }
   return out;
@@ -549,7 +639,7 @@ function buildExecutiveStrip(byMetric: Map<string, MetricRow>): string {
       const row = byMetric.get(metric);
       if (!row) return null;
       const current = normalizeDisplayCell(row.current);
-      if (current === 'N/A') return null;
+      if (isUnavailableDisplay(current)) return null;
       return { label, value: current };
     })
     .filter((v): v is { label: string; value: string } => !!v)
@@ -582,7 +672,7 @@ function buildExecutiveScorecard(byMetric: Map<string, MetricRow>): string {
       const row = byMetric.get(name);
       if (!row) return null;
       const current = normalizeDisplayCell(row.current);
-      if (current === 'N/A') return null;
+      if (isUnavailableDisplay(current)) return null;
       return [
         name,
         current,
@@ -613,6 +703,7 @@ interface VisualItem {
 function buildVisualPages(
   context?: AnalysisContext,
   periodLocks: Record<string, ChartPeriodLock> = {},
+  reportModel: ReportModel | null = null,
 ): string[] {
   if (!context) return [];
   const chartSet = generateChartsWithLocks(context, periodLocks);
@@ -651,7 +742,7 @@ function buildVisualPages(
 
   const clipped = visuals.slice(0, PDF_RENDER_RULES.visuals.maxChartsPerPage * PDF_RENDER_RULES.visuals.maxVisualPages);
   if (clipped.length % 2 === 1) {
-    const insight = buildVisualInsightCard(context, periodLocks);
+    const insight = buildVisualInsightCard(context, reportModel);
     if (insight) clipped.push(insight);
   }
 
@@ -693,21 +784,20 @@ function buildVisualPages(
 
 function buildVisualInsightCard(
   context: AnalysisContext,
-  periodLocks: Record<string, ChartPeriodLock> = {},
+  reportModel: ReportModel | null = null,
 ): VisualItem | null {
-  const ticker = context.tickers[0];
-  if (!ticker) return null;
-  const lock = periodLocks[ticker] || { current: null, prior: null };
-  const de = getRatioValue(context, ticker, 'de', lock.current);
-  const roe = getRatioValue(context, ticker, 'roe', lock.current);
-  const currentRatio = getRatioValue(context, ticker, 'current_ratio', lock.current);
-  const ocf = getLockedMetricValue(context, ticker, 'operating_cash_flow', lock.current);
+  const company = reportModel?.companies[0];
+  if (!company) return null;
+  const de = metricCell(company, 'Debt-to-Equity')?.current ?? null;
+  const roe = metricCell(company, 'Return on Equity')?.current ?? null;
+  const currentRatio = metricCell(company, 'Current Ratio')?.current ?? null;
+  const ocf = metricCell(company, 'Operating Cash Flow')?.current ?? null;
   const bullets: string[] = [];
 
   if (roe !== null) bullets.push(`Return on equity is ${(roe * 100).toFixed(1)}%, indicating current capital productivity.`);
   if (de !== null) bullets.push(`Debt-to-equity stands at ${de.toFixed(2)}x, a direct read on leverage sensitivity.`);
   if (currentRatio !== null) bullets.push(`Current ratio is ${currentRatio.toFixed(2)}x, framing near-term liquidity coverage.`);
-  if (ocf !== null) bullets.push(`Operating cash flow is ${formatCompactCurrency(ocf, { smallDecimals: 0, compactDecimals: 1 })}.`);
+  if (ocf !== null) bullets.push(`Operating cash flow is ${formatCompactCurrency(ocf, { smallDecimals: 0, smartDecimals: true })}.`);
   if (bullets.length === 0) return null;
 
   return {
@@ -723,8 +813,11 @@ function buildDashboardPages(
   context?: AnalysisContext,
   metricRows: MetricRow[] = [],
   periodLocks: Record<string, ChartPeriodLock> = {},
+  reportModel: ReportModel | null = null,
 ): string[] {
-  const parsed = parseDashboardGroups(markdown)
+  const parsed = (reportModel
+    ? dashboardGroupsFromReportModel(reportModel)
+    : parseDashboardGroups(markdown))
     .filter(g => !/additional metrics/i.test(g.title) || g.rows.length >= 3)
     .map(compactDashboardColumns)
     .filter(g => g.rows.length > 0);
@@ -747,7 +840,7 @@ function buildDashboardPages(
     primary: true,
     priority: 10 + idx,
   }));
-  const expansionModules = buildDashboardExpansionModules(context, metricRows, periodLocks);
+  const expansionModules = buildDashboardExpansionModules(context, metricRows, periodLocks, reportModel);
   const packed = packDeterministicPages(modules, {
     pageCapacityUnits: 26,
     minFill: 0.75,
@@ -759,17 +852,69 @@ function buildDashboardPages(
   for (let i = 0; i < packed.length; i++) {
     const title = i === 0 ? 'Key Metrics Dashboard' : `Key Metrics Dashboard (Cont.)`;
     const moduleHtml = packed[i]!.modules.map(m => m.html).join('\n');
+    const stackedLayout = shouldStackDashboardPage(packed[i]!.modules);
     pages.push(`
       <section class="report-page page-dashboard">
         <div class="page-header"><h2>${title}</h2></div>
         ${PERIOD_BANNER_SLOT}
-        <div class="metrics-grid">
+        <div class="metrics-grid${stackedLayout ? ' stacked' : ''}">
           ${moduleHtml}
         </div>
       </section>
     `);
   }
   return pages;
+}
+
+function shouldStackDashboardPage(modules: LayoutModule[]): boolean {
+  const primaryCount = modules.filter(module => module.primary !== false).length;
+  const tableGroupCount = modules.filter(module => /table-group/.test(module.html)).length;
+  return primaryCount <= 2 && tableGroupCount >= 2;
+}
+
+function dashboardGroupsFromReportModel(reportModel: ReportModel): DashboardGroup[] {
+  if (reportModel.type === 'single') {
+    const company = reportModel.companies[0];
+    if (!company) return [];
+    return company.dashboardGroups.map(group => ({
+      title: group.title,
+      headers: ['Metric', 'Current Value', 'Prior Period', 'Change (%)'],
+      rows: group.rows.map(metric => [
+        metric.label,
+        metric.currentDisplay,
+        metric.priorDisplay,
+        metric.changeDisplay,
+      ]),
+    }));
+  }
+
+  const tickers = reportModel.companies.map(company => company.ticker);
+  const merged = new Map<string, Map<string, string>>();
+  for (const company of reportModel.companies) {
+    for (const group of company.comparisonGroups) {
+      let bucket = merged.get(group.title);
+      if (!bucket) {
+        bucket = new Map();
+        merged.set(group.title, bucket);
+      }
+      for (const row of group.rows) {
+        if (!bucket.has(row.label)) {
+          bucket.set(row.label, row.label);
+        }
+      }
+    }
+  }
+
+  return Array.from(merged.entries()).map(([title, rows]) => ({
+    title,
+    headers: ['Metric', ...tickers],
+    rows: Array.from(rows.values())
+      .sort((a, b) => a.localeCompare(b))
+      .map(label => [
+        label,
+        ...reportModel.companies.map(company => company.metricsByLabel.get(label)?.currentDisplay || 'Unavailable'),
+      ]),
+  }));
 }
 
 function parseDashboardGroups(markdown: string): DashboardGroup[] {
@@ -814,15 +959,15 @@ function compactDashboardColumns(group: DashboardGroup): DashboardGroup {
 
   const total = group.rows.length;
   if (total === 0) return group;
-  const emptyPrior = group.rows.filter(r => normalizeDisplayCell(r[priorIdx] || '') === 'N/A').length;
-  const emptyChange = group.rows.filter(r => normalizeDisplayCell(r[changeIdx] || '') === 'N/A').length;
+  const emptyPrior = group.rows.filter(r => isUnavailableDisplay(r[priorIdx] || '')).length;
+  const emptyChange = group.rows.filter(r => isUnavailableDisplay(r[changeIdx] || '')).length;
   const sparse = emptyPrior / total >= 0.8 && emptyChange / total >= 0.8;
   if (!sparse) return group;
 
   const headers = [group.headers[0] || 'Metric', group.headers[currentIdx] || 'Current Value', 'Note'];
   const rows = group.rows.map(r => [
     r[0] || 'Metric',
-    r[currentIdx] || 'N/A',
+    r[currentIdx] || 'Unavailable',
     'Latest annual snapshot',
   ]);
   return { title: group.title, headers, rows };
@@ -851,56 +996,98 @@ function buildDashboardExpansionModules(
   context: AnalysisContext | undefined,
   metricRows: MetricRow[],
   periodLocks: Record<string, ChartPeriodLock> = {},
+  reportModel: ReportModel | null = null,
 ): LayoutModule[] {
   const modules: LayoutModule[] = [];
-  const secondary = buildSecondaryMetricsModule(context, periodLocks);
+  const comparisonBasis = buildComparisonBasisModule(reportModel);
+  if (comparisonBasis) modules.push(comparisonBasis);
+  const comparisonCoverage = buildComparisonCoverageModule(reportModel);
+  if (comparisonCoverage) modules.push(comparisonCoverage);
+  const secondary = buildSecondaryMetricsModule(reportModel);
   if (secondary) modules.push(secondary);
-  const derived = buildDerivedMetricsStripModule(context, metricRows, periodLocks);
-  if (derived) modules.push(derived);
   const notes = buildMethodNotesModule(context);
   if (notes) modules.push(notes);
   return modules;
 }
 
-function buildSecondaryMetricsModule(
-  context?: AnalysisContext,
-  periodLocks: Record<string, ChartPeriodLock> = {},
-): LayoutModule | null {
-  const ticker = context?.tickers?.[0];
-  if (!ticker || context?.type !== 'single') return null;
-  const periodMap = buildAnnualStatementPeriodMap(context, ticker);
-  const periods = Object.keys(periodMap).sort((a, b) => b.localeCompare(a));
-  if (periods.length === 0) return null;
-  const lock = periodLocks[ticker] || { current: null, prior: null };
-  const currentKey = lock.current && periodMap[lock.current] ? lock.current : periods[0]!;
-  const priorKey = lock.prior && periodMap[lock.prior]
-    ? lock.prior
-    : periods.find(p => p.localeCompare(currentKey) < 0) || null;
-  const current = periodMap[currentKey]!;
-  const prior = priorKey ? periodMap[priorKey] : undefined;
+function buildComparisonBasisModule(reportModel: ReportModel | null): LayoutModule | null {
+  if (!reportModel || reportModel.type !== 'comparison' || !reportModel.comparisonBasis) return null;
+  const basis = reportModel.comparisonBasis;
+  const bullets = [
+    `${comparisonBasisLabel(basis.effective_mode)} is active.`,
+    basis.note,
+    ...Object.entries(basis.peer_periods)
+      .slice(0, 3)
+      .map(([ticker, binding]) => `${ticker}: current ${binding.current_period || 'Unavailable'}; prior ${binding.prior_period || 'Unavailable'}.`),
+  ].filter(Boolean);
 
-  const defs: Array<{ key: string; label: string; unit: string }> = [
-    { key: 'gross_profit', label: 'Gross Profit', unit: 'USD' },
-    { key: 'current_assets', label: 'Current Assets', unit: 'USD' },
-    { key: 'current_liabilities', label: 'Current Liabilities', unit: 'USD' },
-    { key: 'cash_and_equivalents', label: 'Cash & Equivalents', unit: 'USD' },
-    { key: 'long_term_debt', label: 'Long-Term Debt', unit: 'USD' },
-    { key: 'short_term_debt', label: 'Short-Term Debt', unit: 'USD' },
-    { key: 'shares_outstanding', label: 'Shares Outstanding', unit: 'shares' },
-  ];
+  return {
+    id: 'comparison-basis-module',
+    html: `
+      <section class="module method-notes comparison-basis-module">
+        <h3>Comparison Basis</h3>
+        <ul>${clipBullets(bullets, 4).map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>
+      </section>
+    `,
+    units: 7,
+    primary: false,
+    priority: 30,
+  };
+}
 
-  const rows: string[][] = [];
-  for (const def of defs) {
-    const currentVal = current[def.key];
-    if (!isFinite(currentVal)) continue;
-    const priorVal = prior ? prior[def.key] : undefined;
-    rows.push([
-      def.label,
-      formatByUnit(currentVal!, def.unit),
-      (typeof priorVal === 'number' && isFinite(priorVal)) ? formatByUnit(priorVal, def.unit) : 'N/A',
-      'Deterministic carry-through from appendix source lines',
-    ]);
+function buildComparisonCoverageModule(reportModel: ReportModel | null): LayoutModule | null {
+  if (!reportModel || reportModel.type !== 'comparison') return null;
+  const bullets: string[] = [];
+
+  for (const company of reportModel.companies.slice(0, 4)) {
+    const unavailable = company.metrics
+      .filter(metric => isUnavailableDisplay(metric.currentDisplay))
+      .map(metric => metric.label);
+    if (unavailable.length === 0) {
+      bullets.push(`${company.ticker}: all surfaced peer-dashboard metrics are currently available on the locked basis.`);
+      continue;
+    }
+    bullets.push(
+      `${company.ticker}: ${unavailable.length} peer metrics remain unavailable on the locked basis (${unavailable.slice(0, 3).join(', ')}${unavailable.length > 3 ? ', ...' : ''}).`,
+    );
   }
+
+  if (bullets.length === 0) return null;
+  return {
+    id: 'comparison-coverage-module',
+    html: `
+      <section class="module method-notes comparison-coverage-module">
+        <h3>Coverage Notes</h3>
+        <ul>${clipBullets(bullets, 4).map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>
+      </section>
+    `,
+    units: 7,
+    primary: false,
+    priority: 35,
+  };
+}
+
+function buildSecondaryMetricsModule(reportModel: ReportModel | null): LayoutModule | null {
+  const company = reportModel?.companies[0];
+  if (!company || reportModel?.type !== 'single') return null;
+
+  const defs = [
+    { label: 'Gross Profit', note: 'Reported income-statement line when available' },
+    { label: 'Current Assets', note: 'Reported balance-sheet line' },
+    { label: 'Current Liabilities', note: 'Reported balance-sheet line' },
+    { label: 'Cash & Equivalents', note: 'Reported balance-sheet cash line' },
+    { label: 'Long-Term Debt', note: 'Reported balance-sheet debt line' },
+    { label: 'Short-Term Debt', note: 'Reported balance-sheet debt line' },
+    { label: 'Shares Outstanding', note: 'Reported period-end shares' },
+  ] as const;
+
+  const rows: string[][] = defs
+    .map(def => {
+      const metric = metricCell(company, def.label);
+      if (!metric || isUnavailableDisplay(metric.currentDisplay)) return null;
+      return [def.label, metric.currentDisplay, metric.priorDisplay, def.note];
+    })
+    .filter((row): row is string[][][number] => !!row);
 
   if (rows.length < 3) return null;
   const headers = ['Metric', 'Current Value', 'Prior Period', 'Note'];
@@ -918,72 +1105,12 @@ function buildSecondaryMetricsModule(
   };
 }
 
-function buildDerivedMetricsStripModule(
-  context: AnalysisContext | undefined,
-  metricRows: MetricRow[],
-  periodLocks: Record<string, ChartPeriodLock> = {},
-): LayoutModule | null {
-  const revenue = parseRowValue(metricRows, 'Revenue');
-  const fcf = parseRowValue(metricRows, 'Free Cash Flow');
-  const ocf = parseRowValue(metricRows, 'Operating Cash Flow');
-  const opIncome = parseRowValue(metricRows, 'Operating Income');
-  const equity = parseRowValue(metricRows, "Stockholders' Equity");
-  const ticker = context?.tickers?.[0];
-  if (!ticker || context?.type !== 'single') return null;
-
-  const periodMap = buildAnnualStatementPeriodMap(context, ticker);
-  const periods = Object.keys(periodMap).sort((a, b) => b.localeCompare(a));
-  const lock = periodLocks[ticker] || { current: null, prior: null };
-  const currentKey = lock.current && periodMap[lock.current] ? lock.current : (periods[0] || null);
-  const current = currentKey ? periodMap[currentKey] : undefined;
-  const totalDebt = sumFinite(current?.['long_term_debt'], current?.['short_term_debt']);
-  const cash = finiteOrNull(current?.['cash_and_equivalents']);
-
-  if (revenue === null || fcf === null || ocf === null || opIncome === null || equity === null) {
-    return null;
-  }
-  if (totalDebt === null || cash === null || equity <= 0 || revenue === 0) return null;
-
-  const fcfMargin = fcf / revenue;
-  const cfoMargin = ocf / revenue;
-  const roicProxy = opIncome / (equity + totalDebt);
-  const netDebt = totalDebt - cash;
-
-  const cards: Array<{ label: string; value: string; note: string }> = [
-    { label: 'FCF Margin', value: `${(fcfMargin * 100).toFixed(1)}%`, note: 'FCF / Revenue' },
-    { label: 'CFO Margin', value: `${(cfoMargin * 100).toFixed(1)}%`, note: 'CFO / Revenue' },
-    { label: 'ROIC Proxy', value: `${(roicProxy * 100).toFixed(1)}%`, note: 'OpInc / (Equity + Debt)' },
-    { label: 'Net Debt', value: formatByUnit(netDebt, 'USD'), note: 'Debt - Cash' },
-  ];
-
-  return {
-    id: 'dashboard-derived-strip',
-    html: `
-      <section class="module derived-strip">
-        <h3>Derived Metrics Strip</h3>
-        <div class="derived-grid">
-          ${cards.map(card => `
-            <article class="derived-card">
-              <h4>${escapeHTML(card.label)}</h4>
-              <p>${escapeHTML(card.value)}</p>
-              <span>${escapeHTML(card.note)}</span>
-            </article>
-          `).join('')}
-        </div>
-      </section>
-    `,
-    units: 5,
-    primary: false,
-    priority: 70,
-  };
-}
-
 function buildMethodNotesModule(context?: AnalysisContext): LayoutModule | null {
   if (!context) return null;
   const bullets = [
     'Period lock is deterministic: headline, dashboard, and appendix are aligned to the same annual basis.',
     'Derived metrics are formula-based and only shown when required source inputs are present.',
-    'N/A appears only when a required input is genuinely unavailable in the filing-derived dataset.',
+    'Unavailable, policy-excluded, and QA-excluded fields come directly from canonical reason codes rather than template-side omissions.',
   ];
   return {
     id: 'dashboard-method-notes',
@@ -1043,6 +1170,7 @@ function buildCommentaryPage(
   context: AnalysisContext | undefined,
   metricRows: MetricRow[],
   periodLocks: Record<string, ChartPeriodLock> = {},
+  reportModel: ReportModel | null = null,
 ): string {
   const strengthsSrc = report.type === 'comparison'
     ? sections['relative_strengths']?.content || ''
@@ -1056,8 +1184,8 @@ function buildCommentaryPage(
 
   const generated = context
     ? (report.type === 'comparison'
-        ? buildComparisonCommentaryFallback(context, metricRows, periodLocks)
-        : buildSingleCommentaryFallback(context, metricRows, periodLocks))
+        ? buildComparisonCommentaryFallback(context, reportModel, periodLocks)
+        : buildSingleCommentaryFallback(context, reportModel?.companies[0] || null, periodLocks))
     : { standout: [], watch: [], interpretation: [] };
 
   const standout = finalizeCommentaryBullets(generated.standout, sectionStandout, 3);
@@ -1071,7 +1199,11 @@ function buildCommentaryPage(
       ${buildCommentaryBlock('What stands out', standout)}
       ${buildCommentaryBlock('Watch items', watch)}
       ${buildCommentaryBlock('Analyst interpretation', interpretation)}
-      ${buildCommentaryChecklist(context, metricRows)}
+      ${buildCommentaryChecklist(
+        context,
+        reportModel?.companies[0] ? metricRowsFromCompany(reportModel.companies[0]) : metricRows,
+        reportModel,
+      )}
     </section>
   `;
 }
@@ -1152,6 +1284,7 @@ function sanitizeSentence(input: string): string {
     .replace(/\s+/g, ' ')
     .replace(/^[-*]\s+/, '')
     .replace(/^\d+\.\s+/, '')
+    .replace(/^Watch Items\s*/i, '')
     .replace(/\b([A-Za-z][A-Za-z ]{1,30})\s+\1\b/gi, '$1')
     .replace(/\b(z-?score|sigma|std(?:dev)?|standard deviation)\b/gi, 'volatility')
     .replace(/\bmean\b/gi, 'historical average')
@@ -1178,7 +1311,34 @@ function buildCommentaryBlock(title: string, bullets: string[]): string {
 function buildCommentaryChecklist(
   context: AnalysisContext | undefined,
   metricRows: MetricRow[],
+  reportModel: ReportModel | null = null,
 ): string {
+  if (context?.type === 'comparison') {
+    const basis = reportModel?.comparisonBasis;
+    const checklist: string[] = [];
+    if (basis?.note) checklist.push(basis.note);
+    const peerPeriods = basis
+      ? Object.entries(basis.peer_periods)
+        .map(([ticker, binding]) => `${ticker}: ${binding.current_period || 'Unavailable'} current / ${binding.prior_period || 'Unavailable'} prior`)
+      : [];
+    if (peerPeriods.length > 0) checklist.push(`Locked peer periods: ${peerPeriods.join('; ')}.`);
+    const unavailable = (reportModel?.companies || [])
+      .map(company => ({
+        ticker: company.ticker,
+        count: company.metrics.filter(metric => isUnavailableDisplay(metric.currentDisplay)).length,
+      }))
+      .filter(item => item.count > 0);
+    if (unavailable.length > 0) {
+      checklist.push(`Current peer-metric gaps remain for ${unavailable.map(item => `${item.ticker} (${item.count})`).join(', ')}.`);
+    }
+    if (checklist.length === 0) return '';
+    return `
+      <section class="module checklist-block">
+        <h3>Comparison Checklist</h3>
+        <ul>${clipBullets(checklist, 4).map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>
+      </section>
+    `;
+  }
   const checklist: string[] = [];
   const de = findMetric(metricRows, 'Debt-to-Equity');
   const current = findMetric(metricRows, 'Current Ratio');
@@ -1199,10 +1359,11 @@ function buildCommentaryChecklist(
 
 function buildSingleCommentaryFallback(
   context: AnalysisContext,
-  metricRows: MetricRow[],
+  company: CompanyReportModel | null,
   periodLocks: Record<string, ChartPeriodLock> = {},
 ): { standout: string[]; watch: string[]; interpretation: string[] } {
   const ticker = context.tickers[0]!;
+  const metricRows = company ? metricRowsFromCompany(company) : [];
   const standout: string[] = [];
   const watch: string[] = [];
   const interpretation: string[] = [];
@@ -1219,22 +1380,44 @@ function buildSingleCommentaryFallback(
 
   if (revenue) {
     const ch = normalizeDisplayCell(revenue.change);
-    standout.push(ch !== 'N/A'
+    standout.push(!isUnavailableDisplay(ch)
       ? `Revenue is ${revenue.current}, with ${ch} growth versus the prior annual filing.`
       : `Revenue is ${revenue.current} on the latest annual filing.`);
   }
   if (netIncome) {
     const niChange = normalizeDisplayCell(netIncome.change);
-    standout.push(niChange !== 'N/A'
+    standout.push(!isUnavailableDisplay(niChange)
       ? `Net income is ${netIncome.current}, with ${niChange} change year over year.`
       : `Net income is ${netIncome.current}, confirming current earnings scale.`);
   }
   if (opMargin && netMargin) {
-    standout.push(`Operating margin is ${opMargin.current} and net margin is ${netMargin.current}, indicating current earnings conversion and bottom-line retention.`);
+    const opNum = parseNumber(opMargin.current);
+    const netNum = parseNumber(netMargin.current);
+    const bothNegative = (opNum !== null && opNum < 0) && (netNum !== null && netNum < 0);
+    const eitherNegative = (opNum !== null && opNum < 0) || (netNum !== null && netNum < 0);
+    if (bothNegative) {
+      standout.push(`Operating margin is ${opMargin.current} and net margin is ${netMargin.current}, indicating operating losses at both levels.`);
+    } else if (eitherNegative) {
+      standout.push(`Operating margin is ${opMargin.current} and net margin is ${netMargin.current}, reflecting mixed profitability across operating and bottom-line levels.`);
+    } else {
+      standout.push(`Operating margin is ${opMargin.current} and net margin is ${netMargin.current}, indicating current earnings conversion and bottom-line retention.`);
+    }
   } else if (opMargin) {
-    standout.push(`Operating margin at ${opMargin.current} supports strong operating conversion in the latest period.`);
+    const opNum = parseNumber(opMargin.current);
+    if (opNum !== null && opNum < 0) {
+      standout.push(`Operating margin at ${opMargin.current} indicates operating losses in the latest period.`);
+    } else {
+      standout.push(`Operating margin at ${opMargin.current} supports operating conversion in the latest period.`);
+    }
   }
-  if (fcf) standout.push(`Free cash flow is ${fcf.current}, supporting internal funding capacity and earnings quality.`);
+  if (fcf) {
+    const fcfNum = parseNumber(fcf.current);
+    if (fcfNum !== null && fcfNum < 0) {
+      standout.push(`Free cash flow is ${fcf.current}, indicating reliance on external financing.`);
+    } else {
+      standout.push(`Free cash flow is ${fcf.current}, supporting internal funding capacity and earnings quality.`);
+    }
+  }
 
   const deNum = de ? parseNumber(de.current) : null;
   if (de && deNum !== null && deNum > 2) watch.push(`Leverage is elevated at ${de.current}, which raises refinancing sensitivity.`);
@@ -1258,12 +1441,25 @@ function buildSingleCommentaryFallback(
     watch.push('Validate next-period durability before extrapolating the latest one-year growth and margin profile.');
   }
 
-  interpretation.push(`${ticker} currently combines scale and profitability, but the key decision point is whether margin and cash conversion stay consistent across the next filings.`);
+  const niNum = netIncome ? parseNumber(netIncome.current) : null;
+  const opMarginNum = opMargin ? parseNumber(opMargin.current) : null;
+  const isProfitable = (niNum !== null && niNum > 0) || (opMarginNum !== null && opMarginNum > 0);
+
+  if (isProfitable) {
+    interpretation.push(`${ticker} currently combines scale and profitability, but the key decision point is whether margin and cash conversion stay consistent across the next filings.`);
+  } else {
+    interpretation.push(`${ticker} is not yet profitable, so the key decision point is the trajectory toward breakeven and whether cash runway supports continued operations.`);
+  }
   if (de && currentRatio) {
     interpretation.push(`Balance-sheet posture is best read jointly: debt-to-equity at ${de.current} and current ratio at ${currentRatio.current}.`);
   }
   if (fcf) {
-    interpretation.push(`Cash generation remains a central validation point, with free cash flow at ${fcf.current} in the latest annual period.`);
+    const fcfNum = parseNumber(fcf.current);
+    if (fcfNum !== null && fcfNum < 0) {
+      interpretation.push(`Cash burn remains a central monitoring point, with free cash flow at ${fcf.current} in the latest annual period.`);
+    } else {
+      interpretation.push(`Cash generation remains a central validation point, with free cash flow at ${fcf.current} in the latest annual period.`);
+    }
   }
 
   return { standout, watch, interpretation };
@@ -1271,35 +1467,36 @@ function buildSingleCommentaryFallback(
 
 function buildComparisonCommentaryFallback(
   context: AnalysisContext,
-  metricRows: MetricRow[],
+  reportModel: ReportModel | null,
   periodLocks: Record<string, ChartPeriodLock> = {},
 ): { standout: string[]; watch: string[]; interpretation: string[] } {
   const standout: string[] = [];
   const watch: string[] = [];
   const interpretation: string[] = [];
 
-  const revenueRow = metricRows.find(r => r.metric === 'Revenue');
-  if (context.tickers.length >= 2) {
-    const t0 = context.tickers[0]!;
-    const t1 = context.tickers[1]!;
-    const rev0 = getLockedMetricValue(context, t0, 'revenue', periodLocks[t0]?.current ?? null);
-    const rev1 = getLockedMetricValue(context, t1, 'revenue', periodLocks[t1]?.current ?? null);
-    if (rev0 !== null && rev1 !== null) {
-      const leader = rev0 >= rev1 ? t0 : t1;
-      const lagger = rev0 >= rev1 ? t1 : t0;
-      const leadVal = formatCompactCurrency(Math.max(rev0, rev1), { smallDecimals: 0, compactDecimals: 1 });
-      const lagVal = formatCompactCurrency(Math.min(rev0, rev1), { smallDecimals: 0, compactDecimals: 1 });
-      standout.push(`${leader} leads on revenue scale (${leadVal} vs ${lagger} at ${lagVal}).`);
+  const companies = reportModel?.companies || [];
+  if (companies.length >= 2) {
+    const revenueRank = companies
+      .map(company => ({
+        ticker: company.ticker,
+        revenue: company.metricsByLabel.get('Revenue')?.current ?? null,
+      }))
+      .filter(item => item.revenue !== null)
+      .sort((a, b) => (b.revenue ?? 0) - (a.revenue ?? 0));
+    if (revenueRank.length >= 2) {
+      const leader = revenueRank[0]!;
+      const lagger = revenueRank[1]!;
+      standout.push(
+        `${leader.ticker} leads on revenue scale (${formatCompactCurrency(leader.revenue!, { smallDecimals: 0, smartDecimals: true })} vs ${lagger.ticker} at ${formatCompactCurrency(lagger.revenue!, { smallDecimals: 0, smartDecimals: true })}).`,
+      );
     }
-  }
-  if (revenueRow) {
-    standout.push(`Peer comparisons reflect each company’s latest annual filing period rather than a forced same-date snapshot.`);
+    standout.push('Peer comparisons use each company’s locked annual filing period rather than a forced same-date restatement.');
   }
 
-  for (const ticker of context.tickers.slice(0, 2)) {
-    const de = getRatioValue(context, ticker, 'de', periodLocks[ticker]?.current ?? null);
+  for (const company of companies.slice(0, 4)) {
+    const de = company.metricsByLabel.get('Debt-to-Equity')?.current ?? null;
     if (de !== null && de > 2) {
-      watch.push(`${ticker} leverage is elevated at ${de.toFixed(2)}x debt-to-equity.`);
+      watch.push(`${company.ticker} leverage is elevated at ${de.toFixed(2)}x debt-to-equity.`);
     }
   }
   if (watch.length === 0) watch.push('Fiscal-year timing and accounting mix should be normalized before drawing hard peer conclusions.');
@@ -1316,6 +1513,8 @@ function buildAppendixPages(
   context: AnalysisContext | undefined,
   sections: Record<string, ReportSection>,
   insights: Record<string, AnalysisInsights> = {},
+  reportModel: ReportModel | null = null,
+  canonicalPackage?: CanonicalReportPackage,
 ): string[] {
   if (!context) {
     const fallback = normalizeMissingDataMarkdown(sections['financial_statements']?.content || '*Financial statements unavailable.*');
@@ -1328,31 +1527,22 @@ function buildAppendixPages(
     `];
   }
 
+  const model = reportModel || requireCanonicalReportPackage(canonicalPackage, 'buildAppendixPages').reportModel;
   const modules: AppendixModule[] = [];
-  const statementOrder: Array<{ type: FinancialStatement['statement_type']; label: string }> = [
-    { type: 'income', label: 'Income Statement' },
-    { type: 'balance_sheet', label: 'Balance Sheet' },
-    { type: 'cash_flow', label: 'Cash Flow Statement' },
-  ];
 
-  for (let tIdx = 0; tIdx < report.tickers.length; tIdx++) {
-    const ticker = report.tickers[tIdx]!;
-    const lockCurrent = insights[ticker]?.snapshotPeriod ?? null;
+  for (let tIdx = 0; tIdx < model.companies.length; tIdx++) {
+    const company = model.companies[tIdx]!;
     const letterBase = String.fromCharCode(65 + Math.min(25, tIdx * 3));
-    const statements = context.statements[ticker] || [];
-    const canonicalPeriodMap = buildCanonicalAnnualPeriodMap(context, ticker);
-    for (let sIdx = 0; sIdx < statementOrder.length; sIdx++) {
-      const def = statementOrder[sIdx]!;
-      const statement = statements.find(s => s.statement_type === def.type);
-      if (!statement || statement.periods.length === 0) continue;
-
-      const { headers, rows } = statementToTable(statement, canonicalPeriodMap, lockCurrent);
+    for (let sIdx = 0; sIdx < company.statementTables.length; sIdx++) {
+      const table = company.statementTables[sIdx]!;
+      const headers = ['Metric', ...table.periodLabels];
+      const rows = table.rows.map(row => [row.label, ...row.displays]);
       const chunks = chunkWithMinTail(rows, PDF_RENDER_RULES.tables.maxAppendixRows, 6);
       for (let cIdx = 0; cIdx < chunks.length; cIdx++) {
         const appendixLetter = String.fromCharCode(letterBase.charCodeAt(0) + sIdx);
         const suffix = chunks.length > 1 ? ` (Part ${cIdx + 1}/${chunks.length})` : '';
         modules.push({
-          title: `Appendix ${appendixLetter} — ${ticker} ${def.label}${suffix}`,
+          title: `Appendix ${appendixLetter} — ${company.ticker} ${table.title}${suffix}`,
           headers,
           rows: chunks[cIdx]!,
         });
@@ -1382,10 +1572,14 @@ function buildAppendixPages(
       </section>
     `,
   }));
+  const appendixExpansionModules = model.companies.flatMap((company, idx) =>
+    buildAppendixNoteModules(company, idx),
+  );
   const packed = packDeterministicPages(packModules, {
     pageCapacityUnits: 40,
     minFill: 0.75,
     minPrimaryModules: 1,
+    expansionModules: appendixExpansionModules,
   });
 
   return packed.map((bucket, idx) => `
@@ -1399,82 +1593,93 @@ function buildAppendixPages(
   `);
 }
 
-function statementToTable(
-  statement: FinancialStatement,
-  canonicalPeriodMap: Map<string, Record<string, number>>,
-  lockCurrent: string | null = null,
-): { headers: string[]; rows: string[][] } {
-  const selectedPeriods = selectStatementPeriods(statement, canonicalPeriodMap, lockCurrent, 3);
-  const headers = ['Metric', ...selectedPeriods.map(p => formatPeriodLabel(p))];
-  const periodDataMap = new Map(statement.periods.map(p => [p.period, p.data]));
-  const getValue = (period: string, metric: string): number | null => {
-    const canonical = canonicalPeriodMap.get(period)?.[metric];
-    if (canonical !== undefined && isFinite(canonical)) return canonical;
-    const raw = periodDataMap.get(period)?.[metric];
-    if (raw === undefined || raw === null || !isFinite(raw)) return null;
-    return normalizeMetricValue(metric, raw);
-  };
+function buildAppendixSupportBullets(company: CompanyReportModel): string[] {
+  const bullets: string[] = [];
 
-  const mappings = getMappingsForStatement(statement.statement_type);
-  const allMetrics = new Set<string>();
-  for (const mapping of mappings) {
-    if (selectedPeriods.some(period => getValue(period, mapping.standardName) !== null)) {
-      allMetrics.add(mapping.standardName);
-    }
-  }
-  for (const period of selectedPeriods) {
-    const periodData = periodDataMap.get(period) || {};
-    for (const key of Object.keys(periodData)) {
-      if (selectedPeriods.some(p => getValue(p, key) !== null)) {
-        allMetrics.add(key);
-      }
+  if (company.snapshotPeriod || company.priorPeriod) {
+    const periods = [company.snapshotLabel, company.priorLabel]
+      .filter(label => label && label !== 'N/A')
+      .join(' and ');
+    if (periods) {
+      bullets.push(`Locked annual appendix basis uses ${periods}.`);
     }
   }
 
-  const mappingOrder = new Map(mappings.map((m, i) => [m.standardName, i] as const));
-  const metrics = Array.from(allMetrics).sort((a, b) => {
-    const ai = mappingOrder.has(a) ? mappingOrder.get(a)! : 999;
-    const bi = mappingOrder.has(b) ? mappingOrder.get(b)! : 999;
-    return ai === bi ? a.localeCompare(b) : ai - bi;
-  });
-
-  const rows = metrics.map(metric => {
-    const mapping = getMappingByName(metric);
-    const display = mapping?.displayName || toTitle(metric);
-    const vals = selectedPeriods.map(period => {
-      const n = getValue(period, metric);
-      if (n === null) return 'N/A';
-      return formatByUnit(n, mapping?.unit);
+  const basisNotes = company.metrics
+    .map(metric => metric.basis)
+    .filter((basis): basis is NonNullable<CanonicalMetricCell['basis']> => !!basis)
+    .filter((basis, idx, arr) => (
+      arr.findIndex(other =>
+        other.displayName === basis.displayName
+        && other.basis === basis.basis
+        && other.disclosureText === basis.disclosureText
+        && other.note === basis.note
+      ) === idx
+    ))
+    .slice(0, 3)
+    .map(basis => {
+      const text = (basis.disclosureText || basis.note || basis.basis).replace(/[.\s]+$/g, '');
+      return `${basis.displayName}: ${text}.`;
     });
-    return [display, ...vals];
-  });
+  bullets.push(...basisNotes);
 
-  return { headers, rows };
+  const derivedRows = company.statementTables
+    .flatMap(table => table.rows.map(row => row.label))
+    .filter(label => /\((?:derived|reported\/reconciled)\)/i.test(label));
+  if (derivedRows.length > 0) {
+    const lead = derivedRows.slice(0, 3).map(label => label.replace(/\s+\((?:derived|reported\/reconciled)\)$/i, ''));
+    const remainder = derivedRows.length - lead.length;
+    bullets.push(
+      `Derived or reconciled appendix rows include ${lead.join(', ')}${remainder > 0 ? `, and ${remainder} more` : ''}.`,
+    );
+  }
+
+  const unavailableCells = company.statementTables.reduce((count, table) => (
+    count + table.rows.reduce((rowCount, row) => (
+      rowCount + row.displays.filter(display => display === 'N/A').length
+    ), 0)
+  ), 0);
+  if (unavailableCells > 0) {
+    bullets.push('N/A appears only where the locked filing basis did not report a value and no governed derivation was available.');
+  }
+
+  const hasCashFlowOutflows = company.statementTables.some(table => table.statementType === 'cash_flow');
+  if (hasCashFlowOutflows) {
+    bullets.push('Cash-flow outflows are normalized to negative values so appendix signs match the dashboard and narrative.');
+  }
+
+  if (company.alignedFiling?.form || company.alignedFiling?.filed) {
+    bullets.push(
+      `Primary filing anchor: ${company.alignedFiling?.form || 'annual filing'}${company.alignedFiling?.filed ? ` filed ${company.alignedFiling.filed}` : ''}.`,
+    );
+  }
+
+  if (company.fxNote) {
+    bullets.push(`FX note: ${company.fxNote}.`);
+  }
+
+  return clipBullets(bullets.filter(Boolean), 7);
 }
 
-function selectStatementPeriods(
-  statement: FinancialStatement,
-  canonicalPeriodMap: Map<string, Record<string, number>>,
-  lockCurrent: string | null,
-  maxPeriods: number,
-): string[] {
-  const statementPeriods = Array.from(new Set(statement.periods.map(p => p.period)))
-    .sort((a, b) => b.localeCompare(a));
-  const canonicalPeriods = Array.from(canonicalPeriodMap.keys()).sort((a, b) => b.localeCompare(a));
-  const basePeriods = canonicalPeriods.length > 0 ? canonicalPeriods : statementPeriods;
-  if (basePeriods.length === 0) return [];
+function buildAppendixNoteModules(company: CompanyReportModel, priorityIndex: number): LayoutModule[] {
+  const bullets = buildAppendixSupportBullets(company);
+  if (bullets.length === 0) return [];
 
-  const lockIdx = lockCurrent ? basePeriods.indexOf(lockCurrent) : -1;
-  const startIdx = lockIdx >= 0 ? lockIdx : 0;
-  const selected = basePeriods.slice(startIdx, startIdx + maxPeriods);
-  if (selected.length >= maxPeriods) return selected;
-
-  for (const period of statementPeriods) {
-    if (selected.length >= maxPeriods) break;
-    if (!selected.includes(period)) selected.push(period);
-  }
-
-  return selected.slice(0, maxPeriods);
+  const chunks = chunkWithMinTail(bullets, 3, 2);
+  return chunks.map((chunkBullets, idx) => ({
+    id: `appendix-notes-${company.ticker}-${idx + 1}`,
+    units: 3 + chunkBullets.length,
+    primary: false,
+    priority: 500 + priorityIndex * 10 + idx,
+    html: `
+      <section class="appendix-section appendix-notes">
+        <h3>${escapeHTML(idx === 0 ? `Appendix Notes — ${company.ticker}` : `Appendix Notes — ${company.ticker} (Cont.)`)}</h3>
+        <ul>
+          ${chunkBullets.map(bullet => `<li>${escapeHTML(bullet)}</li>`).join('\n')}
+        </ul>
+      </section>
+    `,
+  }));
 }
 
 function formatByUnit(n: number, unit?: string): string {
@@ -1482,41 +1687,15 @@ function formatByUnit(n: number, unit?: string): string {
   if (unit === '%' || unit === 'pure') return n.toFixed(2);
   if (unit === 'USD/share' || unit === 'USD/shares') return `$${n.toFixed(2)}`;
   if (unit === 'shares') return formatCompactShares(n);
-  return formatUsdInBillions(n);
-}
-
-function formatUsdInBillions(n: number): string {
-  const sign = n < 0 ? '-' : '';
-  const abs = Math.abs(n);
-  // Use $M below $1B to preserve precision in dashboard/source coherence checks.
-  if (abs < 1_000_000_000) {
-    const m = abs / 1e6;
-    return `${sign}$${m.toFixed(m >= 10 ? 0 : 1)}M`;
-  }
-  const b = abs / 1e9;
-  if (b >= 100) return `${sign}$${b.toFixed(0)}B`;
-  if (b >= 10) return `${sign}$${b.toFixed(1)}B`;
-  return `${sign}$${b.toFixed(2)}B`;
-}
-
-function toTitle(metric: string): string {
-  return metric.split('_').map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(' ');
-}
-
-function formatPeriodLabel(period: string): string {
-  const date = new Date(period);
-  if (isNaN(date.getTime())) return period;
-  const y = date.getUTCFullYear();
-  const m = date.getUTCMonth() + 1;
-  if (m >= 10) return `FY${y}`;
-  const names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
-  return `FY${y} (${names[m - 1] || 'Sep'})`;
+  return formatCompactCurrency(n, { smallDecimals: 0, smartDecimals: true });
 }
 
 function buildSourcesPage(
   context: AnalysisContext | undefined,
   sections: Record<string, ReportSection>,
   report: Report,
+  reportModel: ReportModel | null = null,
+  canonicalPackage?: CanonicalReportPackage,
 ): string {
   const sourceRows: Array<{
     ticker: string;
@@ -1527,18 +1706,18 @@ function buildSourcesPage(
     url: string;
   }> = [];
   if (context) {
-    for (const ticker of context.tickers) {
-      const filings = context.filings[ticker] || [];
-      const cik = context.facts[ticker]?.cik || 'N/A';
-      const picked = filings.slice(0, 6);
-      for (const filing of picked) {
+    const model = reportModel || requireCanonicalReportPackage(canonicalPackage, 'buildSourcesPage').reportModel;
+    for (const company of model.companies) {
+      const cik = context.facts[company.ticker]?.cik || 'N/A';
+      for (const filing of company.filingReferences.slice(0, 6)) {
+        if (!filing.url) continue;
         sourceRows.push({
-          ticker,
+          ticker: company.ticker,
           cik,
-          accession: filing.accession_number,
-          form: filing.filing_type,
-          filed: filing.date_filed,
-          url: filing.primary_document_url,
+          accession: filing.accessionNumber || 'N/A',
+          form: filing.form || 'SEC filing',
+          filed: filing.filed || 'N/A',
+          url: filing.url,
         });
       }
     }
@@ -1569,6 +1748,10 @@ function buildSourcesPage(
 
   const runDate = escapeHTML(new Date(report.generated_at).toISOString().slice(0, 10));
   const retrievalDate = escapeHTML(new Date().toISOString().slice(0, 10));
+  const comparisonMethodNote = report.type === 'comparison'
+    ? (report.comparison_basis?.note
+      || 'Comparisons reflect each issuer’s latest annual filing period unless otherwise noted.')
+    : 'Standalone metrics are locked to the selected annual current/prior basis for the issuer.';
 
   return `
     <section class="report-page page-sources">
@@ -1580,7 +1763,7 @@ function buildSourcesPage(
         <h3>Method Notes</h3>
         <ul>
           <li>Financial values are sourced from SEC EDGAR filings and normalized into statement-level metrics.</li>
-          <li>Comparisons reflect each issuer’s latest annual filing period unless otherwise noted.</li>
+          <li>${escapeHTML(comparisonMethodNote)}</li>
           <li>Narrative text is descriptive only and does not alter deterministic calculations.</li>
         </ul>
         <p>Report date: ${runDate}. Retrieval date: ${retrievalDate}.</p>
@@ -1600,35 +1783,6 @@ function findMetric(rows: MetricRow[], metric: string): MetricRow | null {
   return rows.find(r => r.metric === metric) || null;
 }
 
-function parseRowValue(rows: MetricRow[], metric: string): number | null {
-  const row = rows.find(r => r.metric === metric);
-  if (!row) return null;
-  return parseNumber(normalizeDisplayCell(row.current));
-}
-
-function finiteOrNull(value: unknown): number | null {
-  return typeof value === 'number' && isFinite(value) ? value : null;
-}
-
-function sumFinite(a: unknown, b: unknown): number | null {
-  const aNum = finiteOrNull(a);
-  const bNum = finiteOrNull(b);
-  if (aNum === null && bNum === null) return null;
-  return (aNum ?? 0) + (bNum ?? 0);
-}
-
-function buildAnnualStatementPeriodMap(
-  context: AnalysisContext,
-  ticker: string,
-): Record<string, Record<string, number>> {
-  const out: Record<string, Record<string, number>> = {};
-  const canonical = buildCanonicalAnnualPeriodMap(context, ticker);
-  for (const [period, values] of canonical) {
-    out[period] = { ...values };
-  }
-  return out;
-}
-
 function parseNumber(display: string): number | null {
   const normalized = display.replace(/,/g, '').replace(/\$/g, '').replace(/%/g, '').trim();
   const suffix = normalized.slice(-1).toUpperCase();
@@ -1645,43 +1799,6 @@ function getTrend(context: AnalysisContext, ticker: string, metric: string) {
   return (context.trends[ticker] || []).find(t => t.metric === metric) || null;
 }
 
-function latestTrendPeriod(context: AnalysisContext, ticker: string, metric: string): string | null {
-  const trend = getTrend(context, ticker, metric);
-  if (!trend || trend.values.length === 0) return null;
-  return trend.values[trend.values.length - 1]?.period || null;
-}
-
-function getLockedMetricValue(
-  context: AnalysisContext,
-  ticker: string,
-  metric: string,
-  period: string | null,
-): number | null {
-  const periodMap = buildAnnualStatementPeriodMap(context, ticker);
-  if (period && periodMap[period] && isFinite(periodMap[period]![metric] || NaN)) {
-    return periodMap[period]![metric]!;
-  }
-  const trend = getTrend(context, ticker, metric);
-  if (!trend || trend.values.length === 0) return null;
-  const latest = trend.values[trend.values.length - 1];
-  if (!latest || !isFinite(latest.value)) return null;
-  return latest.value;
-}
-
-function getRatioValue(
-  context: AnalysisContext,
-  ticker: string,
-  ratioName: string,
-  period: string | null = null,
-): number | null {
-  const ratio = period
-    ? (context.ratios[ticker] || []).find(r => r.name === ratioName && r.period === period) ||
-      (context.ratios[ticker] || []).find(r => r.name === ratioName)
-    : (context.ratios[ticker] || []).find(r => r.name === ratioName);
-  if (!ratio || !isFinite(ratio.value)) return null;
-  return ratio.value;
-}
-
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
@@ -1689,20 +1806,23 @@ function chunk<T>(arr: T[], size: number): T[][] {
 }
 
 function chunkWithMinTail<T>(arr: T[], size: number, minTail: number): T[][] {
-  const chunks = chunk(arr, size);
-  if (chunks.length < 2) return chunks;
-  const last = chunks[chunks.length - 1]!;
-  const prev = chunks[chunks.length - 2]!;
-  if (last.length >= minTail) return chunks;
+  if (arr.length <= size) return [arr.slice()];
 
-  const needed = minTail - last.length;
-  const movable = Math.max(0, prev.length + last.length - size);
-  const take = Math.min(needed, movable);
-  if (take <= 0) return chunks;
+  const chunkCount = Math.ceil(arr.length / size);
+  const baseSize = Math.floor(arr.length / chunkCount);
+  if (baseSize < minTail) {
+    return chunk(arr, size);
+  }
 
-  const moved = prev.splice(prev.length - take, take);
-  chunks[chunks.length - 1] = [...moved, ...last];
-  return chunks;
+  const remainder = arr.length % chunkCount;
+  const out: T[][] = [];
+  let index = 0;
+  for (let i = 0; i < chunkCount; i++) {
+    const nextSize = baseSize + (i < remainder ? 1 : 0);
+    out.push(arr.slice(index, index + nextSize));
+    index += nextSize;
+  }
+  return out;
 }
 
 function escapeHTML(str: string): string {

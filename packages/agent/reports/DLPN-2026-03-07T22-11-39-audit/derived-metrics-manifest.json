@@ -1,0 +1,201 @@
+{
+  "DLPN": [
+    {
+      "key": "asset_turnover",
+      "label": "Asset Turnover",
+      "current": "0.83x",
+      "prior": "0.65x",
+      "basis": {
+        "metric": "asset_turnover",
+        "displayName": "Asset Turnover",
+        "basis": "average_balance",
+        "note": "Asset turnover uses average assets for the current period and prior ending assets for the prior comparison."
+      },
+      "note": "Average-balance efficiency policy applied."
+    },
+    {
+      "key": "bvps",
+      "label": "Book Value Per Share",
+      "current": "$1.04",
+      "prior": "$1.10",
+      "basis": {
+        "metric": "bvps",
+        "displayName": "Book Value Per Share",
+        "basis": "period_end_shares",
+        "note": "BVPS uses period-end shares outstanding.",
+        "disclosureText": "Book Value Per Share uses period-end shares outstanding.",
+        "alternativesConsidered": [
+          "weighted_average_diluted"
+        ]
+      },
+      "note": "BVPS uses period-end shares outstanding."
+    },
+    {
+      "key": "capex_to_revenue",
+      "label": "CapEx / Revenue",
+      "current": "0.0%",
+      "prior": "0.1%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cash_ratio",
+      "label": "Cash Ratio",
+      "current": "0.31x",
+      "prior": "0.23x",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_to_net_income",
+      "label": "CFO / Net Income",
+      "current": "0.01x",
+      "prior": "0.19x",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "cfo_margin",
+      "label": "CFO Margin",
+      "current": "-0.3%",
+      "prior": "-10.7%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "current_ratio",
+      "label": "Current Ratio",
+      "current": "0.76x",
+      "prior": "0.75x",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "debt_maturity_current_pct",
+      "label": "Debt Maturity (Current %)",
+      "current": "33.1%",
+      "prior": "19.2%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "ebitda",
+      "label": "EBITDA",
+      "current": "-$10M",
+      "prior": "-$20M",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "equity_multiplier",
+      "label": "Equity Multiplier",
+      "current": "3.95x",
+      "prior": "3.32x",
+      "basis": {
+        "metric": "equity_multiplier",
+        "displayName": "Equity Multiplier",
+        "basis": "average_balance",
+        "note": "Equity multiplier uses average assets and average equity for the locked current period."
+      },
+      "note": "Average-balance capital-structure policy applied."
+    },
+    {
+      "key": "fcf_margin",
+      "label": "FCF Margin",
+      "current": "-0.3%",
+      "prior": "-10.8%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "fcf",
+      "label": "Free Cash Flow",
+      "current": "-$159K",
+      "prior": "-$4.6M",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "gross_margin",
+      "label": "Gross Margin",
+      "current": "5.8%",
+      "prior": "7.0%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_debt",
+      "label": "Net Debt",
+      "current": "-$3.1M",
+      "prior": "-$1.3M",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "net_margin",
+      "label": "Net Margin",
+      "current": "-24.4%",
+      "prior": "-56.6%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "operating_margin",
+      "label": "Operating Margin",
+      "current": "-20.3%",
+      "prior": "-46.6%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "quick_ratio",
+      "label": "Quick Ratio",
+      "current": "0.76x",
+      "prior": "0.75x",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "roa",
+      "label": "Return on Assets",
+      "current": "-20.2%",
+      "prior": "-36.8%",
+      "basis": {
+        "metric": "roa",
+        "displayName": "Return on Assets",
+        "basis": "average_balance",
+        "note": "ROA uses average assets over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "roe",
+      "label": "Return on Equity",
+      "current": "-79.8%",
+      "prior": "-122.2%",
+      "basis": {
+        "metric": "roe",
+        "displayName": "Return on Equity",
+        "basis": "average_balance",
+        "note": "ROE uses average equity over the locked current/prior annual periods."
+      },
+      "note": "Average-balance return policy applied."
+    },
+    {
+      "key": "roic_proxy",
+      "label": "ROIC Proxy",
+      "current": "-62.6%",
+      "prior": "-80.3%",
+      "basis": null,
+      "note": null
+    },
+    {
+      "key": "working_capital",
+      "label": "Working Capital",
+      "current": "-$6.4M",
+      "prior": "-$6.7M",
+      "basis": null,
+      "note": null
+    }
+  ]
+}

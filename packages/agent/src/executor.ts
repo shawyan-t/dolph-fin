@@ -205,12 +205,18 @@ function aggregateResult(
 
   switch (step.tool) {
     case 'get_company_filings': {
-      const allFilings = data as Filing[];
-      // Prioritize annual filings (10-K for domestic, 20-F/40-F for foreign filers)
-      const annualTypes = new Set(['10-K', '20-F', '40-F']);
-      const annualFilings = allFilings.filter(f => annualTypes.has(f.filing_type));
-      // Use annual filings if available, otherwise keep all
-      context.filings[ticker] = annualFilings.length > 0 ? annualFilings : allFilings;
+      const newFilings = data as Filing[];
+      const existing = context.filings[ticker] || [];
+      // Merge with existing filings, deduplicating by accession number
+      const seen = new Set(existing.map(f => f.accession_number));
+      const merged = [...existing];
+      for (const filing of newFilings) {
+        if (!seen.has(filing.accession_number)) {
+          seen.add(filing.accession_number);
+          merged.push(filing);
+        }
+      }
+      context.filings[ticker] = merged;
       break;
     }
 

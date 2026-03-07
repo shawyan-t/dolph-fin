@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [
+    "DLPN: Anomaly in Gross Profit — Significant spike: 99999900.0% YoY change (2.5σ from mean) (period: 2023-12-31)"
+  ],
+  "recomputedMetrics": {
+    "DLPN": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "DLPN": {
+      "current": "2024-12-31",
+      "prior": "2023-12-31"
+    }
+  }
+}

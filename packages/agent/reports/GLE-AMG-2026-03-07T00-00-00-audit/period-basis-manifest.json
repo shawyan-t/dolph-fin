@@ -1,0 +1,14 @@
+{
+  "GLE": {
+    "current": "2025-06-30",
+    "prior": "2024-06-30",
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "comparison_basis_mode": "latest_per_peer_with_prominent_disclosure"
+  },
+  "AMG": {
+    "current": "2025-12-31",
+    "prior": "2024-12-31",
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "comparison_basis_mode": "latest_per_peer_with_prominent_disclosure"
+  }
+}

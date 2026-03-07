@@ -1,0 +1,14 @@
+{
+  "AMG": {
+    "current": "2025-12-31",
+    "prior": "2024-12-31",
+    "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period.",
+    "comparison_basis_mode": "overlap_normalized"
+  },
+  "CEG": {
+    "current": "2025-12-31",
+    "prior": "2024-12-31",
+    "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period.",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

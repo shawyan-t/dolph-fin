@@ -1,0 +1,12 @@
+{
+  "warnings": [
+    {
+      "section": "analyst_notes",
+      "issue": "Section has too few specific numbers (found 0, expected at least 2)",
+      "severity": "warning"
+    }
+  ],
+  "mappingFixes": [
+    "NVDA: Anomaly in Gross Profit — Significant spike: 188.5% YoY change (2.1σ from mean) (period: 2024-01-28)"
+  ]
+}

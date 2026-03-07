@@ -97,6 +97,7 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Operating Income',
     xbrlTags: [
       'OperatingIncomeLoss',
+      'OperatingIncome',
     ],
     ifrsTags: [
       'ProfitLossFromOperatingActivities',
@@ -257,6 +258,7 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Total Liabilities',
     xbrlTags: [
       'Liabilities',
+      'LiabilitiesTotal',
     ],
     ifrsTags: [
       'Liabilities',
@@ -267,10 +269,10 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
   },
   {
     standardName: 'stockholders_equity',
-    displayName: "Stockholders' Equity",
+    displayName: "Total Stockholders' Equity",
     xbrlTags: [
-      'StockholdersEquity',
       'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest',
+      'StockholdersEquity',
     ],
     ifrsTags: [
       'Equity',
@@ -510,6 +512,7 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Treasury Stock',
     xbrlTags: [
       'TreasuryStockValue',
+      'TreasuryStockCommonValue',
       'CommonStocksIncludingAdditionalPaidInCapitalTreasuryStock',
     ],
     ifrsTags: [
@@ -629,12 +632,36 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     xbrlTags: [
       'DepreciationDepletionAndAmortization',
       'DepreciationAmortizationAndAccretionNet',
-      'Depreciation',
-      'AmortizationOfIntangibleAssets',
     ],
     ifrsTags: [
       'DepreciationAmortisationAndImpairment',
       'DepreciationAndAmortisationExpense',
+    ],
+    statement: 'cash_flow',
+    unit: 'USD',
+    higherIsBetter: false,
+  },
+  {
+    standardName: 'depreciation_expense',
+    displayName: 'Depreciation',
+    xbrlTags: [
+      'Depreciation',
+    ],
+    ifrsTags: [
+      'DepreciationExpense',
+    ],
+    statement: 'cash_flow',
+    unit: 'USD',
+    higherIsBetter: false,
+  },
+  {
+    standardName: 'amortization_expense',
+    displayName: 'Amortization of Intangibles',
+    xbrlTags: [
+      'AmortizationOfIntangibleAssets',
+    ],
+    ifrsTags: [
+      'AmortisationExpense',
     ],
     statement: 'cash_flow',
     unit: 'USD',
@@ -674,7 +701,7 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     displayName: 'Cash at Beginning of Period',
     xbrlTags: [
       'CashAndCashEquivalentsAtCarryingValueBeginningOfPeriod',
-      'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents',
+      'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsBeginningBalance',
     ],
     ifrsTags: [
       'CashAndCashEquivalentsAtBeginningOfPeriod',
@@ -687,8 +714,8 @@ export const XBRL_MAPPINGS: XBRLMapping[] = [
     standardName: 'cash_ending',
     displayName: 'Cash at End of Period',
     xbrlTags: [
-      'CashAndCashEquivalentsAtCarryingValue',
       'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents',
+      'CashAndCashEquivalentsAtCarryingValueEndOfPeriod',
     ],
     ifrsTags: [
       'CashAndCashEquivalents',

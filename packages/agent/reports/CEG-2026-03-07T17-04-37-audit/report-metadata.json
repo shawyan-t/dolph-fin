@@ -1,0 +1,14 @@
+{
+  "id": "fl_mmgkptvj_hls9fm",
+  "type": "single",
+  "tickers": [
+    "CEG"
+  ],
+  "generated_at": "2026-03-07T17:04:37.759Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 46,
+    "data_points_used": 971,
+    "policy_mode": "institutional"
+  }
+}

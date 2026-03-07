@@ -1,0 +1,26 @@
+{
+  "policy": {
+    "mode": "institutional",
+    "comparisonBasisMode": "overlap_normalized",
+    "requestedComparisonBasisMode": "overlap_normalized",
+    "statementHistoryPeriods": 5,
+    "trendHistoryPeriods": 10,
+    "returnMetricBasisMode": "average_balance",
+    "sparseDerivationMode": "expanded",
+    "strictLayoutQA": true,
+    "persistAuditArtifacts": true,
+    "narrativeGovernanceMode": "deterministic",
+    "allowExternalContext": false,
+    "comparisonRequireOverlap": false,
+    "comparisonFallbackMode": null,
+    "comparisonMaxPeriodSpreadDays": 45,
+    "metricNAInference": "governed",
+    "displayDerivedLabels": true,
+    "percentMeaningfulBase": 0.05
+  },
+  "report_id": "fl_mmgx53xo_fgk01m",
+  "tickers": [
+    "NVDA"
+  ],
+  "generated_at": "2026-03-07T22:52:26.028Z"
+}

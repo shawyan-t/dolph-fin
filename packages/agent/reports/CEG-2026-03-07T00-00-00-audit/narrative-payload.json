@@ -1,0 +1,73 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "paragraphs": [
+        {
+          "text": "CEG posted $22.7B in revenue (19.5% YoY) and $2.32B in net income (-38.1% YoY) for 2025-12-31. Revenue growth coupled with declining net income suggests margin pressure or rising operating costs that bear monitoring in subsequent quarters. The profitability profile is defined by operating margin of 13.6% and net margin of 10.2%, framing the earnings quality behind the headline figures.",
+          "fact_ids": []
+        },
+        {
+          "text": "The balance sheet carries a moderate profile at 0.49x debt-to-equity and 1.53x current ratio, which is serviceable but leaves limited margin for error under stress scenarios. The quick ratio of 1.31x confirms liquidity depth after excluding inventory from the coverage calculation.",
+          "fact_ids": []
+        },
+        {
+          "text": "Cash generation is anchored by $4.24B in operating cash flow versus -$2.46B in the prior period, which converts to $1.29B in free cash flow versus -$5.03B in the prior period. Capital expenditures of $2.95B (13.0% of revenue) reflect the reinvestment intensity required to sustain the current operating base and fund future growth. The healthy conversion of earnings into operating cash flow suggests the reported result is supported by cash generation rather than dominated by accruals.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "paragraphs": [
+        {
+          "text": "### Operating Income\nOperating Income is currently $3.09B with 64.5% CAGR. Operating Income has grown at a 64.5% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Operating Cash Flow\nOperating Cash Flow is currently $4.24B with 48.6% CAGR. Operating Cash Flow has grown at a 48.6% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Net Income\nNet Income is currently $2.32B with 31.5% CAGR. Net Income has grown at a 31.5% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Capital Expenditures\nCapital Expenditures is currently $2.95B with 11.0% CAGR. Capital Expenditures has grown at a 11.0% CAGR.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "paragraphs": [
+        {
+          "text": "### Watch Items\n- No major quantitative red flags are active in the locked annual snapshot.\n- Continue monitoring margin durability and cash conversion in the next filing cycle.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "paragraphs": [
+        {
+          "text": "### What Stands Out\n- ROE of 16.3% indicates efficient use of shareholder capital.\n- Revenue is up 19.5% year over year, showing strong top-line momentum.\n- Current ratio of 1.53x indicates solid liquidity.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Watch Items\n- No critical flags are active; monitor execution against current margin and cash benchmarks.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2025-12-31).\n- Prior comparisons use 2024-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": []
+        }
+      ]
+    }
+  ]
+}

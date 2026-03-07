@@ -1,0 +1,41 @@
+{
+  "report_type": "comparison",
+  "requested_basis_mode": "latest_per_peer_with_prominent_disclosure",
+  "effective_basis_mode": "latest_per_peer_with_prominent_disclosure",
+  "resolution": {
+    "requested_mode": "latest_per_peer_with_prominent_disclosure",
+    "effective_mode": "latest_per_peer_with_prominent_disclosure",
+    "status": "resolved",
+    "resolution_kind": "latest_per_peer",
+    "comparable_current_key": null,
+    "comparable_prior_key": null,
+    "max_current_spread_days": 184,
+    "max_prior_spread_days": 184,
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "fallback_reason": null,
+    "peer_periods": {
+      "GLE": {
+        "current_period": "2025-06-30",
+        "prior_period": "2024-06-30"
+      },
+      "AMG": {
+        "current_period": "2025-12-31",
+        "prior_period": "2024-12-31"
+      }
+    }
+  },
+  "companies": [
+    {
+      "ticker": "GLE",
+      "snapshot_period": "2025-06-30",
+      "prior_period": "2024-06-30",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    {
+      "ticker": "AMG",
+      "snapshot_period": "2025-12-31",
+      "prior_period": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    }
+  ]
+}

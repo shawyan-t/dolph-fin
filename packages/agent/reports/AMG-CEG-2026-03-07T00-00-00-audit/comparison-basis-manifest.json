@@ -1,0 +1,41 @@
+{
+  "report_type": "comparison",
+  "requested_basis_mode": "overlap_normalized",
+  "effective_basis_mode": "overlap_normalized",
+  "resolution": {
+    "requested_mode": "overlap_normalized",
+    "effective_mode": "overlap_normalized",
+    "status": "resolved",
+    "resolution_kind": "exact_date_overlap",
+    "comparable_current_key": "2025-12-31",
+    "comparable_prior_key": "2024-12-31",
+    "max_current_spread_days": 0,
+    "max_prior_spread_days": 0,
+    "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period.",
+    "fallback_reason": null,
+    "peer_periods": {
+      "AMG": {
+        "current_period": "2025-12-31",
+        "prior_period": "2024-12-31"
+      },
+      "CEG": {
+        "current_period": "2025-12-31",
+        "prior_period": "2024-12-31"
+      }
+    }
+  },
+  "companies": [
+    {
+      "ticker": "AMG",
+      "snapshot_period": "2025-12-31",
+      "prior_period": "2024-12-31",
+      "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period."
+    },
+    {
+      "ticker": "CEG",
+      "snapshot_period": "2025-12-31",
+      "prior_period": "2024-12-31",
+      "note": "Peer metrics are overlap-normalized to 2025-12-31 with 2024-12-31 as the shared prior period."
+    }
+  ]
+}

@@ -15,18 +15,19 @@ import { buildReportHTML } from './exporter-template.js';
 import { buildPdfPages, PERIOD_BANNER_SLOT } from './pdf-page-templates.js';
 import { PDF_THEME } from './pdf-theme.js';
 import { runDeterministicQAGates, writeQAFailureReport } from './deterministic-qa.js';
-import { analyzeData } from './analyzer.js';
-import { generateDeterministicNarrative } from './deterministic-narrative.js';
-
-const STRICT_LAYOUT_QA = process.env['DOLPH_STRICT_LAYOUT_QA'] === '1';
+import { writeAuditArtifacts } from './audit-artifacts.js';
+import { requireCanonicalReportPackage, type CanonicalReportPackage } from './canonical-report-package.js';
+import { defaultReportsDir } from './report-paths.js';
+const STRICT_LAYOUT_QA_ENV = process.env['DOLPH_STRICT_LAYOUT_QA'] === '1';
 
 export async function generatePDF(
   report: Report,
   outputDir?: string,
   context?: AnalysisContext,
+  canonicalPackage?: CanonicalReportPackage,
 ): Promise<string> {
   let finalReport = report;
-  const dir = outputDir || resolve(process.cwd(), 'reports');
+  const dir = outputDir || defaultReportsDir();
   await mkdir(dir, { recursive: true });
 
   const timestamp = new Date(finalReport.generated_at)
@@ -40,8 +41,11 @@ export async function generatePDF(
   // when validation blocks rendering.
   await rm(outputPath, { force: true });
 
-  let preRenderQA = context
-    ? runDeterministicQAGates(finalReport, context)
+  const policy = finalReport.policy || context?.policy;
+  const strictLayoutQA = policy?.strictLayoutQA ?? STRICT_LAYOUT_QA_ENV;
+  const pkg = context ? requireCanonicalReportPackage(canonicalPackage, 'generatePDF') : undefined;
+  const preRenderQA = context && pkg
+    ? runDeterministicQAGates(finalReport, context, pkg)
     : {
       pass: false,
       failures: [{
@@ -53,25 +57,6 @@ export async function generatePDF(
       mappingFixes: [],
       recomputedMetrics: {},
     };
-
-  if (
-    context &&
-    !preRenderQA.pass &&
-    preRenderQA.failures.some(f => f.gate.startsWith('narrative.'))
-  ) {
-    const insights = analyzeData(context);
-    const deterministicNarrative = generateDeterministicNarrative(context, insights);
-    const overrideById = new Map(
-      deterministicNarrative.sections
-        .filter(section => section.content.trim().length > 0)
-        .map(section => [section.id, section] as const),
-    );
-    finalReport = {
-      ...finalReport,
-      sections: finalReport.sections.map(section => overrideById.get(section.id) || section),
-    };
-    preRenderQA = runDeterministicQAGates(finalReport, context);
-  }
 
   if (!preRenderQA.pass) {
     const qaPath = await writeQAFailureReport(finalReport, preRenderQA, dir);
@@ -96,7 +81,7 @@ export async function generatePDF(
     throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
   }
 
-  const { bodyHTML } = buildPdfPages(finalReport, context);
+  const { bodyHTML } = buildPdfPages(finalReport, context, pkg || undefined);
   const expectedBannerCount = countNonCoverSourcesPages(bodyHTML);
   const slotCount = countToken(bodyHTML, PERIOD_BANNER_SLOT);
   if (slotCount !== expectedBannerCount) {
@@ -287,7 +272,7 @@ export async function generatePDF(
 
     const blockingIssues = qaIssues.filter((issue: any) => {
       const gate = String(issue.gate || '');
-      if (gate.startsWith('layout.')) return STRICT_LAYOUT_QA;
+      if (gate.startsWith('layout.')) return strictLayoutQA;
       return true;
     });
 
@@ -329,6 +314,20 @@ export async function generatePDF(
         </div>
       `,
     });
+
+    if (context && policy?.persistAuditArtifacts && pkg) {
+      finalReport.audit = await writeAuditArtifacts({
+        report: finalReport,
+        context,
+        insights: pkg.insights,
+        reportModel: pkg.reportModel,
+        qa: preRenderQA,
+        outputDir: dir,
+        pdfPath: outputPath,
+        layoutIssues: qaIssues.map((issue: any) => ({ gate: String(issue.gate || ''), message: String(issue.message || '') })),
+        narrativePayload: finalReport.narrative,
+      });
+    }
   } finally {
     await browser.close();
   }

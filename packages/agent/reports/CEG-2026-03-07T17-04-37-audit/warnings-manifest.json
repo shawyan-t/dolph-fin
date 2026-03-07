@@ -1,0 +1,15 @@
+{
+  "warnings": [
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $2.46B not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    },
+    {
+      "section": "executive_summary",
+      "issue": "Cited figure $5.03B not found in canonical metrics — may be from non-authoritative source",
+      "severity": "warning"
+    }
+  ],
+  "mappingFixes": []
+}

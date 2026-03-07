@@ -1,0 +1,41 @@
+{
+  "report_type": "comparison",
+  "requested_basis_mode": "latest_per_peer_with_prominent_disclosure",
+  "effective_basis_mode": "latest_per_peer_with_prominent_disclosure",
+  "resolution": {
+    "requested_mode": "latest_per_peer_with_prominent_disclosure",
+    "effective_mode": "latest_per_peer_with_prominent_disclosure",
+    "status": "resolved",
+    "resolution_kind": "latest_per_peer",
+    "comparable_current_key": null,
+    "comparable_prior_key": null,
+    "max_current_spread_days": 29,
+    "max_prior_spread_days": 29,
+    "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers.",
+    "fallback_reason": null,
+    "peer_periods": {
+      "AMD": {
+        "current_period": "2025-12-27",
+        "prior_period": "2024-12-28"
+      },
+      "NVDA": {
+        "current_period": "2026-01-25",
+        "prior_period": "2025-01-26"
+      }
+    }
+  },
+  "companies": [
+    {
+      "ticker": "AMD",
+      "snapshot_period": "2025-12-27",
+      "prior_period": "2024-12-28",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    {
+      "ticker": "NVDA",
+      "snapshot_period": "2026-01-25",
+      "prior_period": "2025-01-26",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    }
+  ]
+}

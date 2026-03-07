@@ -1,0 +1,15 @@
+{
+  "id": "snap_2026-03-07_cfupmk",
+  "type": "single",
+  "tickers": [
+    "CEG"
+  ],
+  "generated_at": "2026-03-07T00:00:00.000Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 24,
+    "data_points_used": 971,
+    "snapshot_id": "snap_2026-03-07_cfupmk",
+    "policy_mode": "institutional"
+  }
+}

@@ -105,7 +105,7 @@ class OpenAIProvider implements LLMProvider {
   async generate(
     prompt: string,
     systemPrompt?: string,
-    options?: { temperature?: number; signal?: AbortSignal },
+    options?: { temperature?: number; signal?: AbortSignal; maxTokens?: number; jsonMode?: boolean },
   ): Promise<LLMResponse> {
     if (options?.signal?.aborted) {
       throw new Error('OpenAI API call aborted');
@@ -126,7 +126,8 @@ class OpenAIProvider implements LLMProvider {
           model: this.config.model,
           messages,
           temperature: options?.temperature ?? 0.3,
-          max_tokens: 4096,
+          max_tokens: options?.maxTokens ?? 4096,
+          ...(options?.jsonMode ? { response_format: { type: 'json_object' as const } } : {}),
         },
         { signal: options?.signal } as { signal?: AbortSignal },
       ),
@@ -160,13 +161,17 @@ class GeminiProvider implements LLMProvider {
   async generate(
     prompt: string,
     systemPrompt?: string,
-    options?: { temperature?: number; signal?: AbortSignal },
+    options?: { temperature?: number; signal?: AbortSignal; maxTokens?: number; jsonMode?: boolean },
   ): Promise<LLMResponse> {
     const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`;
     const body = JSON.stringify({
       contents: [{ parts: [{ text: fullPrompt }] }],
-      generationConfig: { temperature: options?.temperature ?? 0.3, maxOutputTokens: 4096 },
+      generationConfig: {
+        temperature: options?.temperature ?? 0.3,
+        maxOutputTokens: options?.maxTokens ?? 4096,
+        ...(options?.jsonMode ? { responseMimeType: 'application/json' } : {}),
+      },
     });
 
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
@@ -251,7 +256,7 @@ class GroqProvider implements LLMProvider {
   async generate(
     prompt: string,
     systemPrompt?: string,
-    options?: { temperature?: number; signal?: AbortSignal },
+    options?: { temperature?: number; signal?: AbortSignal; maxTokens?: number; jsonMode?: boolean },
   ): Promise<LLMResponse> {
     if (options?.signal?.aborted) {
       throw new Error('Groq API call aborted');
@@ -281,7 +286,8 @@ class GroqProvider implements LLMProvider {
           model: this.config.model,
           messages,
           temperature: options?.temperature ?? 0.3,
-          max_tokens: 4096,
+          max_tokens: options?.maxTokens ?? 4096,
+          ...(options?.jsonMode ? { response_format: { type: 'json_object' } } : {}),
         }),
         signal: controller.signal,
       });

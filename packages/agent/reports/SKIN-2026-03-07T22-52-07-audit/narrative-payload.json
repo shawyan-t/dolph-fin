@@ -1,0 +1,167 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "SKIN posted $334M in revenue (-16.0% YoY) and -$29M in net income (-70.9% YoY) for 2024-12-31. Simultaneous revenue and earnings contraction underscores fundamental headwinds in the current operating environment. The profitability profile is defined by operating margin of -20.3% and net margin of -8.7%, framing the earnings quality behind the headline figures.\n\nCurrent ratio stands at 7.00x in the locked annual basis, providing a baseline liquidity reference. The quick ratio of 5.99x confirms liquidity depth after excluding inventory from the coverage calculation.\n\nCash generation is anchored by $16M in operating cash flow (-25.8% YoY), which converts to $15M in free cash flow (-14.2% YoY). Capital expenditures of $756K (0.2% of revenue) show the reinvestment burden required to sustain the current operating base.",
+      "paragraphs": [
+        {
+          "text": "SKIN posted $334M in revenue (-16.0% YoY) and -$29M in net income (-70.9% YoY) for 2024-12-31. Simultaneous revenue and earnings contraction underscores fundamental headwinds in the current operating environment. The profitability profile is defined by operating margin of -20.3% and net margin of -8.7%, framing the earnings quality behind the headline figures.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "operating_margin",
+            "net_margin"
+          ]
+        },
+        {
+          "text": "Current ratio stands at 7.00x in the locked annual basis, providing a baseline liquidity reference. The quick ratio of 5.99x confirms liquidity depth after excluding inventory from the coverage calculation.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "Cash generation is anchored by $16M in operating cash flow (-25.8% YoY), which converts to $15M in free cash flow (-14.2% YoY). Capital expenditures of $756K (0.2% of revenue) show the reinvestment burden required to sustain the current operating base.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "fcf",
+            "capex",
+            "revenue"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "rendered_content": "### Total Liabilities\nTotal Liabilities is currently $634M with 147.6% CAGR. Total Liabilities has grown at a 147.6% CAGR.\n\n### Total Stockholders' Equity\nTotal Stockholders' Equity is currently $52M with 136.8% CAGR. Total Stockholders' Equity has grown at a 136.8% CAGR.\n\n### Operating Cash Flow\nOperating Cash Flow is currently $16M with 56.3% CAGR. Operating Cash Flow has grown at a 56.3% CAGR.\n\n### Capital Expenditures\nCapital Expenditures is currently $756K with -38.8% CAGR. Capital Expenditures has declined at a -38.8% CAGR.",
+      "paragraphs": [
+        {
+          "text": "Total Liabilities is currently $634M with 147.6% CAGR. Total Liabilities has grown at a 147.6% CAGR.",
+          "fact_ids": [
+            "total_liabilities"
+          ]
+        },
+        {
+          "text": "Total Stockholders' Equity is currently $52M with 136.8% CAGR. Total Stockholders' Equity has grown at a 136.8% CAGR.",
+          "fact_ids": [
+            "stockholders_equity"
+          ]
+        },
+        {
+          "text": "Operating Cash Flow is currently $16M with 56.3% CAGR. Operating Cash Flow has grown at a 56.3% CAGR.",
+          "fact_ids": [
+            "operating_cash_flow"
+          ]
+        },
+        {
+          "text": "Capital Expenditures is currently $756K with -38.8% CAGR. Capital Expenditures has declined at a -38.8% CAGR.",
+          "fact_ids": [
+            "capex"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "rendered_content": "### Watch Items\n- The following governed risk signals are active in the locked annual basis.\n\n- **Negative profitability:** Net margin is -8.7%, indicating a loss-making profile.\n- **Declining revenue:** Revenue declined 16.0% versus prior year.\n- **Anomaly in Total Stockholders' Equity:** Significant spike: 5945.9% YoY change (2.0σ from mean) (period: 2021-12-31)\n- **Current-period completeness gap:** Current period is missing Cash & Equivalents while prior exists.",
+      "paragraphs": [
+        {
+          "text": "- The following governed risk signals are active in the locked annual basis.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Negative profitability:** Net margin is -8.7%, indicating a loss-making profile.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Declining revenue:** Revenue declined 16.0% versus prior year.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- **Anomaly in Total Stockholders' Equity:** Significant spike: 5945.9% YoY change (2.0σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Current-period completeness gap:** Current period is missing Cash & Equivalents while prior exists.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "### What Stands Out\n- Gross margin of 54.5% indicates strong pricing power.\n\n- Current ratio of 7.00x indicates solid liquidity.\n### Watch Items\n- Net margin is -8.7%, indicating a loss-making profile.\n\n- Revenue declined 16.0% versus prior year.\n- Significant spike: 5945.9% YoY change (2.0σ from mean) (period: 2021-12-31)\n### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2024-12-31).\n\n- Prior comparisons use 2023-12-31; metrics without required inputs remain intentionally unfilled.",
+      "paragraphs": [
+        {
+          "text": "- Gross margin of 54.5% indicates strong pricing power.",
+          "fact_ids": [
+            "gross_margin"
+          ]
+        },
+        {
+          "text": "- Current ratio of 7.00x indicates solid liquidity.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "- Net margin is -8.7%, indicating a loss-making profile.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Revenue declined 16.0% versus prior year.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- Significant spike: 5945.9% YoY change (2.0σ from mean) (period: 2021-12-31)",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Current conclusions are anchored to a period-locked annual basis (2024-12-31).",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Prior comparisons use 2023-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    }
+  ]
+}

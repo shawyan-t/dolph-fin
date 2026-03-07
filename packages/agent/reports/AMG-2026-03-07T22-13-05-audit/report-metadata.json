@@ -1,0 +1,15 @@
+{
+  "id": "fl_mmgvqivs_t0yxtd",
+  "type": "single",
+  "tickers": [
+    "AMG"
+  ],
+  "generated_at": "2026-03-07T22:13:05.944Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 35,
+    "data_points_used": 1951,
+    "policy_mode": "institutional",
+    "comparison_basis_mode": "overlap_normalized"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "paragraphs": [
+        {
+          "text": "REAX posted $1.97B in revenue (55.7% YoY) and -$8.1M in net income (-69.5% YoY) for 2025-12-31. Revenue growth coupled with declining net income suggests margin pressure or rising operating costs that bear monitoring in subsequent quarters. The profitability profile is defined by operating margin of -0.5% and net margin of -0.4%, framing the earnings quality behind the headline figures.",
+          "fact_ids": []
+        },
+        {
+          "text": "Current ratio stands at 1.41x in the locked annual basis, providing a baseline liquidity reference. The quick ratio of 1.41x confirms liquidity depth after excluding inventory from the coverage calculation.",
+          "fact_ids": []
+        },
+        {
+          "text": "Cash generation is anchored by $66M in operating cash flow (35.3% YoY), which converts to $65M in free cash flow (35.9% YoY). Capital expenditures of $1.1M (0.1% of revenue) reflect the reinvestment intensity required to sustain the current operating base and fund future growth.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "paragraphs": [
+        {
+          "text": "### Operating Cash Flow\nOperating Cash Flow is currently $66M with 86.4% CAGR. Operating Cash Flow has grown at a 86.4% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Revenue\nRevenue is currently $1.97B with 69.0% CAGR. Revenue has grown at a 69.0% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Total Liabilities\nTotal Liabilities is currently $75M with 65.6% CAGR. Total Liabilities has grown at a 65.6% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Gross Profit\nGross Profit is currently $166M with 62.3% CAGR. Gross Profit has grown at a 62.3% CAGR.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "paragraphs": [
+        {
+          "text": "### Watch Items\n- **Negative profitability:** Net margin is -0.4%, indicating a loss-making profile.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "paragraphs": [
+        {
+          "text": "### What Stands Out\n- Revenue is up 55.7% year over year, showing strong top-line momentum.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Watch Items\n- Net margin is -0.4%, indicating a loss-making profile.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2025-12-31).\n- Prior comparisons use 2024-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "report_type": "single",
+  "requested_basis_mode": "overlap_normalized",
+  "effective_basis_mode": "overlap_normalized",
+  "resolution": null,
+  "companies": [
+    {
+      "ticker": "DLPN",
+      "snapshot_period": "2024-12-31",
+      "prior_period": "2023-12-31",
+      "note": null
+    }
+  ]
+}

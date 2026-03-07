@@ -1,0 +1,2077 @@
+{
+  "sources": [
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "description": "REAX 40-F",
+      "date": "2026-03-04"
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "description": "REAX 40-F",
+      "date": "2025-03-06"
+    }
+  ],
+  "provenance": {
+    "REAX:revenue:2025-12-31": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2025-09-30": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2025-06-30": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2025-03-31": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2024-12-31": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2024-09-30": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2024-06-30": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2024-03-31": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:revenue:2023-12-31": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.485Z"
+    },
+    "REAX:cost_of_revenue:2025-12-31": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cost_of_revenue:2025-09-30": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cost_of_revenue:2025-06-30": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cost_of_revenue:2025-03-31": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cost_of_revenue:2024-12-31": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cost_of_revenue:2024-09-30": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.498Z"
+    },
+    "REAX:cost_of_revenue:2024-06-30": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.498Z"
+    },
+    "REAX:cost_of_revenue:2024-03-31": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.498Z"
+    },
+    "REAX:cost_of_revenue:2023-12-31": {
+      "xbrl_tag": "CostOfGoodsAndServicesSold",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.498Z"
+    },
+    "REAX:gross_profit:2025-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2025-09-30": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2025-06-30": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2025-03-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2024-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2024-09-30": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2024-06-30": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2024-03-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:gross_profit:2023-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2025-12-31": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2025-09-30": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2025-06-30": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2025-03-31": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2024-12-31": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2024-09-30": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2024-06-30": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2024-03-31": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_expenses:2023-12-31": {
+      "xbrl_tag": "OperatingExpenses",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2025-12-31": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2025-09-30": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2025-06-30": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2025-03-31": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2024-12-31": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2024-09-30": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2024-06-30": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2024-03-31": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_income:2023-12-31": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2025-12-31": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2025-09-30": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2025-06-30": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2025-03-31": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2024-12-31": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2024-09-30": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2024-06-30": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2024-03-31": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:net_income:2023-12-31": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2025-12-31": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2025-09-30": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2025-06-30": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2025-03-31": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2024-12-31": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2024-09-30": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2024-06-30": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2024-03-31": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_basic:2023-12-31": {
+      "xbrl_tag": "EarningsPerShareBasic",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2025-12-31": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2025-09-30": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2025-06-30": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2025-03-31": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2024-12-31": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2024-09-30": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2024-06-30": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2024-03-31": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:eps_diluted:2023-12-31": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2025-12-31": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2025-09-30": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2025-06-30": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2025-03-31": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2024-12-31": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2024-05-01": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2023-12-31": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:shares_outstanding:2023-05-18": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2025-12-31": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2025-09-30": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2025-06-30": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2025-03-31": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2024-12-31": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2024-09-30": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2024-06-30": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2024-03-31": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:weighted_avg_shares_diluted:2023-12-31": {
+      "xbrl_tag": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2025-12-31": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2025-09-30": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2025-06-30": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2025-03-31": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2024-12-31": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2024-09-30": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2024-06-30": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2024-03-31": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:research_and_development:2023-12-31": {
+      "xbrl_tag": "ResearchAndDevelopmentExpense",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:pretax_income:2025-12-31": {
+      "xbrl_tag": "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:pretax_income:2025-09-30": {
+      "xbrl_tag": "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:pretax_income:2024-12-31": {
+      "xbrl_tag": "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:pretax_income:2024-09-30": {
+      "xbrl_tag": "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:income_tax_expense:2025-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseBenefit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:income_tax_expense:2025-09-30": {
+      "xbrl_tag": "IncomeTaxExpenseBenefit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2025-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2025-09-30": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2025-06-30": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2025-03-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2024-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_assets:2023-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2025-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2025-09-30": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2025-06-30": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2025-03-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2024-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:total_liabilities:2023-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2025-12-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2025-09-30": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2025-06-30": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2025-03-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2024-12-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2024-09-30": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2024-06-30": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2024-03-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2023-12-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:stockholders_equity:2022-12-31": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2025-12-31": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2025-09-30": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2025-06-30": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2025-03-31": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2024-12-31": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_assets:2023-12-31": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2025-12-31": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2025-09-30": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2025-06-30": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2025-03-31": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2024-12-31": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:current_liabilities:2023-12-31": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2025-12-31": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2025-09-30": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2025-06-30": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2025-03-31": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2024-12-31": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2024-03-31": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_and_equivalents:2023-12-31": {
+      "xbrl_tag": "CashAndCashEquivalentsAtCarryingValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2025-12-31": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2025-09-30": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2025-06-30": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2025-03-31": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2024-12-31": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_receivable:2023-12-31": {
+      "xbrl_tag": "AccountsReceivableNetCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:marketable_securities:2025-12-31": {
+      "xbrl_tag": "ShortTermInvestments",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:marketable_securities:2025-09-30": {
+      "xbrl_tag": "ShortTermInvestments",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:marketable_securities:2025-06-30": {
+      "xbrl_tag": "ShortTermInvestments",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:marketable_securities:2024-12-31": {
+      "xbrl_tag": "ShortTermInvestments",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:other_current_assets:2025-12-31": {
+      "xbrl_tag": "OtherAssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:other_current_assets:2025-09-30": {
+      "xbrl_tag": "OtherAssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:other_current_assets:2024-12-31": {
+      "xbrl_tag": "OtherAssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2025-12-31": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2025-09-30": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2025-06-30": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2025-03-31": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2024-12-31": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accounts_payable:2023-12-31": {
+      "xbrl_tag": "AccountsPayableCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2025-12-31": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2025-09-30": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2025-06-30": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2025-03-31": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2024-12-31": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accrued_expenses:2023-12-31": {
+      "xbrl_tag": "AccruedLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:other_current_liabilities:2025-12-31": {
+      "xbrl_tag": "OtherLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:other_current_liabilities:2024-12-31": {
+      "xbrl_tag": "OtherLiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2025-12-31": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2025-09-30": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2025-06-30": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2025-03-31": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2024-12-31": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:retained_earnings:2023-12-31": {
+      "xbrl_tag": "RetainedEarningsAccumulatedDeficit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2025-12-31": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2025-09-30": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2025-06-30": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2025-03-31": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2024-12-31": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:accumulated_other_comprehensive_income:2023-12-31": {
+      "xbrl_tag": "AccumulatedOtherComprehensiveIncomeLossNetOfTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:treasury_stock:2025-06-30": {
+      "xbrl_tag": "TreasuryStockValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:treasury_stock:2025-03-31": {
+      "xbrl_tag": "TreasuryStockValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:treasury_stock:2024-12-31": {
+      "xbrl_tag": "TreasuryStockValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:treasury_stock:2023-12-31": {
+      "xbrl_tag": "TreasuryStockValue",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2025-12-31": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2025-09-30": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2025-06-30": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2025-03-31": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2024-12-31": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2023-12-31": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:goodwill:2022-12-31": {
+      "xbrl_tag": "Goodwill",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2025-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2025-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2025-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2025-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2024-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2024-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2024-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2024-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:operating_cash_flow:2023-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2025-12-31": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2025-09-30": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2025-06-30": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2025-03-31": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2024-12-31": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2024-09-30": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2024-06-30": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2024-03-31": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:capex:2023-12-31": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2025-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2025-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2025-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2025-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2024-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2024-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2024-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2024-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:investing_cash_flow:2023-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInInvestingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2025-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2025-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2025-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2025-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2024-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2024-09-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2024-06-30": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2024-03-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:financing_cash_flow:2023-12-31": {
+      "xbrl_tag": "NetCashProvidedByUsedInFinancingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:dividends_paid:2023-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001493152-24-009989",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315224009989/0001493152-24-009989-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:dividends_paid:2022-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001493152-23-007836",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315223007836/0001493152-23-007836-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:share_repurchases:2025-12-31": {
+      "xbrl_tag": "PaymentsForRepurchaseOfCommonStock",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:share_repurchases:2025-09-30": {
+      "xbrl_tag": "PaymentsForRepurchaseOfCommonStock",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:share_repurchases:2024-12-31": {
+      "xbrl_tag": "PaymentsForRepurchaseOfCommonStock",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:share_repurchases:2024-09-30": {
+      "xbrl_tag": "PaymentsForRepurchaseOfCommonStock",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2025-12-31": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2025-09-30": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2025-06-30": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2025-03-31": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2024-12-31": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2024-09-30": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2024-06-30": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2024-03-31": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:depreciation_expense:2023-12-31": {
+      "xbrl_tag": "Depreciation",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2025-12-31": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2025-09-30": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2025-06-30": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2025-03-31": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2024-12-31": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2024-09-30": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2024-06-30": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:amortization_expense:2023-12-31": {
+      "xbrl_tag": "AmortizationOfIntangibleAssets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2025-12-31": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2025-09-30": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-020136",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225020136/0001493152-25-020136-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2025-06-30": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2025-03-31": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2024-12-31": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-011674",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225011674/0001493152-25-011674-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2024-03-31": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001641172-25-009147",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000164117225009147/0001641172-25-009147-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:cash_ending:2023-12-31": {
+      "xbrl_tag": "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-25-009312",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:roe:net_income": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:roe:stockholders_equity": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:roa:net_income": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:roa:total_assets": {
+      "xbrl_tag": "Assets",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:current_ratio:current_assets": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:current_ratio:current_liabilities": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:quick_ratio:current_assets": {
+      "xbrl_tag": "AssetsCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:quick_ratio:current_liabilities": {
+      "xbrl_tag": "LiabilitiesCurrent",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:gross_margin:gross_profit": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:gross_margin:revenue": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:ratio:operating_margin:operating_income": {
+      "xbrl_tag": "OperatingIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:operating_margin:revenue": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:ratio:net_margin:net_income": {
+      "xbrl_tag": "NetIncomeLoss",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:net_margin:revenue": {
+      "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.487Z"
+    },
+    "REAX:ratio:eps:eps_diluted": {
+      "xbrl_tag": "EarningsPerShareDiluted",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:bvps:stockholders_equity": {
+      "xbrl_tag": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:bvps:shares_outstanding": {
+      "xbrl_tag": "CommonStockSharesOutstanding",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:fcf:operating_cash_flow": {
+      "xbrl_tag": "NetCashProvidedByUsedInOperatingActivities",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    },
+    "REAX:ratio:fcf:capex": {
+      "xbrl_tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "namespace": "us-gaap",
+      "accession_number": "0001493152-26-008771",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+      "extracted_at": "2026-03-07T17:04:19.499Z"
+    }
+  },
+  "filings": {
+    "REAX": [
+      {
+        "accessionNumber": "0001493152-26-008771",
+        "form": "40-F",
+        "filed": "2026-03-04",
+        "url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315226008771/0001493152-26-008771-index.htm",
+        "metrics": [
+          "revenue",
+          "cost_of_revenue",
+          "gross_profit",
+          "operating_expenses",
+          "operating_income",
+          "net_income",
+          "eps_basic",
+          "eps_diluted",
+          "shares_outstanding",
+          "weighted_avg_shares_diluted",
+          "research_and_development",
+          "pretax_income",
+          "income_tax_expense",
+          "total_assets",
+          "total_liabilities",
+          "stockholders_equity",
+          "current_assets",
+          "current_liabilities",
+          "cash_and_equivalents",
+          "accounts_receivable",
+          "marketable_securities",
+          "other_current_assets",
+          "accounts_payable",
+          "accrued_expenses",
+          "other_current_liabilities",
+          "retained_earnings",
+          "accumulated_other_comprehensive_income",
+          "goodwill",
+          "operating_cash_flow",
+          "capex",
+          "investing_cash_flow",
+          "financing_cash_flow",
+          "share_repurchases",
+          "depreciation_expense",
+          "amortization_expense",
+          "cash_ending"
+        ],
+        "periods": [
+          "2025-12-31",
+          "2024-12-31"
+        ],
+        "sourceKinds": [
+          "xbrl"
+        ]
+      },
+      {
+        "accessionNumber": "0001493152-25-009312",
+        "form": "40-F",
+        "filed": "2025-03-06",
+        "url": "https://www.sec.gov/Archives/edgar/data/1862461/000149315225009312/0001493152-25-009312-index.htm",
+        "metrics": [
+          "revenue",
+          "cost_of_revenue",
+          "gross_profit",
+          "operating_expenses",
+          "operating_income",
+          "net_income",
+          "eps_basic",
+          "eps_diluted",
+          "shares_outstanding",
+          "weighted_avg_shares_diluted",
+          "research_and_development",
+          "total_assets",
+          "total_liabilities",
+          "stockholders_equity",
+          "current_assets",
+          "current_liabilities",
+          "cash_and_equivalents",
+          "accounts_receivable",
+          "accounts_payable",
+          "accrued_expenses",
+          "retained_earnings",
+          "accumulated_other_comprehensive_income",
+          "treasury_stock",
+          "goodwill",
+          "operating_cash_flow",
+          "capex",
+          "investing_cash_flow",
+          "financing_cash_flow",
+          "depreciation_expense",
+          "amortization_expense",
+          "cash_ending"
+        ],
+        "periods": [
+          "2024-12-31",
+          "2024-05-01"
+        ],
+        "sourceKinds": [
+          "xbrl"
+        ]
+      }
+    ]
+  }
+}

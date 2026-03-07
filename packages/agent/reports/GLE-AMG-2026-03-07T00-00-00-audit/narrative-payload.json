@@ -1,0 +1,65 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "paragraphs": [
+        {
+          "text": "This comparison evaluates GLE, AMG across their most recent annual filing periods, examining revenue scale, profitability, leverage, and cash generation to surface relative positioning within this peer set.",
+          "fact_ids": []
+        },
+        {
+          "text": "GLE reports $2.9M in revenue (-53.6% YoY) and -$744K in net income for period 2025-06-30. Key profile markers include net margin of -25.3%, free cash flow of -$1.3M.",
+          "fact_ids": []
+        },
+        {
+          "text": "AMG reports $2.07B in revenue (1.6% YoY) and $717M in net income for period 2025-12-31. Key profile markers include net margin of 34.5%, debt-to-equity of 0.64x, free cash flow of $967M.",
+          "fact_ids": []
+        },
+        {
+          "text": "AMG leads the peer set in annual revenue, anchoring the scale dimension of this comparison.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "paragraphs": [
+        {
+          "text": "### GLE — What Stands Out\n- No clear quantitative outperformance signal is active for GLE in the current period lock.",
+          "fact_ids": []
+        },
+        {
+          "text": "### AMG — What Stands Out\n- ROE of 16.9% indicates efficient use of shareholder capital.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "paragraphs": [
+        {
+          "text": "### Watch Items\n- **GLE:** Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.\n- **AMG:** Significant spike: 19.0% YoY change (2.1σ from mean) (period: 2021-12-31) Significant spike: 12.5% YoY change (2.0σ from mean) (period: 2021-12-31)",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "paragraphs": [
+        {
+          "text": "### Analyst Follow-Up\n- **GLE:** 0 strength signals and 3 active risk signals in the locked annual basis.\n- **AMG:** 1 strength signals and 2 active risk signals in the locked annual basis.",
+          "fact_ids": []
+        },
+        {
+          "text": "Prioritize next-pass work on margin durability, balance-sheet flexibility, and cash conversion differentials across the peer set.",
+          "fact_ids": []
+        }
+      ]
+    }
+  ]
+}

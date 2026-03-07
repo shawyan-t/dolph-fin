@@ -1,0 +1,171 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "DLPN posted $52M in revenue (19.9% YoY) and -$13M in net income (-48.3% YoY) for 2024-12-31. Revenue growth coupled with declining net income suggests margin pressure or rising operating costs that bear monitoring in subsequent periods. The profitability profile is defined by operating margin of -20.3% and net margin of -24.4%, framing the earnings quality behind the headline figures.\n\nThe balance sheet carries a moderate profile at 0.44x debt-to-equity and 0.76x current ratio, which is serviceable but leaves less margin for error under stress. The quick ratio of 0.76x still shows current-asset coverage after excluding inventory, but it does not offset the current cash burn.\n\nCash generation is anchored by -$158K in operating cash flow (-96.6% YoY), which converts to -$159K in free cash flow (-96.6% YoY). Capital expenditures of $2K (0.0% of revenue) show the reinvestment burden required to sustain the current operating base.",
+      "paragraphs": [
+        {
+          "text": "DLPN posted $52M in revenue (19.9% YoY) and -$13M in net income (-48.3% YoY) for 2024-12-31. Revenue growth coupled with declining net income suggests margin pressure or rising operating costs that bear monitoring in subsequent periods. The profitability profile is defined by operating margin of -20.3% and net margin of -24.4%, framing the earnings quality behind the headline figures.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "operating_margin",
+            "net_margin"
+          ]
+        },
+        {
+          "text": "The balance sheet carries a moderate profile at 0.44x debt-to-equity and 0.76x current ratio, which is serviceable but leaves less margin for error under stress. The quick ratio of 0.76x still shows current-asset coverage after excluding inventory, but it does not offset the current cash burn.",
+          "fact_ids": [
+            "de",
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "Cash generation is anchored by -$158K in operating cash flow (-96.6% YoY), which converts to -$159K in free cash flow (-96.6% YoY). Capital expenditures of $2K (0.0% of revenue) show the reinvestment burden required to sustain the current operating base.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "fcf",
+            "capex",
+            "revenue"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "rendered_content": "### Capital Expenditures\nCapital Expenditures is currently $2K with -85.5% CAGR. Capital Expenditures has declined at a -85.5% CAGR.\n\n### Total Assets\nTotal Assets is currently $58M with 39.5% CAGR. Total Assets has grown at a 39.5% CAGR.\n\n### Revenue\nRevenue is currently $52M with 37.2% CAGR. Revenue has grown at a 37.2% CAGR.\n\n### Total Liabilities\nTotal Liabilities is currently $47M with 12.8% CAGR. Total Liabilities has grown at a 12.8% CAGR.",
+      "paragraphs": [
+        {
+          "text": "Capital Expenditures is currently $2K with -85.5% CAGR. Capital Expenditures has declined at a -85.5% CAGR.",
+          "fact_ids": [
+            "capex"
+          ]
+        },
+        {
+          "text": "Total Assets is currently $58M with 39.5% CAGR. Total Assets has grown at a 39.5% CAGR.",
+          "fact_ids": [
+            "total_assets"
+          ]
+        },
+        {
+          "text": "Revenue is currently $52M with 37.2% CAGR. Revenue has grown at a 37.2% CAGR.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "Total Liabilities is currently $47M with 12.8% CAGR. Total Liabilities has grown at a 12.8% CAGR.",
+          "fact_ids": [
+            "total_liabilities"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "rendered_content": "### Watch Items\n- The following governed risk signals are active in the locked annual basis.\n\n- **Negative profitability:** Net margin is -24.4%, indicating a loss-making profile.\n- **Negative operating cash flow:** Operating cash flow is negative in the current annual period.\n- **Low liquidity:** Current ratio is 0.76x, below 1.0x.\n- **Anomaly in Revenue:** Significant spike: 213.3% YoY change (2.2σ from mean) (period: 2016-12-31)\n- **Anomaly in Gross Profit:** Significant spike: 99999900.0% YoY change (2.5σ from mean) (period: 2023-12-31)",
+      "paragraphs": [
+        {
+          "text": "- The following governed risk signals are active in the locked annual basis.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Negative profitability:** Net margin is -24.4%, indicating a loss-making profile.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- **Negative operating cash flow:** Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "fcf"
+          ]
+        },
+        {
+          "text": "- **Low liquidity:** Current ratio is 0.76x, below 1.0x.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "- **Anomaly in Revenue:** Significant spike: 213.3% YoY change (2.2σ from mean) (period: 2016-12-31)",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- **Anomaly in Gross Profit:** Significant spike: 99999900.0% YoY change (2.5σ from mean) (period: 2023-12-31)",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "### What Stands Out\n- Revenue is up 19.9% year over year, showing strong top-line momentum.\n\n### Watch Items\n- Net margin is -24.4%, indicating a loss-making profile.\n\n- Operating cash flow is negative in the current annual period.\n- Current ratio is 0.76x, below 1.0x.\n### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2024-12-31).\n\n- Prior comparisons use 2023-12-31; metrics without required inputs remain intentionally unfilled.",
+      "paragraphs": [
+        {
+          "text": "- Revenue is up 19.9% year over year, showing strong top-line momentum.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "- Net margin is -24.4%, indicating a loss-making profile.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "fcf"
+          ]
+        },
+        {
+          "text": "- Current ratio is 0.76x, below 1.0x.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "- Current conclusions are anchored to a period-locked annual basis (2024-12-31).",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "- Prior comparisons use 2023-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ]
+    }
+  ]
+}

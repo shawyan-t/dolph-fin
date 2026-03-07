@@ -8,21 +8,34 @@
  * - LLM sections use structured per-section calls with exact IDs
  * - Validation uses exact ID matching
  *
- * Cost: ~$0.003-0.01 per analysis (3-5 small LLM calls)
+ * Cost: deterministic mode uses 0 LLM calls; llm mode uses 1 executive-summary call.
  */
 
-import type { Report, ReportSection, LLMProvider, AnalysisContext } from '@dolph/shared';
+import { resolve } from 'node:path';
+import type {
+  Report,
+  ReportSection,
+  LLMProvider,
+  AnalysisContext,
+  StructuredNarrativePayload,
+} from '@dolph/shared';
 import { createPlan } from './planner.js';
 import { executePlan } from './executor.js';
-import { analyzeData } from './analyzer.js';
-import { generateNarrative } from './narrator.js';
+import { generateExecutiveSummaryOnly } from './narrator.js';
 import { generateDeterministicNarrative } from './deterministic-narrative.js';
 import { validateReport } from './validator.js';
-import { correctSections } from './corrector.js';
+import { runDeterministicQAGates, writeQAFailureReport } from './deterministic-qa.js';
 import { buildFinancialStatementsSection } from './statements-builder.js';
 import { buildKeyMetricsSection } from './metrics-builder.js';
 import type { PipelineConfig, PipelineCallbacks, PipelineResult } from './types.js';
-import type { AnalysisInsights } from './analyzer.js';
+import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
+import { resolveReportingPolicy } from './report-policy.js';
+import { buildCanonicalReportPackage, type CanonicalReportPackage } from './canonical-report-package.js';
+import type { ReportModel } from './report-model.js';
+import { writeAuditArtifacts } from './audit-artifacts.js';
+import { defaultReportsDir } from './report-paths.js';
+import { analyzeData } from './analyzer.js';
+import { buildReportModel } from './report-model.js';
 
 /**
  * Run the full analysis pipeline for given tickers.
@@ -40,8 +53,9 @@ export async function runPipeline(
     throwIfAborted(signal);
 
     // ── Step 1: PLAN (deterministic) ──────────────────────────
+    const policy = resolveReportingPolicy(config);
     callbacks?.onStep?.('Creating analysis plan', 'running');
-    const plan = createPlan(config.tickers, config.type);
+    const plan = createPlan(config.tickers, config.type, policy);
     callbacks?.onStep?.('Creating analysis plan', 'complete',
       `${plan.steps.length} steps planned`);
 
@@ -49,6 +63,7 @@ export async function runPipeline(
     throwIfAborted(signal);
     callbacks?.onStep?.('Gathering SEC data', 'running');
     const context = await executePlan(plan, config.maxRetries, callbacks, signal);
+    context.policy = policy;
     throwIfAborted(signal);
 
     const successCount = context.results.filter(r => r.success).length;
@@ -98,8 +113,30 @@ export async function runPipeline(
     // ── Step 3: ANALYZE (deterministic) ──────────────────────
     throwIfAborted(signal);
     callbacks?.onStep?.('Analyzing financial data', 'running');
-    const insights = analyzeData(context);
+    const preliminaryInsights = analyzeData(context, context.policy);
+    const preliminaryReportModel = buildReportModel(context, preliminaryInsights);
     callbacks?.onStep?.('Analyzing financial data', 'complete');
+
+    // ── Step 3b: Align filing excerpts to the locked annual basis ──────
+    throwIfAborted(signal);
+    callbacks?.onStep?.('Aligning filing context', 'running');
+    await alignFilingContentToLockedPeriods(context, preliminaryReportModel, signal);
+    callbacks?.onStep?.('Aligning filing context', 'complete');
+
+    const canonicalPackage = buildCanonicalReportPackage(context);
+    const { insights, reportModel } = canonicalPackage;
+
+    if (
+      context.type === 'comparison'
+      && policy.comparisonRequireOverlap
+      && (!context.comparison_basis
+        || context.comparison_basis.effective_mode !== 'overlap_normalized'
+        || context.comparison_basis.status !== 'resolved')
+    ) {
+      throw new Error(
+        `Institutional comparison mode requires overlap-normalized annual periods, but no governed shared basis was available across all peers. ${context.comparison_basis?.note || ''}`.trim(),
+      );
+    }
 
     // ── Step 4: NARRATE ───────────────────────────────────────
     callbacks?.onStep?.('Generating narrative report', 'running');
@@ -107,10 +144,12 @@ export async function runPipeline(
     const narrativeMode = config.narrativeMode ?? 'deterministic';
     const llmOptions = config.snapshotDate ? { temperature: 0, signal } : { signal };
     let sections: ReportSection[];
+    let structuredNarrative = undefined as Report['narrative'] | undefined;
+    let deterministicNarrative = generateDeterministicNarrative(context, insights);
 
     if (narrativeMode === 'deterministic') {
-      const deterministic = generateDeterministicNarrative(context, insights);
-      sections = deterministic.sections;
+      sections = deterministicNarrative.sections;
+      structuredNarrative = deterministicNarrative.narrative;
       callbacks?.onStep?.('Generating narrative report', 'complete', 'deterministic mode');
     } else {
       if (!llm) {
@@ -119,21 +158,24 @@ export async function runPipeline(
           'Provide a provider or switch to deterministic mode.',
         );
       }
-      const generated = await generateNarrative(context, insights, llm, config.tone, llmOptions);
-      sections = generated.sections;
+      const generated = await generateExecutiveSummaryOnly(context, insights, llm, config.tone, llmOptions, policy);
+      sections = deterministicNarrative.sections.map(section =>
+        section.id === generated.section.id ? generated.section : section,
+      );
+      structuredNarrative = {
+        mode: generated.narrative.mode,
+        sections: deterministicNarrative.narrative.sections.map(section => {
+          const override = generated.narrative.sections.find(candidate => candidate.id === section.id);
+          return override || section;
+        }),
+      };
       totalLLMCalls += generated.llmCallCount;
-      callbacks?.onStep?.('Generating narrative report', 'complete', `${generated.llmCallCount} LLM calls`);
+      callbacks?.onStep?.('Generating narrative report', 'complete', 'executive summary via LLM, all other sections deterministic');
     }
     throwIfAborted(signal);
 
     // ── Step 4b: Fill deterministic sections ──────────────────
-    sections = fillDeterministicSections(sections, context, insights);
-
-    // Emit partial report sections
-    for (const section of sections) {
-      throwIfAborted(signal);
-      callbacks?.onPartialReport?.(section.id, section.content);
-    }
+    sections = fillDeterministicSections(sections, canonicalPackage);
 
     // ── Step 5: VALIDATE (code-based, type-aware) ──────────────
     throwIfAborted(signal);
@@ -145,27 +187,6 @@ export async function runPipeline(
         ? 'All checks passed'
         : `${validation.issues.length} issues found`);
 
-    // ── Step 6: CORRECT (LLM mode only) ───────────────────────
-    const canRunCorrections = config.maxValidationLoops > 0 && !!llm && narrativeMode === 'llm';
-    let correctionLoops = 0;
-    while (canRunCorrections && !validation.pass && correctionLoops < config.maxValidationLoops) {
-      throwIfAborted(signal);
-      correctionLoops++;
-      callbacks?.onStep?.(`Correcting report (attempt ${correctionLoops})`, 'running');
-
-      const { correctedSections, llmCallCount: corrLLMCalls } =
-        await correctSections(sections, validation.issues, context, insights, llm, signal);
-
-      totalLLMCalls += corrLLMCalls;
-      sections = correctedSections;
-
-      validation = validateReport(sections, config.type);
-      callbacks?.onStep?.(
-        `Correcting report (attempt ${correctionLoops})`,
-        validation.pass ? 'complete' : 'error',
-      );
-    }
-
     // FAIL-CLOSED: if validation still has errors, abort
     if (!validation.pass) {
       const errorIssues = validation.issues
@@ -173,8 +194,8 @@ export async function runPipeline(
         .map(i => `[${i.section}] ${i.issue}`)
         .join('; ');
       if (errorIssues) {
-        callbacks?.onStep?.('Validation failed after corrections', 'error', errorIssues);
-        throw new Error(`Report failed validation after ${correctionLoops} correction attempts: ${errorIssues}`);
+        callbacks?.onStep?.('Validation failed', 'error', errorIssues);
+        throw new Error(`Report failed validation: ${errorIssues}`);
       }
       // Only warnings remain — proceed but keep the validation result
     }
@@ -189,27 +210,46 @@ export async function runPipeline(
       id: snapshotId || generateId(),
       tickers: config.tickers,
       type: config.type,
+      policy,
+      comparison_basis: context.comparison_basis || null,
       generated_at: config.snapshotDate
         ? `${config.snapshotDate}T00:00:00.000Z`
         : new Date().toISOString(),
       sections,
-      sources: extractSources(context),
+      sources: extractSources(reportModel),
       validation,
       metadata: {
         llm_calls: totalLLMCalls,
         total_duration_ms: Date.now() - startTime,
         data_points_used: countDataPoints(context),
         snapshot_id: snapshotId,
+        policy_mode: policy.mode,
+        comparison_basis_mode: context.comparison_basis?.effective_mode || policy.comparisonBasisMode,
       },
       provenance: collectProvenance(context),
+      narrative: structuredNarrative,
     };
 
-    await callbacks?.onComplete?.(report, context);
+    const auditOutputDir = config.auditOutputDir || defaultReportsDir();
+    const finalizedReport = await finalizeGovernedReport(report, context, canonicalPackage, {
+      auditOutputDir,
+      narrativeMode,
+      deterministicNarrative,
+      persistAuditArtifacts: policy.persistAuditArtifacts,
+    });
+
+    for (const section of finalizedReport.sections) {
+      throwIfAborted(signal);
+      callbacks?.onPartialReport?.(section.id, section.content);
+    }
+
+    await callbacks?.onComplete?.(finalizedReport, context, canonicalPackage);
     throwIfAborted(signal);
 
     return {
-      report,
+      report: finalizedReport,
       context,
+      canonicalPackage,
       llmCallsCount: totalLLMCalls,
       totalDurationMs: report.metadata.total_duration_ms,
     };
@@ -220,6 +260,70 @@ export async function runPipeline(
   }
 }
 
+interface FinalizeGovernedReportOptions {
+  auditOutputDir: string;
+  narrativeMode: 'llm' | 'deterministic';
+  deterministicNarrative: { sections: ReportSection[]; narrative: StructuredNarrativePayload };
+  persistAuditArtifacts: boolean;
+}
+
+export async function finalizeGovernedReport(
+  report: Report,
+  context: AnalysisContext,
+  canonicalPackage: CanonicalReportPackage,
+  options: FinalizeGovernedReportOptions,
+): Promise<Report> {
+  let finalReport = report;
+  let qa = runDeterministicQAGates(finalReport, context, canonicalPackage);
+
+  if (
+    !qa.pass
+    && options.narrativeMode === 'llm'
+    && qa.failures.length > 0
+    && qa.failures.every(failure => failure.gate.startsWith('narrative.'))
+  ) {
+    const overrideById = new Map(
+      options.deterministicNarrative.sections
+        .filter(section => section.content.trim().length > 0)
+        .map(section => [section.id, section] as const),
+    );
+    finalReport = {
+      ...finalReport,
+      sections: finalReport.sections.map(section => overrideById.get(section.id) || section),
+      narrative: options.deterministicNarrative.narrative,
+      validation: validateReport(
+        finalReport.sections.map(section => overrideById.get(section.id) || section),
+        finalReport.type,
+      ),
+    };
+    qa = runDeterministicQAGates(finalReport, context, canonicalPackage);
+  }
+
+  if (!qa.pass) {
+    const qaPath = await writeQAFailureReport(finalReport, qa, options.auditOutputDir);
+    throw new Error(`Report failed deterministic QA: ${qaPath}`);
+  }
+
+  if (options.persistAuditArtifacts) {
+    finalReport = {
+      ...finalReport,
+      audit: await writeAuditArtifacts({
+        report: finalReport,
+        context,
+        insights: canonicalPackage.insights,
+        reportModel: canonicalPackage.reportModel,
+        qa,
+        outputDir: options.auditOutputDir,
+        pdfPath: null,
+        layoutIssues: [],
+        narrativePayload: finalReport.narrative,
+      }),
+    };
+  }
+
+  return finalReport;
+}
+
 // ── Deterministic Section Builders ──────────────────────────────
 
 /**
@@ -228,37 +332,60 @@ export async function runPipeline(
  */
 function fillDeterministicSections(
   sections: ReportSection[],
-  context: AnalysisContext,
-  insights: Record<string, AnalysisInsights>,
+  canonicalPackage: CanonicalReportPackage,
 ): ReportSection[] {
   return sections.map(section => {
     switch (section.id) {
       case 'key_metrics':
-        return buildKeyMetricsSection(context, insights);
+        return buildKeyMetricsSection(canonicalPackage);
       case 'financial_statements':
-        return buildFinancialStatementsSection(context);
+        return buildFinancialStatementsSection(canonicalPackage);
       case 'data_sources':
-        return buildDataSourcesSection(context);
+        return buildDataSourcesSection(canonicalPackage);
       default:
         return section;
     }
   });
 }
 
+async function alignFilingContentToLockedPeriods(
+  context: AnalysisContext,
+  model: ReportModel,
+  signal?: AbortSignal,
+): Promise<void> {
+  for (const company of model.companies) {
+    if (signal?.aborted) throw new Error('Analysis cancelled');
+    const aligned = company.alignedFiling;
+    if (!aligned) continue;
+    const filing = await getFilingContent({
+      accession_number: aligned.accessionNumber,
+      document_url: aligned.documentUrl,
+    });
+    context.filing_content[company.ticker] = filing;
+  }
+}
+
 /**
  * Build data sources section from context (deterministic).
  */
-function buildDataSourcesSection(context: AnalysisContext): ReportSection {
+function buildDataSourcesSection(
+  canonicalPackage: CanonicalReportPackage,
+): ReportSection {
   const lines: string[] = [];
   const retrievedAt = new Date().toISOString().slice(0, 10);
-  const annualForms = new Set(['10-K', '20-F', '40-F']);
+  const model = canonicalPackage.reportModel;
 
-  for (const ticker of context.tickers) {
-    const filings = context.filings[ticker] || [];
-    const prioritized = filings.filter(f => annualForms.has(f.filing_type));
-    const selected = (prioritized.length > 0 ? prioritized : filings).slice(0, 3);
-    for (const filing of selected) {
-      lines.push(`- [${ticker} ${filing.filing_type} (${filing.date_filed})](${filing.primary_document_url})`);
+  for (const company of model.companies) {
+    const refs = company.filingReferences.slice(0, 4);
+    for (const ref of refs) {
+      const labelTicker = company.ticker;
+      const labelForm = ref.form || 'SEC filing';
+      const labelDate = ref.filed || 'date unavailable';
+      if (ref.url) {
+        lines.push(`- [${labelTicker} ${labelForm} (${labelDate})](${ref.url})`);
+      } else {
+        lines.push(`- ${labelTicker} ${labelForm} (${labelDate})`);
+      }
     }
   }
 
@@ -297,16 +424,16 @@ function generateSnapshotId(tickers: string[], date: string): string {
   return `snap_${date}_${(hash >>> 0).toString(36)}`;
 }
 
-function extractSources(context: AnalysisContext) {
+function extractSources(model: ReportModel) {
   const sources: Array<{ url: string; description: string; date: string }> = [];
 
-  for (const ticker of context.tickers) {
-    const filings = context.filings[ticker] || [];
-    for (const filing of filings) {
+  for (const company of model.companies) {
+    for (const filing of company.filingReferences) {
+      if (!filing.url) continue;
       sources.push({
-        url: filing.primary_document_url,
-        description: `${ticker} ${filing.filing_type}`,
-        date: filing.date_filed,
+        url: filing.url,
+        description: `${company.ticker} ${filing.form || 'SEC filing'}`,
+        date: filing.filed || '',
       });
     }
   }

@@ -1,0 +1,73 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "paragraphs": [
+        {
+          "text": "BDCO posted $318M in revenue (-19.8% YoY) and -$8.6M in net income versus $31M in the prior period for 2024-12-31. The profitability profile is defined by operating margin of -1.4% and net margin of -2.7%, framing the earnings quality behind the headline figures.",
+          "fact_ids": []
+        },
+        {
+          "text": "Current ratio stands at 0.70x in the locked annual basis, but negative operating or free cash flow tempers what would otherwise look like a comfortable liquidity buffer. The quick ratio of 0.14x still shows current-asset coverage after excluding inventory, but it does not offset the current cash burn.",
+          "fact_ids": []
+        },
+        {
+          "text": "Cash generation is anchored by -$16M in operating cash flow versus $20M in the prior period, which converts to -$16M in free cash flow versus $20M in the prior period. Capital expenditures of $46K (0.0% of revenue) reflect the reinvestment intensity required to sustain the current operating base and fund future growth.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "paragraphs": [
+        {
+          "text": "### Gross Profit\nGross Profit is currently $45M with 28.3% CAGR. Gross Profit has grown at a 28.3% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Revenue\nRevenue is currently $318M with -19.3% CAGR. Revenue has declined at a -19.3% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Capital Expenditures\nCapital Expenditures is currently $46K with -5.9% CAGR. Capital Expenditures has declined at a -5.9% CAGR.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Total Liabilities\nTotal Liabilities is currently $69M with 1.7% CAGR. Total Liabilities has been roughly flat.",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "paragraphs": [
+        {
+          "text": "### Watch Items\n- **Negative profitability:** Net margin is -2.7%, indicating a loss-making profile.\n- **Declining revenue:** Revenue declined 19.8% versus prior year.\n- **Negative operating cash flow:** Operating cash flow is negative in the current annual period.\n- **Low liquidity:** Current ratio is 0.70x, below 1.0x.\n- **Anomaly in Net Income:** Significant spike: 1507.5% YoY change (2.4σ from mean) (period: 2019-12-31)",
+          "fact_ids": []
+        }
+      ]
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "paragraphs": [
+        {
+          "text": "### What Stands Out\n- BDCO's profile is currently balanced without a dominant quantitative outperformance signal.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Watch Items\n- Net margin is -2.7%, indicating a loss-making profile.\n- Revenue declined 19.8% versus prior year.\n- Operating cash flow is negative in the current annual period.",
+          "fact_ids": []
+        },
+        {
+          "text": "### Analyst Interpretation\n- Current conclusions are anchored to a period-locked annual basis (2024-12-31).\n- Prior comparisons use 2023-12-31; metrics without required inputs remain intentionally unfilled.",
+          "fact_ids": []
+        }
+      ]
+    }
+  ]
+}

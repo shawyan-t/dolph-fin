@@ -3,12 +3,9 @@
  *
  * The tools required for each analysis type are always the same.
  * This is a lookup table, not a creative decision.
- *
- * Note: We request annual filings without specifying 10-K or 20-F,
- * allowing the executor to handle both domestic and foreign filers.
  */
 
-import type { AgentPlan, AgentStep } from '@dolph/shared';
+import type { AgentPlan, AgentStep, ReportingPolicy } from '@dolph/shared';
 
 const DEFAULT_TREND_METRICS = [
   'revenue', 'net_income', 'operating_income', 'gross_profit',
@@ -17,32 +14,28 @@ const DEFAULT_TREND_METRICS = [
 ];
 
 /**
- * Annual filing types — domestic companies file 10-K, foreign filers file 20-F or 40-F.
- * We try them in order of most common.
- */
-export const ANNUAL_FILING_TYPES = ['10-K', '20-F', '40-F'] as const;
-
-/**
  * Generate a deterministic execution plan based on analysis type.
  * Zero LLM calls.
  */
 export function createPlan(
   tickers: string[],
   type: 'single' | 'comparison',
+  policy?: ReportingPolicy,
 ): AgentPlan {
   if (type === 'single') {
-    return createSinglePlan(tickers[0]!);
+    return createSinglePlan(tickers[0]!, policy);
   }
-  return createComparisonPlan(tickers);
+  return createComparisonPlan(tickers, policy);
 }
 
-function createSinglePlan(ticker: string): AgentPlan {
+function createSinglePlan(ticker: string, policy?: ReportingPolicy): AgentPlan {
+  const statementLimit = policy?.statementHistoryPeriods ?? 5;
+  const trendPeriods = policy?.trendHistoryPeriods ?? 10;
   const steps: AgentStep[] = [
     {
       tool: 'get_company_filings',
-      // Don't specify filing_type — let the executor find annual filings (10-K or 20-F)
-      params: { ticker, limit: 10 },
-      purpose: `Get recent annual filings for ${ticker}`,
+      params: { ticker, limit: 15 },
+      purpose: `Get recent filings for ${ticker}`,
     },
     {
       tool: 'get_company_facts',
@@ -50,23 +43,18 @@ function createSinglePlan(ticker: string): AgentPlan {
       purpose: `Get XBRL financial facts for ${ticker}`,
     },
     {
-      tool: 'get_filing_content',
-      params: { ticker }, // accession_number and document_url filled at runtime
-      purpose: `Parse most recent annual filing for ${ticker}`,
-    },
-    {
       tool: 'get_financial_statements',
-      params: { ticker, statement: 'income', period: 'annual', limit: 5 },
+      params: { ticker, statement: 'income', period: 'annual', limit: statementLimit },
       purpose: `Get income statement for ${ticker}`,
     },
     {
       tool: 'get_financial_statements',
-      params: { ticker, statement: 'balance_sheet', period: 'annual', limit: 5 },
+      params: { ticker, statement: 'balance_sheet', period: 'annual', limit: statementLimit },
       purpose: `Get balance sheet for ${ticker}`,
     },
     {
       tool: 'get_financial_statements',
-      params: { ticker, statement: 'cash_flow', period: 'annual', limit: 5 },
+      params: { ticker, statement: 'cash_flow', period: 'annual', limit: statementLimit },
       purpose: `Get cash flow statement for ${ticker}`,
     },
     {
@@ -76,7 +64,7 @@ function createSinglePlan(ticker: string): AgentPlan {
     },
     {
       tool: 'get_trend_analysis',
-      params: { ticker, metrics: DEFAULT_TREND_METRICS, periods: 10 },
+      params: { ticker, metrics: DEFAULT_TREND_METRICS, periods: trendPeriods },
       purpose: `Analyze metric trends for ${ticker}`,
     },
   ];
@@ -88,7 +76,9 @@ function createSinglePlan(ticker: string): AgentPlan {
   };
 }
 
-function createComparisonPlan(tickers: string[]): AgentPlan {
+function createComparisonPlan(tickers: string[], policy?: ReportingPolicy): AgentPlan {
+  const statementLimit = policy?.statementHistoryPeriods ?? 5;
+  const trendPeriods = policy?.trendHistoryPeriods ?? 10;
   const steps: AgentStep[] = [];
 
   // Get filings, facts, statements, ratios, and trends for each ticker
@@ -96,8 +86,8 @@ function createComparisonPlan(tickers: string[]): AgentPlan {
     steps.push(
       {
         tool: 'get_company_filings',
-        params: { ticker, limit: 5 },
-        purpose: `Get recent annual filings for ${ticker}`,
+        params: { ticker, limit: 15 },
+        purpose: `Get recent filings for ${ticker}`,
       },
       {
         tool: 'get_company_facts',
@@ -106,17 +96,17 @@ function createComparisonPlan(tickers: string[]): AgentPlan {
       },
       {
         tool: 'get_financial_statements',
-        params: { ticker, statement: 'income', period: 'annual', limit: 3 },
+        params: { ticker, statement: 'income', period: 'annual', limit: statementLimit },
         purpose: `Get income statement for ${ticker}`,
       },
       {
         tool: 'get_financial_statements',
-        params: { ticker, statement: 'balance_sheet', period: 'annual', limit: 3 },
+        params: { ticker, statement: 'balance_sheet', period: 'annual', limit: statementLimit },
         purpose: `Get balance sheet for ${ticker}`,
       },
       {
         tool: 'get_financial_statements',
-        params: { ticker, statement: 'cash_flow', period: 'annual', limit: 3 },
+        params: { ticker, statement: 'cash_flow', period: 'annual', limit: statementLimit },
         purpose: `Get cash flow statement for ${ticker}`,
       },
       {
@@ -126,24 +116,11 @@ function createComparisonPlan(tickers: string[]): AgentPlan {
       },
       {
         tool: 'get_trend_analysis',
-        params: { ticker, metrics: DEFAULT_TREND_METRICS, periods: 5 },
+        params: { ticker, metrics: DEFAULT_TREND_METRICS, periods: trendPeriods },
         purpose: `Analyze trends for ${ticker}`,
       },
     );
   }
-
-  // Compare across all tickers
-  steps.push({
-    tool: 'compare_companies',
-    params: {
-      tickers,
-      metrics: [
-        'revenue', 'net_income', 'total_assets', 'stockholders_equity',
-        'operating_cash_flow', 'gross_profit', 'operating_income',
-      ],
-    },
-    purpose: `Compare ${tickers.join(', ')} across key metrics`,
-  });
 
   return {
     type: 'comparison',

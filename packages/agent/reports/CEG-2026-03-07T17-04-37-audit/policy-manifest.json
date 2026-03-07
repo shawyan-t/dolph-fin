@@ -1,0 +1,23 @@
+{
+  "policy": {
+    "mode": "institutional",
+    "comparisonBasisMode": "overlap_normalized",
+    "statementHistoryPeriods": 5,
+    "trendHistoryPeriods": 10,
+    "returnMetricBasisMode": "average_balance",
+    "sparseDerivationMode": "expanded",
+    "strictLayoutQA": true,
+    "persistAuditArtifacts": true,
+    "narrativeGovernanceMode": "deterministic",
+    "allowExternalContext": false,
+    "comparisonRequireOverlap": false,
+    "metricNAInference": "governed",
+    "displayDerivedLabels": true,
+    "percentMeaningfulBase": 0.05
+  },
+  "report_id": "fl_mmgkptvj_hls9fm",
+  "tickers": [
+    "CEG"
+  ],
+  "generated_at": "2026-03-07T17:04:37.759Z"
+}

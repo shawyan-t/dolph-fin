@@ -32,7 +32,7 @@
     "start:headless": "tsx src/index.ts",
     "dev": "tsx watch src/cli.ts",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test src/validator.test.ts src/dcf-builder.test.ts src/analyzer.test.ts src/deterministic-qa.test.ts src/layout-packer.test.ts src/exporter-period-banner.test.ts"
+    "test": "node --import tsx --test src/validator.test.ts src/dcf-builder.test.ts src/analyzer.test.ts src/deterministic-qa.test.ts src/report-integrity.test.ts src/report-governance.test.ts src/layout-packer.test.ts src/exporter-period-banner.test.ts"
   },
   "dependencies": {
     "@dolph/bootup": "workspace:*",

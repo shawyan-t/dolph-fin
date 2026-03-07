@@ -1,0 +1,15 @@
+{
+  "id": "snap_2026-03-07_1wac8xx",
+  "type": "single",
+  "tickers": [
+    "BDCO"
+  ],
+  "generated_at": "2026-03-07T00:00:00.000Z",
+  "metadata": {
+    "llm_calls": 0,
+    "total_duration_ms": 53,
+    "data_points_used": 2034,
+    "snapshot_id": "snap_2026-03-07_1wac8xx",
+    "policy_mode": "institutional"
+  }
+}
