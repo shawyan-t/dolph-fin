@@ -177,8 +177,8 @@ describe('report governance hardening', () => {
     });
 
     assert.equal(policy.mode, 'institutional');
-    assert.equal(policy.comparisonBasisMode, 'overlap_normalized');
-    assert.equal(policy.comparisonRequireOverlap, true);
+    assert.equal(policy.comparisonBasisMode, 'latest_per_peer_with_prominent_disclosure');
+    assert.equal(policy.comparisonRequireOverlap, false);
     assert.equal(policy.strictLayoutQA, true);
     assert.equal(policy.statementHistoryPeriods, 5);
     assert.equal(policy.trendHistoryPeriods, 10);
@@ -660,7 +660,7 @@ describe('report governance hardening', () => {
     }
   });
 
-  it('resolves overlap-normalized fiscal cohorts for close but non-identical annual year ends', () => {
+  it('resolves latest-per-peer comparison for close but non-identical annual year ends', () => {
     const first = makeContext('AAA');
     const second = makeContext('BBB');
 
@@ -703,14 +703,12 @@ describe('report governance hardening', () => {
     const insights = analyzeData(context, context.policy);
 
     assert.equal(context.comparison_basis?.status, 'resolved');
-    assert.equal(context.comparison_basis?.effective_mode, 'overlap_normalized');
-    assert.equal(context.comparison_basis?.resolution_kind, 'fiscal_cohort_tolerance');
-    assert.equal(context.comparison_basis?.comparable_current_key, 'FY2025');
+    assert.equal(context.comparison_basis?.effective_mode, 'latest_per_peer_with_prominent_disclosure');
     assert.equal(insights['AAA']?.snapshotPeriod, '2025-12-31');
     assert.equal(insights['BBB']?.snapshotPeriod, '2025-12-29');
   });
 
-  it('marks institutional comparison unavailable when no shared annual cohort exists', () => {
+  it('resolves latest-per-peer comparison when peers have different fiscal year-ends', () => {
     const first = makeContext('GLE');
     const second = makeContext('AMG');
 
@@ -750,10 +748,12 @@ describe('report governance hardening', () => {
       }),
     };
 
-    analyzeData(context, context.policy);
+    const insights = analyzeData(context, context.policy);
 
-    assert.equal(context.comparison_basis?.status, 'unavailable');
-    assert.equal(context.comparison_basis?.effective_mode, 'overlap_normalized');
+    assert.equal(context.comparison_basis?.status, 'resolved');
+    assert.equal(context.comparison_basis?.effective_mode, 'latest_per_peer_with_prominent_disclosure');
+    assert.equal(insights['GLE']?.snapshotPeriod, '2025-06-30');
+    assert.equal(insights['AMG']?.snapshotPeriod, '2025-12-31');
   });
 
   it('uses governed latest-per-peer disclosure mode when screening policy requests it', () => {

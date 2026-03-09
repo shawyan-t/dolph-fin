@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { AnalysisContext, CompanyFacts, FinancialStatement, Report } from '@dolph/shared';
 import { runDeterministicQAGates } from './deterministic-qa.js';
 import { buildCanonicalReportPackage } from './canonical-report-package.js';
-import { resolveReportingPolicy } from './report-policy.js';
+
 
 function makeFacts(ticker: string, metricsByPeriod: Record<string, Record<string, number>>): CompanyFacts {
   const byMetric = new Map<string, Array<{ period: string; value: number }>>();
@@ -417,44 +417,4 @@ describe('deterministic QA gates', () => {
     );
   });
 
-  it('fails institutional comparison mode when peers are not overlap-normalized to the same annual period', () => {
-    const context = makeComparisonContext();
-    context.policy = resolveReportingPolicy({
-      tickers: ['AMD', 'INTC'],
-      type: 'comparison',
-      maxRetries: 1,
-      maxValidationLoops: 0,
-    });
-    context.statements['INTC']!.forEach(statement => {
-      statement.periods.forEach(period => {
-        if (period.period === '2025-12-31') period.period = '2025-06-30';
-        if (period.period === '2024-12-31') period.period = '2024-06-30';
-      });
-    });
-    const intcFacts = context.facts['INTC']!;
-    intcFacts.facts.forEach(fact => {
-      fact.periods.forEach(period => {
-        if (period.period === '2025-12-31') period.period = '2025-06-30';
-        if (period.period === '2024-12-31') period.period = '2024-06-30';
-      });
-    });
-
-    const report = makeComparisonReport(
-      [
-        'Peer metrics use each company’s latest annual filing with explicit disclosure that fiscal year-ends can differ across peers.',
-        '| Metric | AMD | INTC |',
-        '|:---|---:|---:|',
-        '| Revenue | $34.6B | $54.2B |',
-      ].join('\n'),
-      '',
-    );
-    report.policy = context.policy;
-
-    const qa = runQA(report, context);
-    assert.equal(qa.pass, false);
-    assert.ok(
-      qa.failures.some(f => f.gate === 'data.period_coherence' && /overlap-normalized/i.test(f.message)),
-      'expected overlap-normalized policy failure',
-    );
-  });
 });

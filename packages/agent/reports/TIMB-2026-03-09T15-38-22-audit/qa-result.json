@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [],
+  "recomputedMetrics": {
+    "TIMB": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "TIMB": {
+      "current": "2024-12-31",
+      "prior": "2023-12-31"
+    }
+  }
+}

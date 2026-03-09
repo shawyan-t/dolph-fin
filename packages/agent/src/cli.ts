@@ -315,7 +315,11 @@ async function handleCompare(): Promise<void> {
   });
   const snapshotDate = snapshotInput.trim() || undefined;
   const narrativeMode = getNarrativeModeFromEnv();
-  const comparisonPolicy = await promptComparisonPolicy();
+  const comparisonPolicy: Partial<ReportingPolicy> = {
+    mode: 'screening',
+    comparisonBasisMode: 'latest_per_peer_with_prominent_disclosure',
+    comparisonRequireOverlap: false,
+  };
 
   const config: PipelineConfig = {
     tickers,
@@ -348,48 +352,6 @@ async function handleCompare(): Promise<void> {
     await runPipeline({ ...config, abortSignal: controller.signal }, llm, buildCallbacks(outputFormat));
   } finally {
     if (activeAbortController === controller) activeAbortController = null;
-  }
-}
-
-async function promptComparisonPolicy(): Promise<Partial<ReportingPolicy>> {
-  const mode = await select({
-    message: 'Comparison basis mode:',
-    choices: [
-      {
-        name: 'Institutional (overlap-normalized annual periods; strict, may fail if no governed shared basis exists)',
-        value: 'institutional_strict' as const,
-      },
-      {
-        name: 'Latest annual per peer with prominent disclosure (governed non-overlap mode)',
-        value: 'latest_disclosed' as const,
-      },
-      {
-        name: 'Latest annual per peer screening (loosest governed comparison mode)',
-        value: 'screening' as const,
-      },
-    ],
-    default: 'institutional_strict',
-  });
-
-  switch (mode) {
-    case 'latest_disclosed':
-      return {
-        mode: 'screening',
-        comparisonBasisMode: 'latest_per_peer_with_prominent_disclosure',
-        comparisonRequireOverlap: false,
-      };
-    case 'screening':
-      return {
-        mode: 'screening',
-        comparisonBasisMode: 'latest_per_peer_screening',
-        comparisonRequireOverlap: false,
-      };
-    default:
-      return {
-        mode: 'institutional',
-        comparisonBasisMode: 'overlap_normalized',
-        comparisonRequireOverlap: true,
-      };
   }
 }
 

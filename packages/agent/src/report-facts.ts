@@ -148,12 +148,20 @@ export function applyDerivedPeriodValues(
       }
     }
   } else if (totalDebt === null && (longTermDebt !== null || shortTermDebt !== null)) {
-    // Do not guess a total debt value from a single reported component.
-    // If only one side of the debt split is reported, the standardized total
-    // debt metric stays unavailable until either the other component or a
-    // usable total debt concept is present.
+    // Derive total_debt from whichever component(s) are available.
+    const derivedDebt = (longTermDebt ?? 0) + (shortTermDebt ?? 0);
+    values['total_debt'] = derivedDebt;
     if (sources) {
-      delete sources['total_debt'];
+      const parts: string[] = [];
+      if (longTermDebt !== null) parts.push('long_term_debt');
+      if (shortTermDebt !== null) parts.push('short_term_debt');
+      sources['total_debt'] = {
+        kind: 'derived',
+        ticker,
+        metric: 'total_debt',
+        period,
+        detail: `Derived from ${parts.join(' + ')} only; the other debt component was not reported.`,
+      };
     }
   }
 
@@ -168,6 +176,38 @@ export function applyDerivedPeriodValues(
         metric: 'free_cash_flow',
         period,
         detail: 'Derived as operating_cash_flow - abs(capex).',
+      };
+    }
+  }
+
+  // Derive gross_profit when not directly reported
+  const revenue = finite(values['revenue']);
+  const costOfRevenue = finite(values['cost_of_revenue']);
+  if (revenue !== null && costOfRevenue !== null && values['gross_profit'] === undefined) {
+    values['gross_profit'] = revenue - costOfRevenue;
+    if (sources) {
+      sources['gross_profit'] = {
+        kind: 'derived',
+        ticker,
+        metric: 'gross_profit',
+        period,
+        detail: 'Derived as revenue - cost_of_revenue.',
+      };
+    }
+  }
+
+  // Derive working_capital when not directly reported
+  const currentAssets = finite(values['current_assets']);
+  const currentLiabilities = finite(values['current_liabilities']);
+  if (currentAssets !== null && currentLiabilities !== null && values['working_capital'] === undefined) {
+    values['working_capital'] = currentAssets - currentLiabilities;
+    if (sources) {
+      sources['working_capital'] = {
+        kind: 'derived',
+        ticker,
+        metric: 'working_capital',
+        period,
+        detail: 'Derived as current_assets - current_liabilities.',
       };
     }
   }

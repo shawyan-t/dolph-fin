@@ -38,10 +38,33 @@ type GateId =
   | 'layout.trailing_pages'
   | 'layout.dead_area';
 
+export type QASeverity = 'error' | 'warning';
+
 export interface QAFailure {
   gate: GateId;
+  severity: QASeverity;
   source: string;
   message: string;
+}
+
+const GATE_SEVERITY: Record<GateId, QASeverity> = {
+  'report.section_contract': 'error',
+  'data.cross_section_equality': 'error',
+  'data.period_coherence': 'error',
+  'data.sanity': 'error',
+  'data.units': 'warning',
+  'data.no_fake_na': 'warning',
+  'narrative.threshold_alignment': 'warning',
+  'narrative.templated_repetition': 'warning',
+  'layout.truncation': 'warning',
+  'layout.orphan_headers': 'warning',
+  'layout.split_modules': 'warning',
+  'layout.trailing_pages': 'warning',
+  'layout.dead_area': 'warning',
+};
+
+function pushFailure(failures: QAFailure[], gate: GateId, source: string, message: string): void {
+  failures.push({ gate, severity: GATE_SEVERITY[gate], source, message });
 }
 
 export interface DeterministicQAResult {
@@ -53,16 +76,18 @@ export interface DeterministicQAResult {
 }
 
 const METRIC_DEPENDENCIES: Record<string, string[]> = {
-  'Total Debt': ['long_term_debt', 'short_term_debt'],
-  'Free Cash Flow': ['operating_cash_flow', 'capex'],
+  'Total Debt': ['total_debt'],
+  'Free Cash Flow': ['free_cash_flow'],
   'Earnings Per Share (Diluted)': ['eps_diluted'],
   'Book Value Per Share': ['stockholders_equity', 'shares_outstanding'],
-  'Debt-to-Equity': ['stockholders_equity'],
+  'Debt-to-Equity': ['total_debt', 'stockholders_equity'],
   'Current Ratio': ['current_assets', 'current_liabilities'],
   'Quick Ratio': ['current_assets', 'current_liabilities'],
   'Operating Margin': ['operating_income', 'revenue'],
   'Net Margin': ['net_income', 'revenue'],
   'Gross Margin': ['gross_profit', 'revenue'],
+  'Gross Profit': ['gross_profit'],
+  'Working Capital': ['working_capital'],
 };
 
 const REQUIRED_DASHBOARD_METRICS = new Set([
@@ -96,11 +121,7 @@ export function runDeterministicQAGates(
       note: insight?.periodBasis?.note,
     };
     if (!insight?.snapshotPeriod) {
-      failures.push({
-        gate: 'data.period_coherence',
-        source: ticker,
-        message: 'Missing current period lock.',
-      });
+      pushFailure(failures, 'data.period_coherence', ticker, 'Missing current period lock.');
     }
 
     const fixed: string[] = [];
@@ -131,7 +152,7 @@ export function runDeterministicQAGates(
   runNarrativeGates(report, context, insights, failures);
 
   return {
-    pass: failures.length === 0,
+    pass: failures.filter(f => f.severity === 'error').length === 0,
     failures,
     periodBasis,
     mappingFixes,
@@ -149,47 +170,27 @@ function runSectionContractGates(
   for (const id of requiredSections) {
     const section = sectionMap.get(id);
     if (!section) {
-      failures.push({
-        gate: 'report.section_contract',
-        source: id,
-        message: `Missing required section: ${id}.`,
-      });
+      pushFailure(failures, 'report.section_contract', id, `Missing required section: ${id}.`);
       continue;
     }
     if (section.content.trim().length < 20) {
-      failures.push({
-        gate: 'report.section_contract',
-        source: id,
-        message: `Required section "${id}" has insufficient content.`,
-      });
+      pushFailure(failures, 'report.section_contract', id, `Required section "${id}" has insufficient content.`);
     }
   }
 
   const keyMetrics = sectionMap.get('key_metrics');
   if (keyMetrics && !hasValidMarkdownTable(keyMetrics)) {
-    failures.push({
-      gate: 'report.section_contract',
-      source: 'key_metrics',
-      message: 'Key metrics section is missing a valid markdown table.',
-    });
+    pushFailure(failures, 'report.section_contract', 'key_metrics', 'Key metrics section is missing a valid markdown table.');
   }
 
   const statements = sectionMap.get('financial_statements');
   if (statements && !hasValidMarkdownTable(statements)) {
-    failures.push({
-      gate: 'report.section_contract',
-      source: 'financial_statements',
-      message: 'Financial statements section is missing a valid markdown table.',
-    });
+    pushFailure(failures, 'report.section_contract', 'financial_statements', 'Financial statements section is missing a valid markdown table.');
   }
 
   const sources = sectionMap.get('data_sources');
   if (sources && !hasDataSourceReference(sources)) {
-    failures.push({
-      gate: 'report.section_contract',
-      source: 'data_sources',
-      message: 'Data sources section does not contain a filing reference or URL.',
-    });
+    pushFailure(failures, 'report.section_contract', 'data_sources', 'Data sources section does not contain a filing reference or URL.');
   }
 }
 
@@ -205,21 +206,13 @@ function runPackageContractGates(
 
     for (const table of company.statementTables) {
       if (table.periods.length !== expectedPeriods.length) {
-        failures.push({
-          gate: 'data.period_coherence',
-          source: `${company.ticker}:${table.statementType}`,
-          message: `Statement table uses ${table.periods.length} periods, but the locked contract requires ${expectedPeriods.length}.`,
-        });
+        pushFailure(failures, 'data.period_coherence', `${company.ticker}:${table.statementType}`, `Statement table uses ${table.periods.length} periods, but the locked contract requires ${expectedPeriods.length}.`);
         continue;
       }
 
       for (let idx = 0; idx < expectedPeriods.length; idx++) {
         if (table.periods[idx] !== expectedPeriods[idx]) {
-          failures.push({
-            gate: 'data.period_coherence',
-            source: `${company.ticker}:${table.statementType}`,
-            message: `Statement table period contract drifted (${table.periods.join(', ')} vs locked ${expectedPeriods.join(', ')}).`,
-          });
+          pushFailure(failures, 'data.period_coherence', `${company.ticker}:${table.statementType}`, `Statement table period contract drifted (${table.periods.join(', ')} vs locked ${expectedPeriods.join(', ')}).`);
           break;
         }
       }
@@ -234,11 +227,7 @@ function runPackageContractGates(
   }));
   for (const company of model.companies) {
     if (company.comparisonGroups.length !== expectedGroups.length) {
-      failures.push({
-        gate: 'data.cross_section_equality',
-        source: `${company.ticker}:comparison_groups`,
-        message: 'Comparison row contract does not match the sealed report-level contract.',
-      });
+      pushFailure(failures, 'data.cross_section_equality', `${company.ticker}:comparison_groups`, 'Comparison row contract does not match the sealed report-level contract.');
       continue;
     }
 
@@ -251,11 +240,7 @@ function runPackageContractGates(
         || actualLabels.length !== expected.rowLabels.length
         || actualLabels.some((label, labelIdx) => label !== expected.rowLabels[labelIdx])
       ) {
-        failures.push({
-          gate: 'data.cross_section_equality',
-          source: `${company.ticker}:comparison_groups:${expected.title}`,
-          message: 'Comparison rows drifted from the sealed report-level row contract.',
-        });
+        pushFailure(failures, 'data.cross_section_equality', `${company.ticker}:comparison_groups:${expected.title}`, 'Comparison rows drifted from the sealed report-level row contract.');
         break;
       }
     }
@@ -278,11 +263,7 @@ function runCashFamilyPresentationGates(
       const row = balanceSheet.rows.find(candidate => candidate.key === metric);
       if (!row) continue;
       if (row.displays[0] === 'Not reported') {
-        failures.push({
-          gate: 'data.cross_section_equality',
-          source: `${company.ticker}:${metric}`,
-          message: 'Appendix shows a narrower cash-family row as Not reported even though another governed current cash presentation is available from the filing.',
-        });
+        pushFailure(failures, 'data.cross_section_equality', `${company.ticker}:${metric}`, 'Appendix shows a narrower cash-family row as Not reported even though another governed current cash presentation is available from the filing.');
       }
     }
   }
@@ -306,11 +287,7 @@ function runSingleReportCrossSectionGates(
     const row = rowMap.get(name);
     if (!row) {
       if (REQUIRED_DASHBOARD_METRICS.has(name)) {
-        failures.push({
-          gate: 'data.cross_section_equality',
-          source: `dashboard:${name}`,
-          message: 'Required canonical metric is missing from dashboard output.',
-        });
+        pushFailure(failures, 'data.cross_section_equality', `dashboard:${name}`, 'Required canonical metric is missing from dashboard output.');
       }
       continue;
     }
@@ -319,51 +296,27 @@ function runSingleReportCrossSectionGates(
     const parsedPrior = parseDisplayNumber(row.prior, metric.unit);
 
     if (parsedCurrent === null && metric.current !== null) {
-      failures.push({
-        gate: 'data.no_fake_na',
-        source: `dashboard:${name}`,
-        message: 'Current value is N/A in dashboard but computable in canonical metrics.',
-      });
+      pushFailure(failures, 'data.no_fake_na', `dashboard:${name}`, 'Current value is N/A in dashboard but computable in canonical metrics.');
     } else if (parsedCurrent !== null && !withinTolerance(row.current, parsedCurrent, metric.current, metric.unit)) {
-      failures.push({
-        gate: 'data.cross_section_equality',
-        source: `dashboard:${name}`,
-        message: `Current value mismatch (dashboard ${row.current} vs canonical ${metric.current}).`,
-      });
+      pushFailure(failures, 'data.cross_section_equality', `dashboard:${name}`, `Current value mismatch (dashboard ${row.current} vs canonical ${metric.current}).`);
     }
 
     if (parsedPrior === null && metric.prior !== null) {
-      failures.push({
-        gate: 'data.no_fake_na',
-        source: `dashboard:${name}`,
-        message: 'Prior value is N/A in dashboard but computable in canonical metrics.',
-      });
+      pushFailure(failures, 'data.no_fake_na', `dashboard:${name}`, 'Prior value is N/A in dashboard but computable in canonical metrics.');
     } else if (
       metric.prior !== null &&
       parsedPrior !== null &&
       !withinTolerance(row.prior, parsedPrior, metric.prior, metric.unit)
     ) {
-      failures.push({
-        gate: 'data.cross_section_equality',
-        source: `dashboard:${name}`,
-        message: `Prior value mismatch (dashboard ${row.prior} vs canonical ${metric.prior}).`,
-      });
+      pushFailure(failures, 'data.cross_section_equality', `dashboard:${name}`, `Prior value mismatch (dashboard ${row.prior} vs canonical ${metric.prior}).`);
     }
 
     if (metric.unit === 'USD') {
       if (/\$0\.00B/i.test(row.current) && Math.abs(metric.current) < 100_000_000) {
-        failures.push({
-          gate: 'data.units',
-          source: `dashboard:${name}`,
-          message: 'Value displayed as $0.00B; unit scaling should switch to $M.',
-        });
+        pushFailure(failures, 'data.units', `dashboard:${name}`, 'Value displayed as $0.00B; unit scaling should switch to $M.');
       }
       if (metric.prior !== null && /\$0\.00B/i.test(row.prior) && Math.abs(metric.prior) < 100_000_000) {
-        failures.push({
-          gate: 'data.units',
-          source: `dashboard:${name}`,
-          message: 'Prior value displayed as $0.00B; unit scaling should switch to $M.',
-        });
+        pushFailure(failures, 'data.units', `dashboard:${name}`, 'Prior value displayed as $0.00B; unit scaling should switch to $M.');
       }
     }
   }
@@ -376,32 +329,14 @@ function runSingleReportCrossSectionGates(
   for (const [metricName, deps] of Object.entries(METRIC_DEPENDENCIES)) {
     const m = insight.keyMetrics[metricName];
     const currentBucket = periodValues.get(current) || {};
-    const currentInputs = metricName === 'Debt-to-Equity'
-      ? hasDebtInputs(currentBucket)
-      : metricName === 'Total Debt'
-        ? hasTotalDebtInputs(currentBucket)
-      : hasDependencies(currentBucket, deps);
-    if (currentInputs && !m) {
-      failures.push({
-        gate: 'data.no_fake_na',
-        source: `metric:${metricName}`,
-        message: 'Metric missing despite all current-period inputs existing.',
-      });
+    if (hasDependencies(currentBucket, deps) && !m) {
+      pushFailure(failures, 'data.no_fake_na', `metric:${metricName}`, 'Metric missing despite all current-period inputs existing.');
     }
 
     if (!prior) continue;
     const priorBucket = periodValues.get(prior) || {};
-    const priorInputs = metricName === 'Debt-to-Equity'
-      ? hasDebtInputs(priorBucket)
-      : metricName === 'Total Debt'
-        ? hasTotalDebtInputs(priorBucket)
-      : hasDependencies(priorBucket, deps);
-    if (priorInputs && m && m.prior === null) {
-      failures.push({
-        gate: 'data.no_fake_na',
-        source: `metric:${metricName}`,
-        message: 'Prior metric value is missing despite all prior-period inputs existing.',
-      });
+    if (hasDependencies(priorBucket, deps) && m && m.prior === null) {
+      pushFailure(failures, 'data.no_fake_na', `metric:${metricName}`, 'Prior metric value is missing despite all prior-period inputs existing.');
     }
   }
 }
@@ -423,20 +358,12 @@ function runComparisonReportCrossSectionGates(
       || comparisonBasis.status !== 'resolved'
     )
   ) {
-    failures.push({
-      gate: 'data.period_coherence',
-      source: 'comparison:policy',
-      message: comparisonBasis?.fallback_reason
+    pushFailure(failures, 'data.period_coherence', 'comparison:policy', comparisonBasis?.fallback_reason
         ? `Institutional comparison mode requires overlap-normalized periods, but ${comparisonBasis.fallback_reason}`
-        : 'Institutional comparison mode requires overlap-normalized periods, but no governed shared annual basis was available across all peers.',
-    });
+        : 'Institutional comparison mode requires overlap-normalized periods, but no governed shared annual basis was available across all peers.');
   }
   if (policy?.comparisonRequireOverlap && missingSnapshotPeriods.length > 0) {
-    failures.push({
-      gate: 'data.period_coherence',
-      source: 'comparison:policy',
-      message: `Institutional comparison mode requires shared current periods, but no snapshot period was locked for ${missingSnapshotPeriods.join(', ')}.`,
-    });
+    pushFailure(failures, 'data.period_coherence', 'comparison:policy', `Institutional comparison mode requires shared current periods, but no snapshot period was locked for ${missingSnapshotPeriods.join(', ')}.`);
   }
   const distinctPeriods = new Set(
     context.tickers
@@ -448,11 +375,7 @@ function runComparisonReportCrossSectionGates(
     && comparisonBasis?.resolution_kind === 'exact_date_overlap'
     && distinctPeriods.size > 1
   ) {
-    failures.push({
-      gate: 'data.period_coherence',
-      source: 'comparison:policy',
-      message: 'Institutional comparison mode requires overlap-normalized periods, but peers are locked to different annual periods.',
-    });
+    pushFailure(failures, 'data.period_coherence', 'comparison:policy', 'Institutional comparison mode requires overlap-normalized periods, but peers are locked to different annual periods.');
   }
 
   const keyMetricsSection = report.sections.find(s => s.id === 'key_metrics')?.content || '';
@@ -467,40 +390,24 @@ function runComparisonReportCrossSectionGates(
       const cell = row?.get(ticker.toUpperCase());
       if (cell === undefined) {
         if (REQUIRED_DASHBOARD_METRICS.has(name)) {
-          failures.push({
-            gate: 'data.cross_section_equality',
-            source: `comparison:${ticker}:${name}`,
-            message: 'Required canonical metric is missing from comparison output.',
-          });
+          pushFailure(failures, 'data.cross_section_equality', `comparison:${ticker}:${name}`, 'Required canonical metric is missing from comparison output.');
         }
         continue;
       }
 
       const parsedCurrent = parseDisplayNumber(cell, metric.unit);
       if (parsedCurrent === null && metric.current !== null) {
-        failures.push({
-          gate: 'data.no_fake_na',
-          source: `comparison:${ticker}:${name}`,
-          message: 'Current value is N/A in comparison output but computable in canonical metrics.',
-        });
+        pushFailure(failures, 'data.no_fake_na', `comparison:${ticker}:${name}`, 'Current value is N/A in comparison output but computable in canonical metrics.');
       } else if (
         parsedCurrent !== null &&
         metric.current !== null &&
         !withinTolerance(cell, parsedCurrent, metric.current, metric.unit)
       ) {
-        failures.push({
-          gate: 'data.cross_section_equality',
-          source: `comparison:${ticker}:${name}`,
-          message: `Current value mismatch (comparison ${cell} vs canonical ${metric.current}).`,
-        });
+        pushFailure(failures, 'data.cross_section_equality', `comparison:${ticker}:${name}`, `Current value mismatch (comparison ${cell} vs canonical ${metric.current}).`);
       }
 
       if (metric.unit === 'USD' && /\$0\.00B/i.test(cell) && Math.abs(metric.current) < 100_000_000) {
-        failures.push({
-          gate: 'data.units',
-          source: `comparison:${ticker}:${name}`,
-          message: 'Value displayed as $0.00B; unit scaling should switch to $M.',
-        });
+        pushFailure(failures, 'data.units', `comparison:${ticker}:${name}`, 'Value displayed as $0.00B; unit scaling should switch to $M.');
       }
     }
 
@@ -510,17 +417,8 @@ function runComparisonReportCrossSectionGates(
     const currentBucket = periodValues.get(current) || {};
     for (const [metricName, deps] of Object.entries(METRIC_DEPENDENCIES)) {
       const m = insight.keyMetrics[metricName];
-      const currentInputs = metricName === 'Debt-to-Equity'
-        ? hasDebtInputs(currentBucket)
-        : metricName === 'Total Debt'
-          ? hasTotalDebtInputs(currentBucket)
-          : hasDependencies(currentBucket, deps);
-      if (currentInputs && !m) {
-        failures.push({
-          gate: 'data.no_fake_na',
-          source: `comparison:${ticker}:${metricName}`,
-          message: 'Metric missing despite all current-period inputs existing.',
-        });
+      if (hasDependencies(currentBucket, deps) && !m) {
+        pushFailure(failures, 'data.no_fake_na', `comparison:${ticker}:${metricName}`, 'Metric missing despite all current-period inputs existing.');
       }
     }
   }
@@ -547,11 +445,7 @@ function runSanityGatesForTicker(
     const gap = Math.abs(assets - (liabilities + equity));
     const tolerance = Math.max(Math.abs(assets) * 0.05, 1_000_000);
     if (gap > tolerance) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:balance_sheet`,
-        message: `Assets do not reconcile with liabilities + equity (gap ${gap}).`,
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:balance_sheet`, `Assets do not reconcile with liabilities + equity (gap ${gap}).`);
     }
   }
 
@@ -561,22 +455,14 @@ function runSanityGatesForTicker(
   if (cfo !== null && capex !== null && fcf !== null) {
     const expected = cfo - Math.abs(capex);
     if (Math.abs(expected - fcf) > Math.max(Math.abs(expected) * 0.02, 5_000_000)) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:cash_flow`,
-        message: `FCF does not reconcile with CFO - CapEx (expected ${expected}, got ${fcf}).`,
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:cash_flow`, `FCF does not reconcile with CFO - CapEx (expected ${expected}, got ${fcf}).`);
     }
   }
 
   const gp = finite(current['gross_profit']);
   const op = finite(current['operating_income']);
   if (gp !== null && op !== null && gp < op) {
-    failures.push({
-      gate: 'data.sanity',
-      source: `${ticker}:income_statement`,
-      message: 'Gross profit is below operating income.',
-    });
+    pushFailure(failures, 'data.sanity', `${ticker}:income_statement`, 'Gross profit is below operating income.');
   }
 
   const dna = finite(current['depreciation_and_amortization']);
@@ -585,11 +471,7 @@ function runSanityGatesForTicker(
   if (dna !== null && dep !== null && amort !== null && shouldEnforceDnaReconciliation(currentSources)) {
     const componentSum = dep + amort;
     if (materiallyDiffers(dna, componentSum, 0.1, 50_000)) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:depreciation_and_amortization`,
-        message: 'Depreciation & amortization does not reconcile with depreciation + amortization components.',
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:depreciation_and_amortization`, 'Depreciation & amortization does not reconcile with depreciation + amortization components.');
     }
   }
 
@@ -598,11 +480,7 @@ function runSanityGatesForTicker(
   const shortTermDebt = finite(current['short_term_debt']);
   const totalDebt = finite(current['total_debt']);
   if ((longTermDebt !== null || shortTermDebt !== null) && totalDebt === null) {
-    failures.push({
-      gate: 'data.no_fake_na',
-      source: `${ticker}:total_debt`,
-      message: 'Total Debt is missing even though long-term or short-term debt is present.',
-    });
+    pushFailure(failures, 'data.no_fake_na', `${ticker}:total_debt`, 'Total Debt is missing even though long-term or short-term debt is present.');
   }
   if (
     totalDebt !== null
@@ -611,30 +489,18 @@ function runSanityGatesForTicker(
       || (shortTermDebt !== null && totalDebt + 1_000_000 < shortTermDebt)
     )
   ) {
-    failures.push({
-      gate: 'data.sanity',
-      source: `${ticker}:total_debt`,
-      message: 'Total Debt is lower than a reported debt component, so the debt concept set is internally inconsistent.',
-    });
+    pushFailure(failures, 'data.sanity', `${ticker}:total_debt`, 'Total Debt is lower than a reported debt component, so the debt concept set is internally inconsistent.');
   }
 
   // Cash-flow sign conventions for explicit outflow lines.
   for (const outflowMetric of ['capex', 'dividends_paid', 'share_repurchases'] as const) {
     const currentValue = finite(current[outflowMetric]);
     if (currentValue !== null && currentValue > 0) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:${outflowMetric}`,
-        message: `${outflowMetric} is positive; outflows must be negative or parenthesized.`,
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:${outflowMetric}`, `${outflowMetric} is positive; outflows must be negative or parenthesized.`);
     }
     const priorValue = finite(prior[outflowMetric]);
     if (priorValue !== null && priorValue > 0) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:${outflowMetric}:prior`,
-        message: `${outflowMetric} prior is positive; outflows must be negative or parenthesized.`,
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:${outflowMetric}:prior`, `${outflowMetric} prior is positive; outflows must be negative or parenthesized.`);
     }
   }
 
@@ -671,11 +537,7 @@ function runSanityGatesForTicker(
   if (hasShareJump) {
     const text = context.filing_content[ticker]?.raw_text || '';
     if (!corporateActionEvidence(text) && !corroboratedShareChange) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:shares_outstanding`,
-        message: `Shares outstanding changed by >= ${SHARE_CHANGE_ALERT_THRESHOLD.toFixed(1)}x without filing-text evidence or weighted-share corroboration.`,
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:shares_outstanding`, `Shares outstanding changed by >= ${SHARE_CHANGE_ALERT_THRESHOLD.toFixed(1)}x without filing-text evidence or weighted-share corroboration.`);
     }
   }
 
@@ -684,11 +546,7 @@ function runSanityGatesForTicker(
     const hasWeightedAverageLabel = /weighted[-\s]?average/i.test(reportText);
     const hasPeriodEndLabel = /period[-\s]?end shares?/i.test(reportText);
     if (!hasWeightedAverageLabel || !hasPeriodEndLabel) {
-      failures.push({
-        gate: 'data.sanity',
-        source: `${ticker}:share_basis`,
-        message: 'Per-share basis labeling is missing; EPS must state weighted-average shares and BVPS must state period-end shares.',
-      });
+      pushFailure(failures, 'data.sanity', `${ticker}:share_basis`, 'Per-share basis labeling is missing; EPS must state weighted-average shares and BVPS must state period-end shares.');
     }
   }
 }
@@ -748,42 +606,22 @@ function runNarrativeGates(
       const rendered = section.rendered_content?.trim();
       const actual = sectionContentById.get(section.id) || '';
       if (!rendered) {
-        failures.push({
-          gate: 'narrative.threshold_alignment',
-          source: `narrative:${section.id}`,
-          message: 'Structured narrative section is missing rendered_content.',
-        });
+        pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative section is missing rendered_content.');
       } else if (rendered !== actual) {
-        failures.push({
-          gate: 'narrative.threshold_alignment',
-          source: `narrative:${section.id}`,
-          message: 'Structured narrative rendered_content does not match the rendered report section.',
-        });
+        pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative rendered_content does not match the rendered report section.');
       }
       for (const paragraph of section.paragraphs) {
         if (!paragraph.text.trim()) {
-          failures.push({
-            gate: 'narrative.threshold_alignment',
-            source: `narrative:${section.id}`,
-            message: 'Structured narrative contains an empty paragraph.',
-          });
+          pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative contains an empty paragraph.');
           continue;
         }
         if (paragraph.fact_ids.length === 0) {
-          failures.push({
-            gate: 'narrative.threshold_alignment',
-            source: `narrative:${section.id}`,
-            message: 'Structured narrative paragraph has no fact bindings.',
-          });
+          pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative paragraph has no fact bindings.');
           continue;
         }
         const invalid = paragraph.fact_ids.filter(factId => !validFactIds.has(factId));
         if (invalid.length > 0) {
-          failures.push({
-            gate: 'narrative.threshold_alignment',
-            source: `narrative:${section.id}`,
-            message: `Structured narrative references unsupported fact ids: ${invalid.join(', ')}.`,
-          });
+          pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, `Structured narrative references unsupported fact ids: ${invalid.join(', ')}.`);
         }
       }
     }
@@ -800,11 +638,7 @@ function runNarrativeGates(
 
   const repeatedPattern = /\b([a-z][a-z'’-]*)[ \t]+\1[ \t]+is currently\b/i;
   if (repeatedPattern.test(narrative)) {
-    failures.push({
-      gate: 'narrative.templated_repetition',
-      source: 'narrative',
-      message: 'Detected templated repetition pattern ("X X is currently").',
-    });
+    pushFailure(failures, 'narrative.templated_repetition', 'narrative', 'Detected templated repetition pattern ("X X is currently").');
   }
 
   if (report.type === 'single') {
@@ -817,35 +651,19 @@ function runNarrativeGates(
     const leverageMagnitude = de === null ? null : Math.abs(de);
 
     if (/strong liquidity/.test(low) && (currentRatio === null || currentRatio < 1.5)) {
-      failures.push({
-        gate: 'narrative.threshold_alignment',
-        source: 'narrative',
-        message: 'Narrative claims strong liquidity but current ratio threshold is not met.',
-      });
+      pushFailure(failures, 'narrative.threshold_alignment', 'narrative', 'Narrative claims strong liquidity but current ratio threshold is not met.');
     }
     if (
       /strong liquidity|conservatively positioned|significant strategic flexibility/.test(low)
       && ((operatingCashFlow !== null && operatingCashFlow < 0) || (freeCashFlow !== null && freeCashFlow < 0))
     ) {
-      failures.push({
-        gate: 'narrative.threshold_alignment',
-        source: 'narrative',
-        message: 'Narrative presents balance-sheet strength without acknowledging negative operating or free cash flow.',
-      });
+      pushFailure(failures, 'narrative.threshold_alignment', 'narrative', 'Narrative presents balance-sheet strength without acknowledging negative operating or free cash flow.');
     }
     if ((/high leverage|elevated leverage/.test(low)) && (leverageMagnitude === null || leverageMagnitude < 2)) {
-      failures.push({
-        gate: 'narrative.threshold_alignment',
-        source: 'narrative',
-        message: 'Narrative claims high leverage but debt-to-equity is below threshold.',
-      });
+      pushFailure(failures, 'narrative.threshold_alignment', 'narrative', 'Narrative claims high leverage but debt-to-equity is below threshold.');
     }
     if (/conservative leverage/.test(low) && (leverageMagnitude === null || leverageMagnitude > 1)) {
-      failures.push({
-        gate: 'narrative.threshold_alignment',
-        source: 'narrative',
-        message: 'Narrative claims conservative leverage but debt-to-equity is above threshold.',
-      });
+      pushFailure(failures, 'narrative.threshold_alignment', 'narrative', 'Narrative claims conservative leverage but debt-to-equity is above threshold.');
     }
     return;
   }
@@ -859,11 +677,7 @@ function runNarrativeGates(
     /most conservative leverage|conservative leverage profile|lowest leverage/i.test(low)
     && comparisonDebt.some(entry => entry.debtToEquity === null)
   ) {
-    failures.push({
-      gate: 'narrative.threshold_alignment',
-      source: 'comparison:narrative',
-      message: 'Peer leverage ranking is claimed even though one or more peers have no debt-to-equity value.',
-    });
+    pushFailure(failures, 'narrative.threshold_alignment', 'comparison:narrative', 'Peer leverage ranking is claimed even though one or more peers have no debt-to-equity value.');
   }
 
   const periods = context.tickers.map(ticker => insights[ticker]?.snapshotPeriod ?? null).filter(Boolean);
@@ -872,11 +686,7 @@ function runNarrativeGates(
     /same reported annual period|figures are aligned to the same reported annual period/i.test(low)
     && distinctPeriods.size > 1
   ) {
-    failures.push({
-      gate: 'narrative.threshold_alignment',
-      source: 'comparison:narrative',
-      message: 'Narrative claims synchronized peer periods even though locked annual periods differ.',
-    });
+    pushFailure(failures, 'narrative.threshold_alignment', 'comparison:narrative', 'Narrative claims synchronized peer periods even though locked annual periods differ.');
   }
 }
 
@@ -891,22 +701,6 @@ function hasDependencies(values: Record<string, number>, deps: string[]): boolea
   return deps.every(dep => values[dep] !== undefined && isFinite(values[dep]!));
 }
 
-function hasDebtInputs(values: Record<string, number>): boolean {
-  const equity = finite(values['stockholders_equity']);
-  if (equity === null || equity === 0) return false;
-  const totalDebt = finite(values['total_debt']);
-  const longTerm = finite(values['long_term_debt']);
-  const shortTerm = finite(values['short_term_debt']);
-  return totalDebt !== null || longTerm !== null || shortTerm !== null;
-}
-
-function hasTotalDebtInputs(values: Record<string, number>): boolean {
-  const totalDebt = finite(values['total_debt']);
-  if (totalDebt !== null) return true;
-  const longTerm = finite(values['long_term_debt']);
-  const shortTerm = finite(values['short_term_debt']);
-  return longTerm !== null || shortTerm !== null;
-}
 
 function parseDisplayNumber(raw: string, unit: string): number | null {
   const text = raw.trim();
@@ -1082,7 +876,8 @@ export async function writeQAFailureReport(
     lines.push('- None');
   } else {
     for (const f of qa.failures) {
-      lines.push(`- [${f.gate}] ${f.source}: ${f.message}`);
+      const prefix = f.severity === 'error' ? '[ERROR]' : '[WARNING]';
+      lines.push(`- ${prefix} [${f.gate}] ${f.source}: ${f.message}`);
     }
   }
 

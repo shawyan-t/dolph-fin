@@ -1,0 +1,10 @@
+ticker,period,ratio,value,formula,components,notes
+FLO,2026-01-03,de,1.3579,total_debt / stockholders_equity,stockholders_equity=1303487000;total_debt=1770000000,
+FLO,2026-01-03,roe,0.0643,net_income / stockholders_equity,net_income=83825000;stockholders_equity=1303487000,
+FLO,2026-01-03,roa,0.02,net_income / total_assets,net_income=83825000;total_assets=4183861000,
+FLO,2026-01-03,current_ratio,0.7469,current_assets / current_liabilities,current_assets=729094000;current_liabilities=976157000,
+FLO,2026-01-03,quick_ratio,0.5403,(current_assets - inventory) / current_liabilities,current_assets=729094000;current_liabilities=976157000;inventory=201657000,
+FLO,2026-01-03,operating_margin,0.0331,operating_income / revenue,operating_income=173981000;revenue=5256479000,
+FLO,2026-01-03,net_margin,0.0159,net_income / revenue,net_income=83825000;revenue=5256479000,
+FLO,2026-01-03,eps,0.4,eps_diluted,eps_diluted=0.4,
+FLO,2026-01-03,fcf,319090000,operating_cash_flow - abs(capex),operating_cash_flow=446203000;capex=127113000,

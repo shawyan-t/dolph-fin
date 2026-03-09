@@ -48,6 +48,7 @@ export async function generatePDF(
       pass: false,
       failures: [{
         gate: 'data.period_coherence' as const,
+        severity: 'error' as const,
         source: 'exporter',
         message: 'Analysis context is required for fail-closed deterministic QA.',
       }],
@@ -70,6 +71,7 @@ export async function generatePDF(
         ...preRenderQA.failures,
         {
           gate: 'data.period_coherence' as const,
+          severity: 'error' as const,
           source: 'period_banner',
           message: periodBanner.error,
         },
@@ -91,6 +93,7 @@ export async function generatePDF(
         ...preRenderQA.failures,
         {
           gate: 'data.period_coherence' as const,
+          severity: 'error' as const,
           source: 'period_banner',
           message: `Period banner slots mismatch (${slotCount} found; ${expectedBannerCount} expected).`,
         },

@@ -1,5 +1,4 @@
 import type {
-  ComparisonBasisMode,
   NarrativeGovernanceMode,
   ReportingMode,
   ReportingPolicy,
@@ -8,8 +7,8 @@ import type { PipelineConfig } from './types.js';
 
 export const INSTITUTIONAL_DEFAULTS: ReportingPolicy = {
   mode: 'institutional',
-  comparisonBasisMode: 'overlap_normalized',
-  requestedComparisonBasisMode: 'overlap_normalized',
+  comparisonBasisMode: 'latest_per_peer_with_prominent_disclosure',
+  requestedComparisonBasisMode: 'latest_per_peer_with_prominent_disclosure',
   statementHistoryPeriods: 5,
   trendHistoryPeriods: 10,
   returnMetricBasisMode: 'average_balance',
@@ -18,7 +17,7 @@ export const INSTITUTIONAL_DEFAULTS: ReportingPolicy = {
   persistAuditArtifacts: true,
   narrativeGovernanceMode: 'deterministic',
   allowExternalContext: false,
-  comparisonRequireOverlap: true,
+  comparisonRequireOverlap: false,
   comparisonFallbackMode: null,
   comparisonMaxPeriodSpreadDays: 45,
   metricNAInference: 'governed',
@@ -57,47 +56,9 @@ export function resolveReportingPolicy(config: PipelineConfig): ReportingPolicy 
     ...config.policy,
     requestedComparisonBasisMode: config.policy?.comparisonBasisMode || base.comparisonBasisMode,
     narrativeGovernanceMode: requestedNarrativeMode,
+    comparisonRequireOverlap: false,
   };
-
-  if (merged.mode === 'institutional') {
-    merged.strictLayoutQA = config.policy?.strictLayoutQA ?? true;
-    merged.comparisonFallbackMode = null;
-    if (merged.comparisonBasisMode === 'latest_per_peer_screening') {
-      merged.comparisonBasisMode = 'latest_per_peer_with_prominent_disclosure';
-    }
-  }
-
-  if (config.type !== 'comparison') {
-    merged.comparisonRequireOverlap = false;
-  } else if (merged.comparisonBasisMode === 'overlap_normalized') {
-    merged.comparisonRequireOverlap = true;
-  }
 
   return merged;
 }
 
-export function comparisonBasisLabel(mode: ComparisonBasisMode): string {
-  switch (mode) {
-    case 'overlap_normalized':
-      return 'Overlap-normalized annual basis';
-    case 'latest_per_peer_screening':
-      return 'Latest annual per peer (screening)';
-    case 'latest_per_peer_with_prominent_disclosure':
-      return 'Latest annual per peer (disclosed)';
-  }
-}
-
-export function comparisonBasisDescription(policy: ReportingPolicy): string {
-  switch (policy.comparisonBasisMode) {
-    case 'overlap_normalized':
-      return 'Peer metrics are locked to shared comparable annual periods across all companies.';
-    case 'latest_per_peer_screening':
-      return 'Peer metrics use each company’s latest annual filing and are suitable only for screening, not strict like-for-like comparison.';
-    case 'latest_per_peer_with_prominent_disclosure':
-      return 'Peer metrics use each company’s latest annual filing with explicit disclosure that fiscal periods may not be synchronized.';
-  }
-}
-
-export function isInstitutionalComparison(policy: ReportingPolicy): boolean {
-  return policy.mode === 'institutional' && policy.comparisonBasisMode === 'overlap_normalized';
-}

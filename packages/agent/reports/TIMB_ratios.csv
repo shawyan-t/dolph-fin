@@ -1,0 +1,11 @@
+ticker,period,ratio,value,formula,components,notes
+TIMB,2024-12-31,de,0.115,total_debt / stockholders_equity,stockholders_equity=4269347906.93;total_debt=490808123.27,
+TIMB,2024-12-31,roe,0.1194,net_income / stockholders_equity,net_income=509948906.17;stockholders_equity=4269347906.93,
+TIMB,2024-12-31,roa,0.056,net_income / total_assets,net_income=509948906.17;total_assets=9107525183.11,
+TIMB,2024-12-31,current_ratio,0.9872,current_assets / current_liabilities,current_assets=2047460507.38;current_liabilities=2074029136.42,
+TIMB,2024-12-31,quick_ratio,0.9643,(current_assets - inventory) / current_liabilities,current_assets=2047460507.38;current_liabilities=2074029136.42;inventory=47460507.38,
+TIMB,2024-12-31,gross_margin,0.5326,gross_profit / revenue,gross_profit=2191668957.27;revenue=4114658754.67,
+TIMB,2024-12-31,operating_margin,0.2164,operating_income / revenue,operating_income=890372532.22;revenue=4114658754.67,
+TIMB,2024-12-31,net_margin,0.1239,net_income / revenue,net_income=509948906.17;revenue=4114658754.67,
+TIMB,2021-12-31,eps,1.22,eps_diluted,eps_diluted=1.22,
+TIMB,2024-12-31,fcf,1258131194.72,operating_cash_flow - abs(capex),operating_cash_flow=1993878927.03;capex=735747732.31,

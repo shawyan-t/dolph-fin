@@ -330,16 +330,31 @@ function materiallyEquivalent(a: number, b: number): boolean {
   return delta <= Math.max(Math.abs(a), Math.abs(b), 1) * 0.01 + 100_000;
 }
 
+function createUnavailableCell(label: string): CanonicalMetricCell {
+  return {
+    key: label.toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+    label,
+    unit: 'USD',
+    current: null,
+    prior: null,
+    change: null,
+    currentDisplay: 'N/A',
+    priorDisplay: 'N/A',
+    changeDisplay: 'N/A',
+    availability: { current: 'source_unavailable', prior: 'source_unavailable' },
+  };
+}
+
 function buildMetricGroups(metricCells: CanonicalMetricCell[]): CanonicalMetricGroup[] {
   const metricMap = new Map(metricCells.map(metric => [metric.label, metric]));
   return metricGroupContract()
     .map(group => ({
       title: group.title,
-      rows: group.rowLabels
-        .map(label => metricMap.get(label) || null)
-        .filter((metric): metric is CanonicalMetricCell => !!metric),
+      rows: group.rowLabels.map(label =>
+        metricMap.get(label) || createUnavailableCell(label),
+      ),
     }))
-    .filter(group => group.rows.length > 0);
+    .filter(group => group.rows.some(row => row.current !== null));
 }
 
 function buildStatementTables(
@@ -518,9 +533,9 @@ function applyComparisonRowGroups(
 ): CanonicalMetricGroup[] {
   return comparisonRowGroups.map(group => ({
     title: group.title,
-    rows: group.rowLabels
-      .map(label => company.metricsByLabel.get(label) || null)
-      .filter((metric): metric is CanonicalMetricCell => !!metric),
+    rows: group.rowLabels.map(label =>
+      company.metricsByLabel.get(label) || createUnavailableCell(label),
+    ),
   }));
 }
 

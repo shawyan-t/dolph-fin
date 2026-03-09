@@ -1,0 +1,2974 @@
+{
+  "sources": [
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/timbform20f_2024.htm",
+      "description": "TIMB 20-F",
+      "date": "2025-04-01"
+    }
+  ],
+  "provenance": {
+    "TIMB:revenue:2024-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2023-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2022-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2021-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2020-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2019-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:revenue:2018-12-31": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.373Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:cost_of_revenue:2024-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2023-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2022-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2021-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2020-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2019-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cost_of_revenue:2018-12-31": {
+      "xbrl_tag": "CostOfSales",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CostOfSales"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2024-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2023-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2022-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2021-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2020-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2019-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:gross_profit:2018-12-31": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2024-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2023-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2022-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2021-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2020-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2019-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_expenses:2018-12-31": {
+      "xbrl_tag": "AdministrativeExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdministrativeExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2024-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2023-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2022-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2021-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2020-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2019-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_income:2018-12-31": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2024-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2023-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2022-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2021-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2020-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2019-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_income:2018-12-31": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_basic:2021-12-31": {
+      "xbrl_tag": "BasicEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "BasicEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_basic:2020-12-31": {
+      "xbrl_tag": "BasicEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "BasicEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_basic:2019-12-31": {
+      "xbrl_tag": "BasicEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "BasicEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_diluted:2021-12-31": {
+      "xbrl_tag": "DilutedEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DilutedEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_diluted:2020-12-31": {
+      "xbrl_tag": "DilutedEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DilutedEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:eps_diluted:2019-12-31": {
+      "xbrl_tag": "DilutedEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DilutedEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2024-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2023-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2022-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2021-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2020-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2019-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:weighted_avg_shares_diluted:2018-12-31": {
+      "xbrl_tag": "AdjustedWeightedAverageShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "AdjustedWeightedAverageShares",
+        "WeightedAverageShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2024-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2023-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2022-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2021-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2020-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2019-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:sga_expenses:2018-12-31": {
+      "xbrl_tag": "SellingExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "SellingExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2024-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2023-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2022-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2021-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2020-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2019-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:pretax_income:2018-12-31": {
+      "xbrl_tag": "ProfitLossBeforeTax",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossBeforeTax"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2024-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2023-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2022-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2021-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2020-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2019-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:income_tax_expense:2018-12-31": {
+      "xbrl_tag": "IncomeTaxExpenseContinuingOperations",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncomeTaxExpenseContinuingOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2024-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2023-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2022-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2021-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2020-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_assets:2019-12-31": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2024-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2023-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2022-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2021-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2020-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_liabilities:2019-12-31": {
+      "xbrl_tag": "Liabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Liabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2024-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2023-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2022-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2021-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2020-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2019-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2018-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:stockholders_equity:2017-12-31": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2024-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2023-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2022-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2021-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2020-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_assets:2019-12-31": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2024-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2023-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2022-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2021-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2020-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:current_liabilities:2019-12-31": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2024-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2023-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2022-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2021-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2020-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2019-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2018-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_and_equivalents:2017-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2024-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2023-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2022-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2021-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2020-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:total_debt:2019-12-31": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2024-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2023-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2022-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2021-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2020-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:short_term_debt:2019-12-31": {
+      "xbrl_tag": "ShorttermBorrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ShorttermBorrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2024-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2023-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2022-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2021-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2020-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:inventory:2019-12-31": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2024-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2023-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2022-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2021-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2020-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:accounts_receivable:2019-12-31": {
+      "xbrl_tag": "CurrentTradeReceivables",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentTradeReceivables"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2024-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2023-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2022-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2021-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2020-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_assets:2019-12-31": {
+      "xbrl_tag": "OtherCurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2024-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2023-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2022-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2021-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2020-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:other_current_liabilities:2019-12-31": {
+      "xbrl_tag": "OtherCurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "OtherCurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2024-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2023-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2022-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2021-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2020-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:retained_earnings:2019-12-31": {
+      "xbrl_tag": "RetainedEarnings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "RetainedEarnings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2024-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2023-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2022-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2021-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2020-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:treasury_stock:2019-12-31": {
+      "xbrl_tag": "TreasuryShares",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "TreasuryShares"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2024-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2023-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2022-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2021-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2020-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2019-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:operating_cash_flow:2018-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2024-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2023-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2022-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2021-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2020-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2019-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:capex:2018-12-31": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2024-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2023-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2022-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2021-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2020-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2019-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:investing_cash_flow:2018-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2024-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2023-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2022-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2021-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2020-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2019-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:financing_cash_flow:2018-12-31": {
+      "xbrl_tag": "CashFlowsFromUsedInFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInFinancingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2024-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2023-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2022-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2021-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2020-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2019-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:dividends_paid:2018-12-31": {
+      "xbrl_tag": "DividendsPaidClassifiedAsFinancingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DividendsPaidClassifiedAsFinancingActivities",
+        "DividendsPaid"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2024-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2023-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2022-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2021-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2020-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:depreciation_and_amortization:2019-12-31": {
+      "xbrl_tag": "DepreciationAndAmortisationExpense",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DepreciationAndAmortisationExpense"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2024-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2023-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2022-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2021-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2020-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-23-001944",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281423001944/0001292814-23-001944-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2019-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:net_change_in_cash:2018-12-31": {
+      "xbrl_tag": "IncreaseDecreaseInCashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "IncreaseDecreaseInCashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2024-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2023-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2022-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2021-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2020-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-24-001701",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281424001701/0001292814-24-001701-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2019-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2018-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:cash_ending:2017-12-31": {
+      "xbrl_tag": "CashAndCashEquivalents",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-21-001957",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281421001957/0001292814-21-001957-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashAndCashEquivalents"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:de:stockholders_equity": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:de:total_debt": {
+      "xbrl_tag": "Borrowings",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Borrowings"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:roe:net_income": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:roe:stockholders_equity": {
+      "xbrl_tag": "Equity",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Equity"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:roa:net_income": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:roa:total_assets": {
+      "xbrl_tag": "Assets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Assets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:current_ratio:current_assets": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:current_ratio:current_liabilities": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:quick_ratio:current_assets": {
+      "xbrl_tag": "CurrentAssets",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentAssets"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:quick_ratio:current_liabilities": {
+      "xbrl_tag": "CurrentLiabilities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CurrentLiabilities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:quick_ratio:inventory": {
+      "xbrl_tag": "Inventories",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "Inventories"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:gross_margin:gross_profit": {
+      "xbrl_tag": "GrossProfit",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "GrossProfit"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:gross_margin:revenue": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:ratio:operating_margin:operating_income": {
+      "xbrl_tag": "ProfitLossFromOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.384Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLossFromOperatingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:operating_margin:revenue": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:ratio:net_margin:net_income": {
+      "xbrl_tag": "ProfitLoss",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "ProfitLoss"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:net_margin:revenue": {
+      "xbrl_tag": "Revenue",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.377Z",
+      "selection_policy": "governed_revenue_scope",
+      "candidate_tags_considered": [
+        "Revenue"
+      ],
+      "concept_scope": "total_revenues",
+      "selection_rationale": "Revenue selected by governed concept scope. Chosen tag Revenue (total_revenues) outranked equally current alternatives. Equally current candidates considered: Revenue(total_revenues)."
+    },
+    "TIMB:ratio:eps:eps_diluted": {
+      "xbrl_tag": "DilutedEarningsLossPerShare",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-22-001631",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281422001631/0001292814-22-001631-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "DilutedEarningsLossPerShare"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:fcf:operating_cash_flow": {
+      "xbrl_tag": "CashFlowsFromUsedInOperatingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "CashFlowsFromUsedInOperatingActivities",
+        "CashFlowsFromUsedInOperations"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    },
+    "TIMB:ratio:fcf:capex": {
+      "xbrl_tag": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "namespace": "ifrs-full",
+      "accession_number": "0001292814-25-001263",
+      "filing_url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/0001292814-25-001263-index.htm",
+      "extracted_at": "2026-03-09T15:38:16.385Z",
+      "selection_policy": "ordered_tag_priority",
+      "candidate_tags_considered": [
+        "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
+      ],
+      "selection_rationale": "Selected by annual freshness, tag priority, and period coverage."
+    }
+  },
+  "filings": {
+    "TIMB": [
+      {
+        "accessionNumber": "0001292814-25-001263",
+        "form": "20-F",
+        "filed": "2025-04-01",
+        "url": "https://www.sec.gov/Archives/edgar/data/1826168/000129281425001263/timbform20f_2024.htm",
+        "metrics": [
+          "revenue",
+          "cost_of_revenue",
+          "gross_profit",
+          "operating_expenses",
+          "operating_income",
+          "net_income",
+          "weighted_avg_shares_diluted",
+          "sga_expenses",
+          "pretax_income",
+          "income_tax_expense",
+          "total_assets",
+          "total_liabilities",
+          "stockholders_equity",
+          "current_assets",
+          "current_liabilities",
+          "cash_and_equivalents",
+          "total_debt",
+          "short_term_debt",
+          "inventory",
+          "accounts_receivable",
+          "other_current_assets",
+          "other_current_liabilities",
+          "retained_earnings",
+          "treasury_stock",
+          "operating_cash_flow",
+          "capex",
+          "investing_cash_flow",
+          "financing_cash_flow",
+          "dividends_paid",
+          "depreciation_and_amortization",
+          "net_change_in_cash",
+          "cash_ending"
+        ],
+        "periods": [
+          "2024-12-31",
+          "2023-12-31"
+        ],
+        "sourceKinds": [
+          "xbrl"
+        ]
+      }
+    ]
+  }
+}

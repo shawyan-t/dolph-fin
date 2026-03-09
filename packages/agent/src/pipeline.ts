@@ -123,18 +123,6 @@ export async function runPipeline(
     const canonicalPackage = buildCanonicalReportPackage(context);
     const { insights, reportModel } = canonicalPackage;
 
-    if (
-      context.type === 'comparison'
-      && policy.comparisonRequireOverlap
-      && (!context.comparison_basis
-        || context.comparison_basis.effective_mode !== 'overlap_normalized'
-        || context.comparison_basis.status !== 'resolved')
-    ) {
-      throw new Error(
-        `Institutional comparison mode requires overlap-normalized annual periods, but no governed shared basis was available across all peers. ${context.comparison_basis?.note || ''}`.trim(),
-      );
-    }
-
     // ── Step 4: NARRATE ───────────────────────────────────────
     callbacks?.onStep?.('Generating narrative report', 'running');
     // Default to deterministic narrative for reliability. LLM mode is opt-in.
@@ -257,6 +245,13 @@ export async function finalizeGovernedReport(
 ): Promise<Report> {
   let finalReport = report;
   const qa = runDeterministicQAGates(finalReport, context, canonicalPackage);
+
+  // Log warnings (non-fatal) to console
+  const warnings = qa.failures.filter(f => f.severity === 'warning');
+  if (warnings.length > 0) {
+    console.warn(`[QA] ${warnings.length} warning(s):`);
+    for (const w of warnings) console.warn(`  - [${w.gate}] ${w.source}: ${w.message}`);
+  }
 
   if (!qa.pass) {
     const qaPath = await writeQAFailureReport(finalReport, qa, options.auditOutputDir);

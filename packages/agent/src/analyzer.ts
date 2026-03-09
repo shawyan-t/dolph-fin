@@ -125,8 +125,8 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     key: 'total_debt',
     displayName: 'Total Debt',
     unit: 'USD',
-    dependencies: ['total_debt', 'long_term_debt', 'short_term_debt'],
-    compute: v => resolveDebt(v),
+    dependencies: ['total_debt'],
+    compute: v => finiteOrNull(v['total_debt']),
   },
   {
     key: 'stockholders_equity',
@@ -257,25 +257,15 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     key: 'fcf',
     displayName: 'Free Cash Flow',
     unit: 'USD',
-    dependencies: ['operating_cash_flow', 'capex'],
-    compute: v => {
-      const ocf = finiteOrNull(v['operating_cash_flow']);
-      const capex = finiteOrNull(v['capex']);
-      if (ocf === null || capex === null) return null;
-      return ocf - Math.abs(capex);
-    },
+    dependencies: ['free_cash_flow'],
+    compute: v => finiteOrNull(v['free_cash_flow']),
   },
   {
     key: 'working_capital',
     displayName: 'Working Capital',
     unit: 'USD',
-    dependencies: ['current_assets', 'current_liabilities'],
-    compute: v => {
-      const currentAssets = finiteOrNull(v['current_assets']);
-      const currentLiabilities = finiteOrNull(v['current_liabilities']);
-      if (currentAssets === null || currentLiabilities === null) return null;
-      return currentAssets - currentLiabilities;
-    },
+    dependencies: ['working_capital'],
+    compute: v => finiteOrNull(v['working_capital']),
   },
   {
     key: 'gross_margin',
@@ -346,14 +336,8 @@ const LEDGER_DEFINITIONS: MetricDefinition[] = [
     key: 'de',
     displayName: 'Debt-to-Equity',
     unit: 'x',
-    dependencies: ['stockholders_equity'],
-    compute: v => {
-      const equity = finiteOrNull(v['stockholders_equity']);
-      if (equity === null || equity === 0) return null;
-      const debt = resolveDebt(v);
-      if (debt === null) return null;
-      return debt / equity;
-    },
+    dependencies: ['total_debt', 'stockholders_equity'],
+    compute: v => safeDivide(v['total_debt'], v['stockholders_equity']),
   },
 ];
 
@@ -1253,16 +1237,6 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
   }
 
   return strengths;
-}
-
-function resolveDebt(values: Record<string, number>): number | null {
-  const totalDebt = finiteOrNull(values['total_debt']);
-  if (totalDebt !== null) return totalDebt;
-
-  const longTerm = finiteOrNull(values['long_term_debt']);
-  const shortTerm = finiteOrNull(values['short_term_debt']);
-  if (longTerm === null || shortTerm === null) return null;
-  return longTerm + shortTerm;
 }
 
 function safeDivide(a: number | undefined, b: number | undefined): number | null {
