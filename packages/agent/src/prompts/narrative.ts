@@ -67,10 +67,10 @@ ${data.dataBlock}
 INSTRUCTIONS:
 - Write 3-5 paragraphs of flowing narrative analysis, as if you are a senior analyst briefing a portfolio manager
 - Paragraph 1: Open with the company's financial headline — revenue, net income, and the most striking change year-over-year. Set the scene.
-- Paragraph 2: Dig into profitability and margins. What do operating margin and net margin tell us about the business model? Connect to any notable cost or revenue drivers visible in the data.
+- Paragraph 2: Dig into profitability and margins. Explain whether earnings quality kept pace with revenue and whether margin movement reinforced or weakened the headline growth story.
 - Paragraph 3: Assess the balance sheet and liquidity posture. Is the company conservatively financed or levered? What do the current ratio and debt-to-equity signal about financial flexibility?
 - Paragraph 4: Cash flow story — operating cash flow, free cash flow, and capex. What is the reinvestment profile? Is the business self-funding?
-- Paragraph 5 (optional): If risk factors or filing excerpts are available, connect the numbers to the business and financial context disclosed in the filing — demand profile, margin structure, capital allocation, liquidity, or stated risk exposure.
+- Paragraph 5 (optional): If risk factors or filing excerpts are available, connect the numbers to the filing-backed financial context only. Do not invent broader industry or market explanations.
 - Every paragraph must reference specific dollar amounts and percentages from the AUTHORITATIVE METRICS in the DATA
 - Write in a natural, professional tone — like a well-crafted research note, not a template
 - Connect the financial data points into a coherent narrative arc — do not merely list facts
@@ -102,11 +102,10 @@ DATA:
 ${data.dataBlock}
 
 INSTRUCTIONS:
-- Analyze the top 3-5 most significant trends in the data
-- For each trend, write 2-3 sentences explaining what happened and why it matters
+- Write 2-3 integrated paragraphs explaining the most important trends in the data
+- Synthesize the trends together instead of listing them one by one
 - Reference specific numbers, time periods, and growth rates
-- Use ### subheadings for each trend (e.g., "### Revenue Growth")
-- Do NOT start with a top-level ## heading — write the content directly
+- Do NOT use headings, subheadings, bullets, or list formatting
 - Every sentence must cite a specific figure from the AUTHORITATIVE METRICS in the DATA
 - Maintain coherence with the executive summary above — build on its themes, do not contradict
 
@@ -127,10 +126,10 @@ ${data.dataBlock}
 INSTRUCTIONS:
 - Summarize the top 3-5 risks in 1-2 sentences each
 - If red flags are listed in the data, incorporate them with specific numbers
-- If 10-K risk factor text is available in the data, synthesize and connect those risks to the financial metrics
+- If filing-backed risk text is available in the data, synthesize and connect those risks to the financial metrics
 - Otherwise derive risks from the financial metrics and trends
 - Write in flowing prose paragraphs grouped by risk theme, not a numbered list
-- Do NOT start with a top-level heading — write the content directly
+- Do NOT use headings, bullets, or numbered formatting
 - Every risk must reference a specific number or metric from the AUTHORITATIVE METRICS
 - Connect risk factors to the financial narrative established in prior sections
 
@@ -157,7 +156,7 @@ ${data.dataBlock}
 INSTRUCTIONS:
 - Write 3-4 paragraphs of synthesis that tie together the entire analysis
 - Paragraph 1: What story do the numbers tell? What is the company's financial narrative arc — growth, maturity, turnaround, or decline?
-- Paragraph 2: Connect the financial data to the business context disclosed in the filing. What do the reported risk factors, margin structure, or capital allocation choices suggest about the operating setup?
+- Paragraph 2: Connect the financial data to the filing-backed context only. Explain what the reported risk factors, margin structure, or capital allocation choices imply without inventing external causes.
 - Paragraph 3: What questions should an analyst investigate further? What gaps in the data deserve deeper diligence?
 - Paragraph 4 (optional): Forward-looking considerations — what would confirmation or deterioration in key metrics signal?
 - Every paragraph must reference specific numbers from the AUTHORITATIVE METRICS in the DATA
@@ -229,8 +228,7 @@ ${data.dataBlock}
 INSTRUCTIONS:
 - For each company, write one concise paragraph on competitive advantages
 - Base every point on specific numbers from the AUTHORITATIVE METRICS in the DATA
-- Use markdown subheadings for each company (e.g., "### AAPL", "### MSFT")
-- Do NOT start with a top-level heading
+- Do NOT use headings, bullets, or company-by-company list formatting
 - Do NOT use vague language — every claim must cite a specific number
 - Build on the executive summary's comparative framework
 
@@ -253,7 +251,7 @@ INSTRUCTIONS:
 - Compare financial risk between the companies in flowing prose
 - Reference specific ratios, margins, and trends from the AUTHORITATIVE METRICS in the DATA
 - Write 2-3 paragraphs that contrast risk profiles, not just list them side by side
-- Do NOT start with a top-level heading
+- Do NOT use headings, bullets, or list formatting
 - Every claim must cite a specific figure
 
 Output the risk comparison content only.`;

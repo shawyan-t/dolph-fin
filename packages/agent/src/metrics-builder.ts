@@ -54,11 +54,11 @@ function buildSingleMetricsTable(
         : `*Snapshot period: ${snapshot}.*`,
     );
     if (company.periodNote) {
-      rows.push(`*Period lock note: ${company.periodNote}*`);
+      rows.push(`*Period note: ${company.periodNote}*`);
     }
     rows.push('');
   }
-  rows.push('The dashboard follows the fixed metric contract; unavailable cells remain explicit instead of being hidden by issuer-specific row logic.');
+  rows.push('The dashboard uses the same row order across reports, and values the filing does not disclose remain explicitly marked rather than being hidden.');
   for (const disclosure of buildMetricBasisDisclosures(company)) {
     rows.push(`*${disclosure}*`);
   }
@@ -94,7 +94,7 @@ function buildComparisonMetricsTable(
 
   const rows: string[] = [];
   rows.push(companyComparisonDisclosure(model));
-  rows.push('*The comparison table follows the fixed metric contract; rows stay in one governed order and unavailable cells remain explicit.*');
+  rows.push('*The comparison table uses the same row order for every company, and values missing from the filings remain explicitly marked.*');
   for (const disclosure of mergeMetricBasisDisclosures(model.companies)) {
     rows.push(`*${disclosure}*`);
   }
@@ -153,18 +153,18 @@ function companyComparisonDisclosure(model: ReportModel): string {
   const policy = model.companies[0]?.policy;
   const basis = model.comparisonBasis;
   if (!policy) {
-    return 'Peer metrics are shown on the canonical latest annual basis available for each company.';
+    return 'Peer metrics are shown for the latest annual filing available for each company.';
   }
   if (basis?.effective_mode === 'overlap_normalized') {
     if (basis.note) {
       return basis.note;
     }
-    return 'Peer metrics are overlap-normalized to the same comparable annual periods across all companies.';
+    return 'Peer metrics are aligned to the same annual periods across all companies.';
   }
   if ((basis?.effective_mode || policy.comparisonBasisMode) === 'latest_per_peer_screening') {
-    return basis?.note || 'Peer metrics use each company’s latest annual filing and should be treated as screening output, not strict like-for-like comparison.';
+    return basis?.note || 'Peer metrics use each company’s latest annual filing and should be read as a directional comparison rather than a strict like-for-like comparison.';
   }
-  return basis?.note || 'Peer metrics use each company’s latest annual filing with prominent disclosure that fiscal year-ends can differ across peers.';
+  return basis?.note || 'Peer metrics use each company’s latest annual filing, and fiscal year-ends can differ across the companies shown.';
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {

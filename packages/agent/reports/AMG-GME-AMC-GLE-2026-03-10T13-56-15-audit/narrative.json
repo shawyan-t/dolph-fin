@@ -1,0 +1,201 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison of AMG, GME, AMC, GLE is using each company's most recent annual filing, and it should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.\n\nAMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. Within that profile, net margin is 34.5%, debt-to-equity is 0.64x, free cash flow is $967M.\n\nGME reports $3.82B of revenue (-27.5% YoY) and $131M of net income in 2025-02-01. Within that profile, net margin is 3.4%, debt-to-equity is 0.01x, free cash flow is $130M.\n\nAMC reports $4.85B of revenue (4.6% YoY) and -$632M of net income in 2025-12-31. Within that profile, net margin is -13.0%, debt-to-equity is -2.12x, free cash flow is -$366M.\n\nGLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. Within that profile, net margin is -25.3%, free cash flow is -$1.3M.\n\nAMC leads the peer set on absolute revenue, while AMG carries the highest net margin — a classic scale-versus-efficiency divergence.",
+      "paragraphs": [
+        {
+          "text": "This comparison of AMG, GME, AMC, GLE is using each company's most recent annual filing, and it should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. Within that profile, net margin is 34.5%, debt-to-equity is 0.64x, free cash flow is $967M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GME reports $3.82B of revenue (-27.5% YoY) and $131M of net income in 2025-02-01. Within that profile, net margin is 3.4%, debt-to-equity is 0.01x, free cash flow is $130M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMC reports $4.85B of revenue (4.6% YoY) and -$632M of net income in 2025-12-31. Within that profile, net margin is -13.0%, debt-to-equity is -2.12x, free cash flow is -$366M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. Within that profile, net margin is -25.3%, free cash flow is -$1.3M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMC leads the peer set on absolute revenue, while AMG carries the highest net margin — a classic scale-versus-efficiency divergence.",
+          "fact_ids": [
+            "revenue",
+            "net_margin"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "AMG's clearest relative strength is that roe of 16.9% exceeds the 15% institutional threshold, reflecting productive deployment of book equity.\n\nGME's clearest relative strength is that current ratio of 8.05x provides a wide liquidity cushion relative to near-term obligations.\n\nAMC does not present a single dominant quantitative advantage in the current lock, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on one standout ratio.\n\nGLE does not present a single dominant quantitative advantage in the current lock, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on one standout ratio.",
+      "paragraphs": [
+        {
+          "text": "AMG's clearest relative strength is that roe of 16.9% exceeds the 15% institutional threshold, reflecting productive deployment of book equity.",
+          "fact_ids": [
+            "roe"
+          ]
+        },
+        {
+          "text": "GME's clearest relative strength is that current ratio of 8.05x provides a wide liquidity cushion relative to near-term obligations.",
+          "fact_ids": [
+            "current_ratio",
+            "quick_ratio"
+          ]
+        },
+        {
+          "text": "AMC does not present a single dominant quantitative advantage in the current lock, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on one standout ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE does not present a single dominant quantitative advantage in the current lock, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on one standout ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "Risk comparisons are drawn from each company's locked annual data, and metrics missing for one peer are left unfilled rather than forced into a false side-by-side equivalence.\n\nAMG carries the following main risk signals in the current basis: Pretax income (1.2B) does not reconcile with net_income + income_tax_expense (998.9M).\n\nGME carries the following main risk signals in the current basis: Revenue declined 27.5% versus prior year.\n\nAMC carries the following main risk signals in the current basis: Net margin is -13.0%, indicating a loss-making profile. Operating cash flow is negative in the current annual period.\n\nGLE carries the following main risk signals in the current basis: Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.",
+      "paragraphs": [
+        {
+          "text": "Risk comparisons are drawn from each company's locked annual data, and metrics missing for one peer are left unfilled rather than forced into a false side-by-side equivalence.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG carries the following main risk signals in the current basis: Pretax income (1.2B) does not reconcile with net_income + income_tax_expense (998.9M).",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "GME carries the following main risk signals in the current basis: Revenue declined 27.5% versus prior year.",
+          "fact_ids": [
+            "revenue"
+          ]
+        },
+        {
+          "text": "AMC carries the following main risk signals in the current basis: Net margin is -13.0%, indicating a loss-making profile. Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "operating_margin",
+            "net_margin",
+            "net_income",
+            "operating_cash_flow",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE carries the following main risk signals in the current basis: Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income",
+            "revenue"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "All peer figures are drawn from locked annual filings. Missing metrics remain missing, so the note should be read as a governed comparison of what each filing supports rather than as a fully normalized screen.\n\nAMG enters the comparison with 1 strength signal and 1 watch item, which frames how confidently its current profile can be set against the rest of the peer group.\n\nGME enters the comparison with 1 strength signal and 1 watch item, which frames how confidently its current profile can be set against the rest of the peer group.\n\nAMC enters the comparison with 3 watch items, which frames how confidently its current profile can be set against the rest of the peer group.\n\nGLE enters the comparison with 3 watch items, which frames how confidently its current profile can be set against the rest of the peer group.",
+      "paragraphs": [
+        {
+          "text": "All peer figures are drawn from locked annual filings. Missing metrics remain missing, so the note should be read as a governed comparison of what each filing supports rather than as a fully normalized screen.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG enters the comparison with 1 strength signal and 1 watch item, which frames how confidently its current profile can be set against the rest of the peer group.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "GME enters the comparison with 1 strength signal and 1 watch item, which frames how confidently its current profile can be set against the rest of the peer group.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "AMC enters the comparison with 3 watch items, which frames how confidently its current profile can be set against the rest of the peer group.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "GLE enters the comparison with 3 watch items, which frames how confidently its current profile can be set against the rest of the peer group.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

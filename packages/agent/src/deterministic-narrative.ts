@@ -154,146 +154,134 @@ function strengthFactIds(metricKey: string, company: CompanyReportModel | null, 
   }
 }
 
+function hasMeaningfulChange(point: MetricPoint | undefined): boolean {
+  return !!point && point.change !== null && classifyChangeMeaning(point.current, point.prior) === 'ok';
+}
+
+function joinSentences(parts: Array<string | null | undefined>): string {
+  return parts.filter((part): part is string => !!part && part.trim().length > 0).join(' ');
+}
+
+function shortPeriod(period: string | null | undefined): string {
+  return period || 'the reporting period used in this note';
+}
+
 function buildSingleExecutiveSummary(
   ticker: string,
   company: CompanyReportModel | null,
   insights: AnalysisInsights,
 ): NarrativeSectionBuild {
   const f = extractFacts(company, insights);
-  const period = insights.snapshotPeriod || 'latest annual period';
+  const period = shortPeriod(insights.snapshotPeriod);
   const paragraphs: StructuredNarrativeParagraph[] = [];
 
-  const p1Parts: string[] = [];
-  const p1Facts: string[] = [];
-  if (f.revenue && f.netIncome) {
-    p1Parts.push(
-      `${ticker} generated ${fmtCurrency(f.revenue.current)} in revenue${formatChangeSuffix(f.revenue)} and ${fmtCurrency(f.netIncome.current)} in net income${formatChangeSuffix(f.netIncome)} for ${period}.`,
-    );
-    p1Facts.push('revenue', 'net_income');
-    // Margin context integrated into the revenue paragraph
-    const marginBits: string[] = [];
-    if (f.operatingMargin) {
-      marginBits.push(`an operating margin of ${fmtPct(f.operatingMargin.current)}`);
-      p1Facts.push('operating_margin');
-    }
-    if (f.netMargin) {
-      marginBits.push(`a net margin of ${fmtPct(f.netMargin.current)}`);
-      p1Facts.push('net_margin');
-    }
-    if (marginBits.length > 0) {
-      p1Parts.push(`The period closed with ${marginBits.join(' and ')}.`);
-    }
-    const revenueChangeIsMeaningful = classifyChangeMeaning(f.revenue.current, f.revenue.prior) === 'ok';
-    const netIncomeChangeIsMeaningful = classifyChangeMeaning(f.netIncome.current, f.netIncome.prior) === 'ok';
-    if (f.revenue.change !== null && f.netIncome.change !== null && revenueChangeIsMeaningful && netIncomeChangeIsMeaningful) {
-      if (f.revenue.change > 0.1 && f.netIncome.change > 0.1) {
-        p1Parts.push('Revenue and earnings both expanded at a double-digit pace, consistent with improving operating leverage or favorable demand conditions.');
-      } else if (f.revenue.change > 0.05 && f.netIncome.change < -0.05) {
-        p1Parts.push('Top-line growth did not translate to the bottom line, pointing to cost inflation or margin compression that warrants attention.');
-      } else if (f.revenue.change < -0.05 && f.netIncome.change > 0) {
-        p1Parts.push('Earnings held up despite falling revenue, likely reflecting cost reductions, though sustained top-line decline limits how long that dynamic can persist.');
-      } else if (f.revenue.change < -0.05 && f.netIncome.change < -0.05) {
-        p1Parts.push('Both revenue and earnings contracted, indicating a challenging operating environment across the period.');
-      }
-    }
-  } else if (f.revenue) {
-    p1Parts.push(`${ticker} generated ${fmtCurrency(f.revenue.current)} in revenue${formatChangeSuffix(f.revenue)} for ${period}.`);
-    p1Facts.push('revenue');
-    if (f.operatingMargin || f.netMargin) {
-      const bits: string[] = [];
-      if (f.operatingMargin) { bits.push(`an operating margin of ${fmtPct(f.operatingMargin.current)}`); p1Facts.push('operating_margin'); }
-      if (f.netMargin) { bits.push(`a net margin of ${fmtPct(f.netMargin.current)}`); p1Facts.push('net_margin'); }
-      p1Parts.push(`The period closed with ${bits.join(' and ')}.`);
-    }
-  } else {
-    p1Parts.push(`${ticker} has limited annual coverage in the locked period; analysis relies on the verified statement tables below.`);
-    p1Facts.push(...firstAvailableFactIds(company, insights, ['revenue', 'net_income']));
-  }
-  paragraphs.push({ text: p1Parts.join(' '), fact_ids: uniqueFactIds(p1Facts) });
+  const p1Facts = uniqueFactIds([
+    ...firstAvailableFactIds(company, insights, ['revenue', 'net_income', 'operating_margin', 'net_margin']),
+  ]);
+  const p1 = joinSentences([
+    f.revenue && f.netIncome
+      ? `${ticker} closes ${period} with ${fmtCurrency(f.revenue.current)} of revenue${formatChangeSuffix(f.revenue)} and ${fmtCurrency(f.netIncome.current)} of net income${formatChangeSuffix(f.netIncome)}.`
+      : f.revenue
+        ? `${ticker} closes ${period} with ${fmtCurrency(f.revenue.current)} of revenue${formatChangeSuffix(f.revenue)}.`
+        : `${ticker} has limited top-line disclosure for ${period}, so the report leans more heavily on the verified statement tables than on a simple headline read.`,
+    f.operatingMargin && f.netMargin
+      ? `The period ended with an operating margin of ${fmtPct(f.operatingMargin.current)} and a net margin of ${fmtPct(f.netMargin.current)}, which frames how much of the reported scale translated into retained profitability.`
+      : f.operatingMargin
+        ? `The operating margin of ${fmtPct(f.operatingMargin.current)} is the clearest guide to operating efficiency in the reporting period used here.`
+        : f.netMargin
+          ? `The net margin of ${fmtPct(f.netMargin.current)} is the clearest guide to how much of reported revenue reached the bottom line.`
+          : null,
+    f.revenue && f.netIncome && hasMeaningfulChange(f.revenue) && hasMeaningfulChange(f.netIncome)
+      ? (
+        f.revenue.change! > 0 && f.netIncome.change! > 0
+          ? (f.operatingMargin && f.operatingMargin.change !== null && f.operatingMargin.change < 0
+            ? 'Revenue growth outpaced margin retention, so earnings improved without the same degree of operating efficiency.'
+            : 'Revenue and earnings improved together, indicating that the growth story carried through to reported profitability.')
+          : (f.revenue.change! > 0 && f.netIncome.change! < 0
+            ? 'Top-line growth did not carry through to the bottom line, which points to margin pressure or cost absorption that offset the added scale.'
+            : (f.revenue.change! < 0 && f.netIncome.change! > 0
+              ? 'Earnings held up better than revenue, suggesting that expense control or mix changes partially offset the softer top line.'
+              : 'Revenue and earnings both weakened, leaving the period without a clear offsetting strength on the income statement.'))
+      )
+      : null,
+  ]);
+  paragraphs.push({ text: p1, fact_ids: p1Facts });
 
-  const p2Parts: string[] = [];
-  const p2Facts: string[] = [];
   const cashStress = !!(
     (f.operatingCashFlow && f.operatingCashFlow.current < 0)
     || (f.freeCashFlow && f.freeCashFlow.current < 0)
   );
-  if (f.debtToEquity && f.currentRatio) {
-    const leverage = f.debtToEquity.current;
-    const liquidity = f.currentRatio.current;
-    const negativeEquity = leverage < 0;
-    p2Facts.push(...firstAvailableFactIds(company, insights, ['de', 'current_ratio']));
-    if (negativeEquity) {
-      // Negative equity makes D/E ratio interpretation misleading — explain directly
-      p2Parts.push(`Stockholders' equity is negative, producing a debt-to-equity ratio of ${fmtRatio(leverage)} that does not lend itself to conventional leverage interpretation.`);
-      p2Parts.push(`The current ratio of ${fmtRatio(liquidity)} provides a more reliable near-term solvency reference.`);
-      p2Facts.push(...firstAvailableFactIds(company, insights, ['stockholders_equity']));
-    } else if (leverage < 0.3 && liquidity >= 1.5 && !cashStress) {
-      p2Parts.push(`Debt-to-equity of ${fmtRatio(leverage)} and a current ratio of ${fmtRatio(liquidity)} indicate a conservatively capitalized balance sheet with room for opportunistic deployment.`);
-    } else if (leverage < 0.3 && liquidity >= 1.5) {
-      p2Parts.push(`Debt-to-equity of ${fmtRatio(leverage)} and a current ratio of ${fmtRatio(liquidity)} suggest low structural leverage, though negative operating or free cash flow limits the practical benefit of that headroom.`);
-      p2Facts.push(...firstAvailableFactIds(company, insights, ['operating_cash_flow', 'fcf']));
-    } else if (leverage > 2) {
-      p2Parts.push(`At ${fmtRatio(leverage)} debt-to-equity, the capital structure carries above-average leverage that increases refinancing and interest-rate sensitivity.`);
-      if (liquidity < 1.0) {
-        p2Parts.push(`A current ratio below 1.0x (${fmtRatio(liquidity)}) adds near-term liquidity pressure to the leverage concern.`);
-      } else {
-        p2Parts.push(`The current ratio of ${fmtRatio(liquidity)} provides some near-term coverage.`);
-      }
-    } else {
-      p2Parts.push(`Debt-to-equity of ${fmtRatio(leverage)} and a current ratio of ${fmtRatio(liquidity)} reflect a moderate capital structure without extreme positioning in either direction.`);
-    }
-  } else if (f.currentRatio) {
-    p2Facts.push('current_ratio');
-    if (cashStress) {
-      p2Parts.push(`The current ratio of ${fmtRatio(f.currentRatio.current)} provides baseline coverage, but negative operating or free cash flow limits the practical liquidity cushion.`);
-      p2Facts.push(...firstAvailableFactIds(company, insights, ['operating_cash_flow', 'fcf']));
-    } else {
-      p2Parts.push(`The current ratio stands at ${fmtRatio(f.currentRatio.current)}, providing a baseline liquidity reference.`);
-    }
-  }
-  if (f.quickRatio && p2Parts.length > 0) {
-    p2Facts.push('quick_ratio');
-    if (cashStress) {
-      p2Parts.push(`The quick ratio of ${fmtRatio(f.quickRatio.current)} still shows current-asset coverage after excluding inventory, but it does not offset the current cash burn.`);
-    } else {
-      p2Parts.push(`The quick ratio of ${fmtRatio(f.quickRatio.current)} confirms liquidity depth after excluding inventory from the coverage calculation.`);
-    }
-  }
-  if (p2Parts.length > 0) {
-    paragraphs.push({ text: p2Parts.join(' '), fact_ids: uniqueFactIds(p2Facts) });
-  }
+  const p2Facts = uniqueFactIds([
+    ...firstAvailableFactIds(company, insights, ['operating_cash_flow', 'fcf', 'capex', 'net_income', 'revenue']),
+  ]);
+  const p2 = joinSentences([
+    f.operatingCashFlow && f.freeCashFlow
+      ? `Operating cash flow reached ${fmtCurrency(f.operatingCashFlow.current)}${formatChangeSuffix(f.operatingCashFlow)}, and after ${f.capex ? `${fmtCurrency(Math.abs(f.capex.current))} of capital spending` : 'capital spending'} the business produced ${fmtCurrency(f.freeCashFlow.current)} of free cash flow${formatChangeSuffix(f.freeCashFlow)}.`
+      : f.operatingCashFlow
+        ? `Operating cash flow was ${fmtCurrency(f.operatingCashFlow.current)}${formatChangeSuffix(f.operatingCashFlow)}${f.capex ? `, with capital expenditures of ${fmtCurrency(Math.abs(f.capex.current))}` : ''}.`
+        : 'Cash-flow coverage is thinner than the income statement coverage in the locked period, so the balance between earnings and cash conversion requires caution.',
+    f.operatingCashFlow && f.netIncome
+      ? (() => {
+        if (f.netIncome.current <= 0 && f.operatingCashFlow.current > 0) {
+          return 'Cash generation held up better than reported earnings, which suggests that non-cash charges or working-capital release softened the impact of weak profitability.';
+        }
+        if (f.netIncome.current > 0 && f.operatingCashFlow.current <= 0) {
+          return 'Reported earnings were not matched by operating cash generation, so the quality of earnings deserves closer attention.';
+        }
+        if (f.freeCashFlow && f.operatingCashFlow.current > 0 && f.freeCashFlow.current > 0 && f.netIncome.current > 0) {
+          const cashConversion = f.operatingCashFlow.current / f.netIncome.current;
+          if (cashConversion > 1.2) return 'Cash generation exceeded reported earnings, a sign that the period converted accounting profit into liquidity with relatively little friction.';
+          if (cashConversion < 0.7) return 'Operating cash flow lagged reported earnings, which points to working-capital drag or timing effects even though the company stayed profitable.';
+        }
+        return null;
+      })()
+      : null,
+    f.capex && f.revenue && f.operatingCashFlow
+      ? `Capital spending absorbed ${(Math.abs(f.capex.current) / Math.max(Math.abs(f.revenue.current), 1) * 100).toFixed(1)}% of revenue, which helps frame how much internal cash flow remained available after reinvestment.`
+      : null,
+  ]);
+  paragraphs.push({ text: p2, fact_ids: p2Facts });
 
-  const p3Parts: string[] = [];
-  const p3Facts: string[] = [];
-  if (f.operatingCashFlow && f.freeCashFlow) {
-    p3Facts.push('operating_cash_flow', 'fcf');
-    p3Parts.push(`Operating cash flow of ${fmtCurrency(f.operatingCashFlow.current)}${formatChangeSuffix(f.operatingCashFlow)} converted to ${fmtCurrency(f.freeCashFlow.current)} in free cash flow${formatChangeSuffix(f.freeCashFlow)}.`);
-    if (f.capex) {
-      p3Facts.push('capex');
-      const capexIntensity = f.revenue ? (Math.abs(f.capex.current) / f.revenue.current * 100).toFixed(1) : null;
-      const capexNote = capexIntensity ? ` (${capexIntensity}% of revenue)` : '';
-      p3Parts.push(`Capital expenditures totaled ${fmtCurrency(Math.abs(f.capex.current))}${capexNote}.`);
-      if (f.revenue) p3Facts.push('revenue');
-    }
-    if (f.operatingCashFlow.current > 0 && f.freeCashFlow.current > 0 && f.netIncome && f.netIncome.current > 0) {
-      const cfoToNi = f.operatingCashFlow.current / f.netIncome.current;
-      p3Facts.push('net_income');
-      if (cfoToNi > 1.2) {
-        p3Parts.push('Cash generation exceeded reported earnings, indicating strong accrual-to-cash conversion.');
-      } else if (cfoToNi < 0.7 && cfoToNi > 0) {
-        p3Parts.push('Reported earnings significantly outpaced cash generation, suggesting working capital consumption or accrual timing effects worth monitoring.');
-      }
-    }
-  } else if (f.operatingCashFlow) {
-    p3Facts.push('operating_cash_flow');
-    p3Parts.push(`Operating cash flow was ${fmtCurrency(f.operatingCashFlow.current)}${formatChangeSuffix(f.operatingCashFlow)}.`);
-  } else {
-    p3Facts.push(...firstAvailableFactIds(company, insights, ['operating_cash_flow', 'fcf', 'revenue']));
-    p3Parts.push('Cash-flow data is limited in the locked annual period.');
-  }
-  if (p3Parts.length > 0) {
-    paragraphs.push({ text: p3Parts.join(' '), fact_ids: uniqueFactIds(p3Facts) });
-  }
+  const p3Facts = uniqueFactIds([
+    ...firstAvailableFactIds(company, insights, ['de', 'current_ratio', 'quick_ratio', 'stockholders_equity']),
+  ]);
+  const p3 = joinSentences([
+    f.debtToEquity && f.currentRatio
+      ? (() => {
+        if (f.debtToEquity.current < 0) {
+          return `Stockholders' equity is negative, which makes the reported debt-to-equity ratio of ${fmtRatio(f.debtToEquity.current)} more a sign of balance-sheet distortion than a conventional leverage read. In that setting, the current ratio of ${fmtRatio(f.currentRatio.current)} is the cleaner short-term solvency reference.`;
+        }
+        if (f.currentRatio.current < 1 && f.debtToEquity.current < 1) {
+          return `The balance sheet presents a mixed picture: leverage is moderate at ${fmtRatio(f.debtToEquity.current)} debt-to-equity, but the current ratio of ${fmtRatio(f.currentRatio.current)} still points to a tight liquidity position.`;
+        }
+        if (f.currentRatio.current >= 1.5 && f.debtToEquity.current > 2) {
+          return `Liquidity appears serviceable at ${fmtRatio(f.currentRatio.current)}, but debt-to-equity of ${fmtRatio(f.debtToEquity.current)} leaves the capital structure more levered than the liquidity ratio alone might suggest.`;
+        }
+        if (f.currentRatio.current >= 1.5 && !cashStress) {
+          return `Liquidity and leverage are both relatively manageable, with a current ratio of ${fmtRatio(f.currentRatio.current)} and debt-to-equity of ${fmtRatio(f.debtToEquity.current)}.`;
+        }
+        return `Current liquidity of ${fmtRatio(f.currentRatio.current)} and debt-to-equity of ${fmtRatio(f.debtToEquity.current)} point to a balance sheet that is neither clearly stressed nor clearly overcapitalized.`;
+      })()
+      : f.currentRatio
+        ? `On the balance sheet, the current ratio of ${fmtRatio(f.currentRatio.current)} is the clearest short-term solvency reference available for the reporting period used here.`
+        : null,
+    f.quickRatio && f.currentRatio
+      ? (() => {
+        const gap = f.currentRatio.current - f.quickRatio.current;
+        if (gap > 0.35) {
+          return `The quick ratio of ${fmtRatio(f.quickRatio.current)} sits below the current ratio, indicating that inventory or other less-liquid current assets carry part of the coverage burden.`;
+        }
+        if (Math.abs(gap) <= 0.1) {
+          return `The quick ratio of ${fmtRatio(f.quickRatio.current)} sits close to the current ratio, so near-term coverage does not rely heavily on inventory liquidation.`;
+        }
+        return null;
+      })()
+      : null,
+    cashStress
+      ? 'That balance-sheet reading should still be weighed against weak cash generation when operating or free cash flow is negative.'
+      : null,
+  ]);
+  paragraphs.push({ text: p3, fact_ids: p3Facts });
 
   return sectionFromParagraphs(paragraphs.filter(paragraph => paragraph.text.trim().length > 0));
 }
@@ -307,40 +295,80 @@ function buildSingleTrendAnalysis(company: CompanyReportModel | null, insights: 
       },
     ]);
   }
+  const f = extractFacts(company, insights);
+  const top = insights.topTrends.slice(0, 3);
+  const paragraphs: StructuredNarrativeParagraph[] = [];
+  const secondaryTrendText = top[1]?.description?.trim() || null;
+  const tertiaryTrendText = top[2]?.description?.trim() || null;
+  const firstFacts = uniqueFactIds(top.flatMap(trend => [trend.metric]).concat(firstAvailableFactIds(company, insights, ['revenue', 'operating_margin', 'net_income'])));
+  const firstText = joinSentences([
+    top[0]
+      ? `Across the annual periods shown here, ${top[0].displayName.toLowerCase()} provides the clearest recurring pattern, with the latest value at ${top[0].latestValue !== null ? fmtValue(top[0].latestValue, top[0].metric.includes('margin') ? '%' : 'USD') : 'N/A'}${top[0].cagr !== null ? ` and a compound annual growth rate of ${fmtPct(top[0].cagr)}` : ''}.`
+      : null,
+    secondaryTrendText
+      ? `${secondaryTrendText}`
+      : null,
+    f.revenue && f.operatingMargin && hasMeaningfulChange(f.revenue) && hasMeaningfulChange(f.operatingMargin)
+      ? (f.revenue.change! > 0 && f.operatingMargin.change! < 0
+        ? 'The main trend relationship is therefore one of scale improving faster than margin retention.'
+        : (f.revenue.change! < 0 && f.operatingMargin.change! > 0
+          ? 'The main trend relationship is one of weaker scale but better operating discipline.'
+          : null))
+      : null,
+  ]);
+  paragraphs.push({ text: firstText, fact_ids: firstFacts });
 
-  const blocks = insights.topTrends.slice(0, 4).map(trend => {
-    const cagrText = trend.cagr !== null ? `${fmtPct(trend.cagr)} CAGR` : 'CAGR unavailable';
-    const latestText = trend.latestValue !== null ? fmtCurrency(trend.latestValue) : 'N/A';
-    return {
-      text: `${trend.displayName} stands at ${latestText} (${cagrText}). ${trend.description}`,
-      fact_ids: [trend.metric],
-    };
-  });
-  return sectionFromBlocks(blocks);
+  const secondFacts = uniqueFactIds(firstAvailableFactIds(company, insights, ['operating_cash_flow', 'fcf', 'de', 'current_ratio']).concat(top[2] ? [top[2].metric] : []));
+  const secondText = joinSentences([
+    tertiaryTrendText && tertiaryTrendText !== secondaryTrendText ? `${tertiaryTrendText}` : null,
+    f.operatingCashFlow && f.freeCashFlow
+      ? (f.operatingCashFlow.current > 0 && f.freeCashFlow.current > 0
+        ? `Cash generation remained constructive, with ${fmtCurrency(f.operatingCashFlow.current)} of operating cash flow translating into ${fmtCurrency(f.freeCashFlow.current)} of free cash flow.`
+        : `Cash generation remains the main point of pressure, with ${fmtCurrency(f.operatingCashFlow.current)} of operating cash flow and ${fmtCurrency(f.freeCashFlow.current)} of free cash flow in the current period.`)
+      : null,
+    f.debtToEquity && f.currentRatio
+      ? `Balance-sheet pressure should be read through both leverage (${fmtRatio(f.debtToEquity.current)} debt-to-equity) and liquidity (${fmtRatio(f.currentRatio.current)} current ratio), because those measures do not always point to the same conclusion about financial flexibility.`
+      : null,
+  ]);
+  paragraphs.push({ text: secondText, fact_ids: secondFacts });
+
+  return sectionFromParagraphs(paragraphs.filter(paragraph => paragraph.text.trim().length > 0));
 }
 
 function buildSingleRiskFactors(
   company: CompanyReportModel | null,
   insights: AnalysisInsights,
 ): NarrativeSectionBuild {
-  const lines: Array<{ heading?: string; text: string; fact_ids: string[] }> = insights.redFlags.length === 0
-    ? [{
-      text: 'No major quantitative red flags are active in the locked annual snapshot, although margin durability and cash conversion still warrant routine monitoring.',
-      fact_ids: firstAvailableFactIds(company, insights, ['operating_margin', 'fcf', 'operating_cash_flow']),
-    }]
-    : insights.redFlags.slice(0, 5).map(flag => ({
-      text: `${flag.flag}: ${flag.detail}`,
-      fact_ids: flagFactIds(flag.flag, company, insights),
-    }));
-
-  if (insights.redFlags.length > 0) {
-    lines.unshift({
-      text: 'The following governed risk signals are active in the locked annual basis and should frame interpretation of the current results.',
-      fact_ids: firstAvailableFactIds(company, insights, ['revenue', 'net_income']),
-    });
+  const f = extractFacts(company, insights);
+  if (insights.redFlags.length === 0) {
+    return sectionFromParagraphs([{
+      text: joinSentences([
+        'No single balance-sheet or earnings issue dominates the reporting period used in this note.',
+        f.operatingMargin || f.freeCashFlow
+          ? `The main areas to monitor remain profitability${f.operatingMargin ? ` at ${fmtPct(f.operatingMargin.current)}` : ''} and free cash flow${f.freeCashFlow ? ` at ${fmtCurrency(f.freeCashFlow.current)}` : ''}, because those lines usually determine whether the balance sheet is strengthening or merely holding steady.`
+          : 'Even so, the absence of a hard red flag does not eliminate the need to monitor margin durability, cash conversion, and balance-sheet flexibility.'
+      ]),
+      fact_ids: firstAvailableFactIds(company, insights, ['operating_margin', 'fcf', 'operating_cash_flow', 'current_ratio']),
+    }]);
   }
 
-  return sectionFromBlocks(lines);
+  const flags = insights.redFlags.slice(0, 4);
+  const first = flags.slice(0, 2).map(flag => flag.detail).join(' ');
+  const second = flags.slice(2).map(flag => flag.detail).join(' ');
+  const paragraphs: StructuredNarrativeParagraph[] = [{
+    text: joinSentences([
+      'The most important risks in the current numbers are concentrated in the areas where profitability, cash generation, or balance-sheet support are not moving together.',
+      first,
+    ]),
+    fact_ids: uniqueFactIds(flags.slice(0, 2).flatMap(flag => flagFactIds(flag.flag, company, insights))),
+  }];
+  if (second) {
+    paragraphs.push({
+      text: second,
+      fact_ids: uniqueFactIds(flags.slice(2).flatMap(flag => flagFactIds(flag.flag, company, insights))),
+    });
+  }
+  return sectionFromParagraphs(paragraphs);
 }
 
 function buildSingleAnalystNotes(
@@ -348,24 +376,30 @@ function buildSingleAnalystNotes(
   company: CompanyReportModel | null,
   insights: AnalysisInsights,
 ): NarrativeSectionBuild {
+  const f = extractFacts(company, insights);
   const strengths = insights.strengths.slice(0, 3);
-  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [];
+  const paragraphs: StructuredNarrativeParagraph[] = [{
+    text: joinSentences([
+      strengths.length > 0
+        ? `The most constructive part of ${ticker}'s profile is straightforward: ${strengths[0]!.detail}`
+        : `${ticker}'s profile does not reduce to a single standout strength or weakness; the more relevant question is how the income statement, cash flow statement, and balance sheet interact.`,
+      strengths.length > 1 ? strengths[1]!.detail : null,
+      f.debtToEquity && f.currentRatio && f.freeCashFlow
+        ? `That matters because leverage (${fmtRatio(f.debtToEquity.current)} debt-to-equity), liquidity (${fmtRatio(f.currentRatio.current)} current ratio), and free cash flow (${fmtCurrency(f.freeCashFlow.current)}) need to be read together rather than in isolation.`
+        : null,
+    ]),
+    fact_ids: uniqueFactIds([
+      ...strengths.slice(0, 2).flatMap(strength => strengthFactIds(strength.metric, company, insights)),
+      ...firstAvailableFactIds(company, insights, ['de', 'current_ratio', 'fcf']),
+    ]),
+  }];
 
-  // Strengths section (unique to analyst notes — risk factors are in the separate risk section)
-  blocks.push({ text: strengths.length === 0
-    ? `${ticker}'s profile is balanced without a dominant quantitative outperformance signal in the current period.`
-    : strengths[0]!.detail, fact_ids: strengths.length === 0 ? firstAvailableFactIds(company, insights, ['revenue', 'net_income']) : strengthFactIds(strengths[0]!.metric, company, insights) });
-  for (const strength of strengths.slice(1)) {
-    blocks.push({ text: strength.detail, fact_ids: strengthFactIds(strength.metric, company, insights) });
-  }
-
-  // Methodology note (no duplication of risk factors — those are in the Risk Factors section)
-  blocks.push({
-    text: `Analysis is anchored to the locked annual period ending ${insights.snapshotPeriod ?? 'N/A'}${insights.priorPeriod ? `, with prior-period comparisons drawn from ${insights.priorPeriod}` : ''}. Metrics without required inputs remain intentionally unfilled rather than estimated.`,
-    fact_ids: firstAvailableFactIds(company, insights, ['revenue', 'net_income']),
+  paragraphs.push({
+    text: `This note is anchored to the annual period ending ${insights.snapshotPeriod ?? 'N/A'}${insights.priorPeriod ? `, with the prior period set at ${insights.priorPeriod}` : ''}. Metrics without the required statement support remain blank rather than estimated, so the analysis stays tied to the filing evidence rather than to gap-filled assumptions.`,
+    fact_ids: firstAvailableFactIds(company, insights, ['revenue', 'net_income', 'current_ratio']),
   });
 
-  return sectionFromBlocks(blocks);
+  return sectionFromParagraphs(paragraphs);
 }
 
 function buildComparisonExecutiveSummary(
@@ -397,57 +431,53 @@ function buildComparisonExecutiveSummary(
     ? `based on ${uniquePeriods[0]} annual filings`
     : `using each company's most recent annual filing`;
   paragraphs.push({
-    text: `The following comparison of ${context.tickers.join(', ')} is ${periodNote}, covering revenue scale, profitability, leverage, and cash generation.`,
+    text: `This comparison of ${context.tickers.join(' and ')} uses ${periodNote.replace(/^using /, '')} and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.`,
     fact_ids: ['revenue', 'net_income', 'de', 'fcf'],
   });
-
   for (const s of summaries) {
-    const parts: string[] = [];
-    const factIds = ['revenue'];
-    const rev = s.revenue !== null ? fmtCurrency(s.revenue) : null;
-    const ni = s.netIncome !== null ? fmtCurrency(s.netIncome) : null;
-    const revChg = formatChangeSuffixFromValues(s.revenueChange, s.revenue, s.revenuePrior, 'USD');
-
-    if (rev && ni) {
-      parts.push(`${s.ticker} generated ${rev} in revenue${revChg} and ${ni} in net income (${s.period}).`);
-      factIds.push('net_income');
-    } else if (rev) {
-      parts.push(`${s.ticker} generated ${rev} in revenue${revChg} (${s.period}).`);
-    } else {
-      parts.push(`${s.ticker} has limited data coverage for the locked period.`);
-    }
-
-    const profileBits: string[] = [];
-    if (s.netMargin !== null) {
-      profileBits.push(`net margin of ${fmtPct(s.netMargin)}`);
-      factIds.push('net_margin');
-    }
-    if (s.debtToEquity !== null) {
-      profileBits.push(`debt-to-equity of ${fmtRatio(s.debtToEquity)}`);
-      factIds.push('de');
-    }
-    if (s.freeCashFlow !== null) {
-      profileBits.push(`free cash flow of ${fmtCurrency(s.freeCashFlow)}`);
-      factIds.push('fcf');
-    }
-    if (profileBits.length > 0) {
-      parts.push(`Key profile markers include ${profileBits.join(', ')}.`);
-    }
-
-    paragraphs.push({ text: parts.join(' '), fact_ids: uniqueFactIds(factIds) });
+    paragraphs.push({
+      text: joinSentences([
+        s.revenue !== null && s.netIncome !== null
+        ? `${s.ticker} reports ${fmtCurrency(s.revenue)} of revenue${formatChangeSuffixFromValues(s.revenueChange, s.revenue, s.revenuePrior, 'USD')} and ${fmtCurrency(s.netIncome)} of net income in ${s.period}.`
+          : s.revenue !== null
+            ? `${s.ticker} reports ${fmtCurrency(s.revenue)} of revenue${formatChangeSuffixFromValues(s.revenueChange, s.revenue, s.revenuePrior, 'USD')} in ${s.period}, although earnings coverage is less complete.`
+            : `${s.ticker} has thinner financial disclosure in the reporting period used for this peer set than the rest of the group.`,
+        s.netMargin !== null || s.debtToEquity !== null || s.freeCashFlow !== null
+          ? `${s.ticker}'s profile is further defined by ${[
+            s.netMargin !== null ? `net margin of ${fmtPct(s.netMargin)}` : null,
+            s.debtToEquity !== null ? `debt-to-equity of ${fmtRatio(s.debtToEquity)}` : null,
+            s.freeCashFlow !== null ? `free cash flow of ${fmtCurrency(s.freeCashFlow)}` : null,
+          ].filter(Boolean).join(', ')}.`
+          : null,
+      ]),
+      fact_ids: uniqueFactIds(['revenue', 'net_income', 'net_margin', 'de', 'fcf']),
+    });
   }
 
   const revenueLeader = [...summaries].filter(s => s.revenue !== null).sort((a, b) => (b.revenue ?? 0) - (a.revenue ?? 0))[0];
   const marginLeader = [...summaries].filter(s => s.netMargin !== null).sort((a, b) => (b.netMargin ?? 0) - (a.netMargin ?? 0))[0];
   if (revenueLeader && marginLeader && revenueLeader.ticker !== marginLeader.ticker) {
     paragraphs.push({
-      text: `${revenueLeader.ticker} leads the peer set on absolute revenue, while ${marginLeader.ticker} carries the highest net margin — a classic scale-versus-efficiency divergence.`,
+      text: `${revenueLeader.ticker} is the larger company on reported annual revenue, while ${marginLeader.ticker} carries the highest net margin, so scale and efficiency do not point to the same leader.`,
       fact_ids: ['revenue', 'net_margin'],
     });
   } else if (revenueLeader) {
     paragraphs.push({
-      text: `${revenueLeader.ticker} leads the peer set on annual revenue.`,
+      text: `${revenueLeader.ticker} is the larger company on reported annual revenue.`,
       fact_ids: ['revenue'],
+    });
+  }
+
+  const profitable = summaries.filter(s => s.netMargin !== null && s.netMargin > 0);
+  const unprofitable = summaries.filter(s => s.netMargin !== null && s.netMargin < 0);
+  if (profitable.length > 0 && unprofitable.length > 0) {
+    const profitableTickers = profitable.map(s => s.ticker).join(' and ');
+    const unprofitableTickers = unprofitable.map(s => s.ticker).join(' and ');
+    const profitableVerb = profitable.length > 1 ? 'remain' : 'remains';
+    const unprofitableVerb = unprofitable.length > 1 ? 'are' : 'is';
+    paragraphs.push({
+      text: `${profitableTickers} ${profitableVerb} profitable in the periods used for this note, while ${unprofitableTickers} ${unprofitableVerb} still operating from a weaker earnings base. That split matters because revenue scale alone does not make cash generation and margin structure economically comparable across the group.`,
+      fact_ids: ['revenue', 'net_margin', 'fcf'],
     });
   }
 
@@ -459,22 +489,26 @@ function buildRelativeStrengths(
   reportModel: ReportModel | null,
   insights: Record<string, AnalysisInsights>,
 ): NarrativeSectionBuild {
-  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [];
+  const paragraphs: StructuredNarrativeParagraph[] = [];
   for (const ticker of context.tickers) {
     const strengths = insights[ticker]?.strengths || [];
-    blocks.push({
+    const facts = extractFacts(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!);
+    paragraphs.push({
       text: strengths.length === 0
-        ? `No clear quantitative outperformance signal is active for ${ticker} in the current period lock.`
-        : strengths[0]!.detail,
+        ? `${ticker} does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.`
+        : joinSentences([
+          `For ${ticker}, the most favorable feature in the current figures is straightforward: ${strengths[0]!.detail}`,
+          strengths[1]?.detail,
+          facts.freeCashFlow && facts.debtToEquity
+            ? `That picture sits alongside free cash flow of ${fmtCurrency(facts.freeCashFlow.current)} and debt-to-equity of ${fmtRatio(facts.debtToEquity.current)}, which helps show how profitability is balanced against financing risk.`
+            : null,
+        ]),
       fact_ids: strengths.length === 0
-        ? firstAvailableFactIds(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!, ['revenue', 'net_income'])
-        : strengthFactIds(strengths[0]!.metric, reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!),
+        ? firstAvailableFactIds(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!, ['revenue', 'net_income', 'de', 'fcf'])
+        : uniqueFactIds(strengths.slice(0, 2).flatMap(strength => strengthFactIds(strength.metric, reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!))),
     });
-    for (const strength of strengths.slice(1, 4)) {
-      blocks.push({ text: strength.detail, fact_ids: strengthFactIds(strength.metric, reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!) });
-    }
   }
-  return sectionFromBlocks(blocks);
+  return sectionFromParagraphs(paragraphs);
 }
 
 function buildComparisonRisk(
@@ -482,23 +516,21 @@ function buildComparisonRisk(
   reportModel: ReportModel | null,
   insights: Record<string, AnalysisInsights>,
 ): NarrativeSectionBuild {
-  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [
-    {
-      text: 'Risk signals below are drawn from each peer\'s locked annual data; metrics not reported by a peer are excluded rather than imputed.',
-      fact_ids: ['revenue', 'de', 'fcf'],
-    },
-  ];
+  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [{
+    text: 'The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.',
+    fact_ids: ['revenue', 'de', 'fcf'],
+  }];
   for (const ticker of context.tickers) {
     const flags = insights[ticker]?.redFlags || [];
     if (flags.length === 0) {
       blocks.push({
-        text: `${ticker}: No quantitative red flags surfaced for the locked annual period.`,
+        text: `${ticker} does not present one dominant financial stress point in the reporting period used here, although that should not be mistaken for a risk-free profile.`,
         fact_ids: firstAvailableFactIds(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!, ['revenue', 'net_income']),
       });
       continue;
     }
     blocks.push({
-      text: `${ticker}: ${flags.slice(0, 2).map(f => f.detail).join(' ')}`,
+      text: `For ${ticker}, the main areas of financial pressure in the reporting period are as follows. ${flags.slice(0, 2).map(f => f.detail).join(' ')}`,
       fact_ids: uniqueFactIds(flags.slice(0, 2).flatMap(flag => flagFactIds(flag.flag, reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!))),
     });
   }
@@ -510,26 +542,22 @@ function buildComparisonNotes(
   reportModel: ReportModel | null,
   insights: Record<string, AnalysisInsights>,
 ): NarrativeSectionBuild {
-  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [
-    {
-      text: 'All peer data is drawn from locked annual filings. Where a metric is absent for one peer, it is excluded from comparison rather than estimated.',
-      fact_ids: ['revenue', 'net_income', 'de', 'fcf'],
-    },
-  ];
+  const blocks: Array<{ heading?: string; text: string; fact_ids: string[] }> = [{
+    text: 'All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.',
+    fact_ids: ['revenue', 'net_income', 'de', 'fcf'],
+  }];
   for (const ticker of context.tickers) {
     const strengths = insights[ticker]?.strengths ?? [];
     const flags = insights[ticker]?.redFlags ?? [];
-    const parts: string[] = [];
-    if (strengths.length > 0) {
-      parts.push(`${strengths.length} strength signal${strengths.length > 1 ? 's' : ''}`);
-    }
-    if (flags.length > 0) {
-      parts.push(`${flags.length} watch item${flags.length > 1 ? 's' : ''}`);
-    }
-    const summary = parts.length > 0 ? parts.join(' and ') : 'no material signals either way';
     blocks.push({
-      text: `${ticker}: ${summary}.`,
-      fact_ids: firstAvailableFactIds(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!, ['revenue', 'net_income']),
+      text: strengths.length > 0 || flags.length > 0
+        ? joinSentences([
+          `${ticker} enters the comparison with ${strengths.length > 0 ? 'clear areas of support in the numbers' : 'no obvious financial advantage'} and ${flags.length > 0 ? 'at least one area that deserves caution' : 'no single dominant area of immediate financial stress'}.`,
+          strengths[0]?.detail,
+          flags[0]?.detail,
+        ])
+        : `${ticker} enters the comparison without one overwhelming positive or negative feature, so the overall profile has to be judged by how the main statements fit together.`,
+      fact_ids: firstAvailableFactIds(reportModel?.companiesByTicker.get(ticker) || null, insights[ticker]!, ['revenue', 'net_income', 'de', 'fcf']),
     });
   }
   return sectionFromBlocks(blocks);

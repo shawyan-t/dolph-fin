@@ -1,0 +1,139 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison of AMG and GLE uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.\n\nAMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. AMG's profile is further defined by net margin of 34.5%, debt-to-equity of 0.64x, free cash flow of $967M.\n\nGLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. GLE's profile is further defined by net margin of -25.3%, free cash flow of -$1.3M. AMG is the larger company on reported annual revenue.\n\nAMG remains profitable in the periods used for this note, while GLE is still operating from a weaker earnings base. That split matters because revenue scale alone does not make cash generation and margin structure economically comparable across the group.",
+      "paragraphs": [
+        {
+          "text": "This comparison of AMG and GLE uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. AMG's profile is further defined by net margin of 34.5%, debt-to-equity of 0.64x, free cash flow of $967M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. GLE's profile is further defined by net margin of -25.3%, free cash flow of -$1.3M. AMG is the larger company on reported annual revenue.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG remains profitable in the periods used for this note, while GLE is still operating from a weaker earnings base. That split matters because revenue scale alone does not make cash generation and margin structure economically comparable across the group.",
+          "fact_ids": [
+            "revenue",
+            "net_margin",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "For AMG, the most favorable feature in the current figures is straightforward: ROE of 16.9% points to solid earnings generation relative to book equity. That picture sits alongside free cash flow of $967M and debt-to-equity of 0.64x, which helps show how profitability is balanced against financing risk.\n\nGLE does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+      "paragraphs": [
+        {
+          "text": "For AMG, the most favorable feature in the current figures is straightforward: ROE of 16.9% points to solid earnings generation relative to book equity. That picture sits alongside free cash flow of $967M and debt-to-equity of 0.64x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "roe"
+          ]
+        },
+        {
+          "text": "GLE does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.\n\nFor AMG, the main areas of financial pressure in the reporting period are as follows. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.\n\nFor GLE, the main areas of financial pressure in the reporting period are as follows. Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.",
+      "paragraphs": [
+        {
+          "text": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "For AMG, the main areas of financial pressure in the reporting period are as follows. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For GLE, the main areas of financial pressure in the reporting period are as follows. Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income",
+            "revenue"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.\n\nAMG enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 16.9% points to solid earnings generation relative to book equity. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.\n\nGLE enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -25.3%, indicating a loss-making profile.",
+      "paragraphs": [
+        {
+          "text": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 16.9% points to solid earnings generation relative to book equity. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -25.3%, indicating a loss-making profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

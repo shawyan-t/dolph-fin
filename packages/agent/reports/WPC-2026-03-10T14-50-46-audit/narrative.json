@@ -1,0 +1,83 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "WPC closes 2025-12-31 with $1.72B of revenue (8.4% YoY) and $466M of net income (1.2% YoY). The net margin of 27.2% is the clearest guide to how much of reported revenue reached the bottom line. Revenue and earnings improved together, indicating that the growth story carried through to reported profitability. Operating cash flow was $1.28B (-30.0% YoY).",
+      "paragraphs": [
+        {
+          "text": "WPC closes 2025-12-31 with $1.72B of revenue (8.4% YoY) and $466M of net income (1.2% YoY). The net margin of 27.2% is the clearest guide to how much of reported revenue reached the bottom line. Revenue and earnings improved together, indicating that the growth story carried through to reported profitability. Operating cash flow was $1.28B (-30.0% YoY).",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "operating_cash_flow"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "trend_analysis",
+      "title": "Trend Analysis",
+      "rendered_content": "Across the annual periods shown here, operating cash flow provides the clearest recurring pattern, with the latest value at $1.28B and a compound annual growth rate of 19.4%. The multi-year progression is steady enough to suggest an improving operating profile.\n\nThe multi-year trend is positive, but the pace is moderate rather than transformative.",
+      "paragraphs": [
+        {
+          "text": "Across the annual periods shown here, operating cash flow provides the clearest recurring pattern, with the latest value at $1.28B and a compound annual growth rate of 19.4%. The multi-year progression is steady enough to suggest an improving operating profile.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "gross_profit",
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "The multi-year trend is positive, but the pace is moderate rather than transformative.",
+          "fact_ids": [
+            "operating_cash_flow",
+            "revenue"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Factors",
+      "rendered_content": "No single balance-sheet or earnings issue dominates the reporting period used in this note. Even so, the absence of a hard red flag does not eliminate the need to monitor margin durability, cash conversion, and balance-sheet flexibility.",
+      "paragraphs": [
+        {
+          "text": "No single balance-sheet or earnings issue dominates the reporting period used in this note. Even so, the absence of a hard red flag does not eliminate the need to monitor margin durability, cash conversion, and balance-sheet flexibility.",
+          "fact_ids": [
+            "operating_cash_flow"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "WPC's profile does not reduce to a single standout strength or weakness; the more relevant question is how the income statement, cash flow statement, and balance sheet interact.\n\nThis note is anchored to the annual period ending 2025-12-31, with the prior period set at 2024-12-31. Metrics without the required statement support remain blank rather than estimated, so the analysis stays tied to the filing evidence rather than to gap-filled assumptions.",
+      "paragraphs": [
+        {
+          "text": "WPC's profile does not reduce to a single standout strength or weakness; the more relevant question is how the income statement, cash flow statement, and balance sheet interact.",
+          "fact_ids": [
+            "de",
+            "current_ratio",
+            "fcf"
+          ]
+        },
+        {
+          "text": "This note is anchored to the annual period ending 2025-12-31, with the prior period set at 2024-12-31. Metrics without the required statement support remain blank rather than estimated, so the analysis stays tied to the filing evidence rather than to gap-filled assumptions.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

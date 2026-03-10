@@ -51,16 +51,25 @@ export function buildCanonicalSourceRows(
 export function buildDataSourcesSection(
   canonicalPackage: CanonicalReportPackage,
 ): ReportSection {
+  const { context } = requireCanonicalReportPackage(canonicalPackage, 'buildDataSourcesSection');
   const rows = buildCanonicalSourceRows(canonicalPackage);
   const lines: string[] = [];
 
   if (rows.length === 0) {
-    lines.push('- Extraction failure: no SEC filing references were captured for this analysis.');
+    lines.push('- No SEC filing references were captured for this run.');
   } else {
     for (const row of rows) {
       const periodText = row.periods.length > 0 ? `; periods: ${row.periods.join(', ')}` : '';
       const kindText = row.sourceKinds.length > 0 ? `; sources: ${row.sourceKinds.join(', ')}` : '';
       lines.push(`- [${row.ticker} ${row.form} (${row.filed})](${row.url})${periodText}${kindText}`);
+    }
+  }
+
+  if ((context.comparison_exclusions || []).length > 0) {
+    lines.push('');
+    lines.push('Excluded issuers:');
+    for (const exclusion of context.comparison_exclusions || []) {
+      lines.push(`- ${exclusion.ticker}: ${exclusion.reason}`);
     }
   }
 

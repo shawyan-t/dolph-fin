@@ -1,0 +1,243 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison of MSFT and META and AMC and GLE and AMG uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.\n\nMSFT reports $282B of revenue (14.9% YoY) and $102B of net income in 2025-06-30. MSFT's profile is further defined by net margin of 36.1%, debt-to-equity of 0.13x, free cash flow of $71.6B.\n\nMETA reports $201B of revenue (22.2% YoY) and $60.5B of net income in 2025-12-31. META's profile is further defined by net margin of 30.1%, debt-to-equity of 0.27x, free cash flow of $46.1B.\n\nAMC reports $4.85B of revenue (4.6% YoY) and -$632M of net income in 2025-12-31. AMC's profile is further defined by net margin of -13.0%, debt-to-equity of -2.12x, free cash flow of -$366M.\n\nGLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. GLE's profile is further defined by net margin of -25.3%, free cash flow of -$1.3M.\n\nAMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. AMG's profile is further defined by net margin of 34.5%, debt-to-equity of 0.64x, free cash flow of $967M. MSFT is the larger company on reported annual revenue.\n\nMSFT and META and AMG remain profitable in the periods used for this note, while AMC and GLE are still operating from a weaker earnings base. That split matters because revenue scale alone does not make cash generation and margin structure economically comparable across the group.",
+      "paragraphs": [
+        {
+          "text": "This comparison of MSFT and META and AMC and GLE and AMG uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "MSFT reports $282B of revenue (14.9% YoY) and $102B of net income in 2025-06-30. MSFT's profile is further defined by net margin of 36.1%, debt-to-equity of 0.13x, free cash flow of $71.6B.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "META reports $201B of revenue (22.2% YoY) and $60.5B of net income in 2025-12-31. META's profile is further defined by net margin of 30.1%, debt-to-equity of 0.27x, free cash flow of $46.1B.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMC reports $4.85B of revenue (4.6% YoY) and -$632M of net income in 2025-12-31. AMC's profile is further defined by net margin of -13.0%, debt-to-equity of -2.12x, free cash flow of -$366M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE reports $2.9M of revenue (-53.6% YoY) and -$744K of net income in 2025-06-30. GLE's profile is further defined by net margin of -25.3%, free cash flow of -$1.3M.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG reports $2.07B of revenue (1.6% YoY) and $717M of net income in 2025-12-31. AMG's profile is further defined by net margin of 34.5%, debt-to-equity of 0.64x, free cash flow of $967M. MSFT is the larger company on reported annual revenue.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "MSFT and META and AMG remain profitable in the periods used for this note, while AMC and GLE are still operating from a weaker earnings base. That split matters because revenue scale alone does not make cash generation and margin structure economically comparable across the group.",
+          "fact_ids": [
+            "revenue",
+            "net_margin",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "For MSFT, the most favorable feature in the current figures is straightforward: Gross margin of 68.8% leaves the company with a reasonable buffer to absorb operating expenses. ROE of 33.3% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $71.6B and debt-to-equity of 0.13x, which helps show how profitability is balanced against financing risk.\n\nFor META, the most favorable feature in the current figures is straightforward: Gross margin of 82.0% leaves a large share of revenue available to absorb operating costs and support profitability. ROE of 30.2% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $46.1B and debt-to-equity of 0.27x, which helps show how profitability is balanced against financing risk.\n\nAMC does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.\n\nGLE does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.\n\nFor AMG, the most favorable feature in the current figures is straightforward: ROE of 16.9% points to solid earnings generation relative to book equity. That picture sits alongside free cash flow of $967M and debt-to-equity of 0.64x, which helps show how profitability is balanced against financing risk.",
+      "paragraphs": [
+        {
+          "text": "For MSFT, the most favorable feature in the current figures is straightforward: Gross margin of 68.8% leaves the company with a reasonable buffer to absorb operating expenses. ROE of 33.3% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $71.6B and debt-to-equity of 0.13x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "gross_margin",
+            "roe"
+          ]
+        },
+        {
+          "text": "For META, the most favorable feature in the current figures is straightforward: Gross margin of 82.0% leaves a large share of revenue available to absorb operating costs and support profitability. ROE of 30.2% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $46.1B and debt-to-equity of 0.27x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "gross_margin",
+            "roe"
+          ]
+        },
+        {
+          "text": "AMC does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "fcf"
+          ]
+        },
+        {
+          "text": "For AMG, the most favorable feature in the current figures is straightforward: ROE of 16.9% points to solid earnings generation relative to book equity. That picture sits alongside free cash flow of $967M and debt-to-equity of 0.64x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "roe"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.\n\nMSFT does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.\n\nMETA does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.\n\nFor AMC, the main areas of financial pressure in the reporting period are as follows. Net margin is -13.0%, indicating a loss-making profile. Operating cash flow is negative in the current annual period.\n\nFor GLE, the main areas of financial pressure in the reporting period are as follows. Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.\n\nFor AMG, the main areas of financial pressure in the reporting period are as follows. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+      "paragraphs": [
+        {
+          "text": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "MSFT does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "META does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For AMC, the main areas of financial pressure in the reporting period are as follows. Net margin is -13.0%, indicating a loss-making profile. Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "operating_margin",
+            "net_margin",
+            "net_income",
+            "operating_cash_flow",
+            "fcf"
+          ]
+        },
+        {
+          "text": "For GLE, the main areas of financial pressure in the reporting period are as follows. Net margin is -25.3%, indicating a loss-making profile. Revenue declined 53.6% versus prior year.",
+          "fact_ids": [
+            "gross_margin",
+            "operating_margin",
+            "net_margin",
+            "net_income",
+            "revenue"
+          ]
+        },
+        {
+          "text": "For AMG, the main areas of financial pressure in the reporting period are as follows. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.\n\nMSFT enters the comparison with clear areas of support in the numbers and no single dominant area of immediate financial stress. Gross margin of 68.8% leaves the company with a reasonable buffer to absorb operating expenses.\n\nMETA enters the comparison with clear areas of support in the numbers and no single dominant area of immediate financial stress. Gross margin of 82.0% leaves a large share of revenue available to absorb operating costs and support profitability.\n\nAMC enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -13.0%, indicating a loss-making profile.\n\nGLE enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -25.3%, indicating a loss-making profile.\n\nAMG enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 16.9% points to solid earnings generation relative to book equity. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+      "paragraphs": [
+        {
+          "text": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "MSFT enters the comparison with clear areas of support in the numbers and no single dominant area of immediate financial stress. Gross margin of 68.8% leaves the company with a reasonable buffer to absorb operating expenses.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "META enters the comparison with clear areas of support in the numbers and no single dominant area of immediate financial stress. Gross margin of 82.0% leaves a large share of revenue available to absorb operating costs and support profitability.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMC enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -13.0%, indicating a loss-making profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "GLE enters the comparison with no obvious financial advantage and at least one area that deserves caution. Net margin is -25.3%, indicating a loss-making profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "fcf"
+          ]
+        },
+        {
+          "text": "AMG enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 16.9% points to solid earnings generation relative to book equity. Reported pretax income of $1.19B does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

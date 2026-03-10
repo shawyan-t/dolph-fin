@@ -1,0 +1,154 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison of RTX and LMT and NG uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.\n\nRTX reports $88.6B of revenue (9.7% YoY) and $6.73B of net income in 2025-12-31. RTX's profile is further defined by net margin of 7.6%, debt-to-equity of 0.51x, free cash flow of $7.94B.\n\nLMT reports $75.0B of revenue (5.6% YoY) and $5.02B of net income in 2025-12-31. LMT's profile is further defined by net margin of 6.7%, debt-to-equity of 3.41x, free cash flow of $6.91B. NG reports $0 of revenue and -$95M of net income in 2025-11-30. RTX is the larger company on reported annual revenue.",
+      "paragraphs": [
+        {
+          "text": "This comparison of RTX and LMT and NG uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "RTX reports $88.6B of revenue (9.7% YoY) and $6.73B of net income in 2025-12-31. RTX's profile is further defined by net margin of 7.6%, debt-to-equity of 0.51x, free cash flow of $7.94B.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "LMT reports $75.0B of revenue (5.6% YoY) and $5.02B of net income in 2025-12-31. LMT's profile is further defined by net margin of 6.7%, debt-to-equity of 3.41x, free cash flow of $6.91B. NG reports $0 of revenue and -$95M of net income in 2025-11-30. RTX is the larger company on reported annual revenue.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "RTX does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.\n\nFor LMT, the most favorable feature in the current figures is straightforward: ROE of 76.9% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $6.91B and debt-to-equity of 3.41x, which helps show how profitability is balanced against financing risk.\n\nNG does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+      "paragraphs": [
+        {
+          "text": "RTX does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "For LMT, the most favorable feature in the current figures is straightforward: ROE of 76.9% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $6.91B and debt-to-equity of 3.41x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "roe"
+          ]
+        },
+        {
+          "text": "NG does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.\n\nRTX does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.\n\nFor LMT, the main areas of financial pressure in the reporting period are as follows. Debt-to-equity at 3.41x indicates elevated leverage. Gross profit ($7.62B) is below operating income ($7.73B). Gross-margin metrics were excluded.\n\nFor NG, the main areas of financial pressure in the reporting period are as follows. Operating cash flow is negative in the current annual period.",
+      "paragraphs": [
+        {
+          "text": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "RTX does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For LMT, the main areas of financial pressure in the reporting period are as follows. Debt-to-equity at 3.41x indicates elevated leverage. Gross profit ($7.62B) is below operating income ($7.73B). Gross-margin metrics were excluded.",
+          "fact_ids": [
+            "de",
+            "total_debt",
+            "stockholders_equity",
+            "operating_margin",
+            "net_margin",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For NG, the main areas of financial pressure in the reporting period are as follows. Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "operating_cash_flow"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.\n\nRTX enters the comparison without one overwhelming positive or negative feature, so the overall profile has to be judged by how the main statements fit together.\n\nLMT enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 76.9% points to very strong earnings generation relative to book equity. Debt-to-equity at 3.41x indicates elevated leverage.\n\nNG enters the comparison with no obvious financial advantage and at least one area that deserves caution. Operating cash flow is negative in the current annual period.",
+      "paragraphs": [
+        {
+          "text": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "RTX enters the comparison without one overwhelming positive or negative feature, so the overall profile has to be judged by how the main statements fit together.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "LMT enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. ROE of 76.9% points to very strong earnings generation relative to book equity. Debt-to-equity at 3.41x indicates elevated leverage.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "NG enters the comparison with no obvious financial advantage and at least one area that deserves caution. Operating cash flow is negative in the current annual period.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

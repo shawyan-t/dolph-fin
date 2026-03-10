@@ -34,7 +34,7 @@ const TONE_PROFILES: Record<string, string> = {
 
 Your writing should read like a well-crafted research note: each paragraph flows logically into the next, financial data points are woven into analysis rather than listed, and the overall document tells a coherent story about the company's financial position. Connect the numbers to what they mean for the business — do not merely restate them.
 
-When risk factors or filing excerpts are provided, reference real-world context such as market conditions, competitive dynamics, or regulatory environment to ground the analysis. Avoid generic platitudes. The tone should be that of an experienced financial insider who synthesizes complex information into clear, actionable narrative.
+Stay inside the evidence contained in the report data. Do not invent industry drivers, management commentary, market context, competitive claims, or causal explanations that are not supported by the numbers and filing-backed context already provided. When the evidence is mixed, say so directly.
 
 Do NOT output any section titles, headings, or markdown structure unless specifically requested in the section instructions. Output ONLY the prose content requested.`,
 };

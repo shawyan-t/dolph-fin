@@ -173,7 +173,12 @@ function buildCallbacks(outputFormat: 'terminal' | 'pdf' | 'both'): PipelineCall
         console.log('');
         console.log(`  ${YELLOW}⟳${RESET} Generating PDF...`);
         try {
-          const pdfPath = await generatePDF(report, undefined, context, canonicalPackage);
+          const pdfPath = await generatePDF(
+            report,
+            undefined,
+            canonicalPackage ? context : undefined,
+            canonicalPackage,
+          );
           console.log(`  ${GREEN}✓${RESET} PDF saved: ${BOLD}${pdfPath}${RESET}`);
         } catch (err) {
           console.error(`  ${RED}✗${RESET} PDF generation failed: ${err instanceof Error ? err.message : err}`);
@@ -208,6 +213,9 @@ function printReportToTerminal(report: Report): void {
   console.log('');
   console.log(`${GREEN}═══════════════════════════════════════${RESET}`);
   console.log(`${BOLD}Analysis complete for ${report.tickers.join(', ')}${RESET}`);
+  if (report.metadata.report_state && report.metadata.report_state !== 'full') {
+    console.log(`  Coverage: ${report.metadata.report_state}`);
+  }
   console.log(`  LLM calls: ${report.metadata.llm_calls}`);
   console.log(`  Duration: ${(report.metadata.total_duration_ms / 1000).toFixed(1)}s`);
   console.log(`  Data points: ${report.metadata.data_points_used}`);

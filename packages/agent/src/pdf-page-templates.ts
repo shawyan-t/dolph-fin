@@ -55,15 +55,30 @@ export function buildPdfPages(
   const metricRows = primaryCompany ? metricRowsFromCompany(primaryCompany) : [];
   const pages: string[] = [];
 
-  pages.push(buildCoverPage(report, metricRows, reportModel));
-  pages.push(buildExecutivePage(report, sections, metricRows, reportModel));
-  pages.push(...buildVisualPages(charts, reportModel));
-  pages.push(...buildDashboardPages(reportModel));
+  pages.push(buildFrontPage(report, sections, metricRows, reportModel));
+  pages.push(...buildVisualPages(report, charts, reportModel));
+  pages.push(...buildDashboardPages(report, reportModel));
   pages.push(buildCommentaryPage(report, metricRows, reportModel));
-  pages.push(...buildAppendixPages(canonicalPackage));
+  pages.push(...buildAppendixPages(report, canonicalPackage));
   pages.push(buildSourcesPage(report, canonicalPackage));
 
   return { bodyHTML: pages.filter(Boolean).join('\n') };
+}
+
+function renderPageHeader(
+  title: string,
+  kicker: string,
+  identifier: string,
+): string {
+  return `
+    <div class="page-header">
+      <div class="page-header-top">
+        <div class="page-kicker">${escapeHTML(kicker)}</div>
+        <div class="page-header-meta">${escapeHTML(identifier)}</div>
+      </div>
+      <h2>${escapeHTML(title)}</h2>
+    </div>
+  `;
 }
 
 function indexSections(sections: ReportSection[]): Record<string, ReportSection> {
@@ -72,8 +87,9 @@ function indexSections(sections: ReportSection[]): Record<string, ReportSection>
   return map;
 }
 
-function buildCoverPage(
+function buildFrontPage(
   report: Report,
+  sections: Record<string, ReportSection>,
   metricRows: MetricRow[],
   reportModel: ReportModel | null = null,
 ): string {
@@ -81,28 +97,67 @@ function buildCoverPage(
     ? (reportModel?.companies[0]?.companyName || report.tickers[0] || 'N/A')
     : report.tickers.join(' vs ');
   const subtitle = report.type === 'comparison' ? 'Peer Comparison Brief' : 'Equity Research Note';
-  const kpiMarkup = report.type === 'comparison' && reportModel?.type === 'comparison'
-    ? buildComparisonCoverCards(reportModel)
-    : buildSingleCoverCards(metricRows);
+  const executiveSection = sections['executive_summary']?.content || '';
+  const executiveBody = isSectionSummaryUsable(executiveSection)
+    ? renderNarrativeParagraphs(executiveSection.trim(), 4)
+    : '<p class="thesis">The report summarizes the current annual financial profile using the same filing-backed metrics shown throughout the note.</p>';
+  const metricStrip = report.type === 'comparison' && reportModel?.type === 'comparison'
+    ? buildComparisonMetricStrip(reportModel)
+    : buildSingleMetricStrip(metricRows);
+  const scorecard = report.type === 'comparison'
+    ? buildComparisonExecutiveScorecard(reportModel)
+    : buildExecutiveScorecard(new Map(metricRows.map(r => [r.metric, r])));
+  const metadata = buildFrontMetadataLine(report, reportModel);
 
   return `
-    <section class="report-page page-cover">
-      <div class="cover-top">
-        <div class="cover-brand">Dolph Research</div>
-        <div class="cover-family">${escapeHTML(subtitle)}</div>
-        <div class="cover-date">${escapeHTML(formatDate(report.generated_at))}</div>
-      </div>
-      <div class="cover-hero">
+    <section class="report-page page-front">
+      <div class="front-title-block">
+        <div class="front-brand-row">
+          <div class="cover-brand">Dolph Research</div>
+          <div class="front-subtitle">${escapeHTML(subtitle)}</div>
+        </div>
         <h1>${escapeHTML(companyTitle)}</h1>
+        <div class="front-metadata-line">${metadata}</div>
       </div>
-      <div class="cover-kpis">
-        ${kpiMarkup}
+      ${PERIOD_BANNER_SLOT}
+      <div class="front-summary">
+        ${renderPageHeader(
+          'Executive Summary',
+          'Executive Summary',
+          report.type === 'comparison'
+            ? report.tickers.join(' vs ')
+            : (reportModel?.companies[0]?.companyName || report.tickers[0] || 'N/A'),
+        )}
+        <div class="module executive-copy">
+          ${executiveBody}
+        </div>
+      </div>
+      ${metricStrip}
+      <div class="module executive-scorecard">
+        <h3>Snapshot Scorecard</h3>
+        ${scorecard}
       </div>
     </section>
   `;
 }
 
-function buildSingleCoverCards(metricRows: MetricRow[]): string {
+function buildFrontMetadataLine(
+  report: Report,
+  reportModel: ReportModel | null,
+): string {
+  const bits = [
+    report.type === 'comparison' ? 'Comparison' : 'Standalone',
+    formatDate(report.generated_at),
+  ];
+  if (report.type === 'comparison' && report.comparison_basis?.note) {
+    bits.push(report.comparison_basis.note);
+  } else if (reportModel?.companies[0]?.periodNote) {
+    bits.push(reportModel.companies[0].periodNote);
+  }
+  return bits.map(bit => `<span>${escapeHTML(bit)}</span>`).join('');
+}
+
+function buildSingleMetricStrip(metricRows: MetricRow[]): string {
   const kpiPriority = [
     'Revenue',
     'Net Income',
@@ -120,32 +175,46 @@ function buildSingleCoverCards(metricRows: MetricRow[]): string {
     if (cards.length >= PDF_RENDER_RULES.cover.maxKpis) break;
   }
 
-  return cards.map(kpi => `
-    <article class="kpi-card">
-      <div class="kpi-label">${escapeHTML(kpi.metric)}</div>
-      <div class="kpi-value">${escapeHTML(normalizeDisplayCell(kpi.current))}</div>
-      <div class="kpi-note">${escapeHTML(formatKpiNote(kpi))}</div>
-    </article>
-  `).join('\n');
+  return `
+    <section class="module metric-strip">
+      ${cards.map(kpi => `
+        <article class="metric-strip-item">
+          <div class="metric-strip-label">${escapeHTML(kpi.metric)}</div>
+          <div class="metric-strip-value">${escapeHTML(normalizeDisplayCell(kpi.current))}</div>
+          <div class="metric-strip-note">${escapeHTML(formatKpiNote(kpi))}</div>
+        </article>
+      `).join('\n')}
+    </section>
+  `;
 }
 
-function buildComparisonCoverCards(reportModel: ReportModel): string {
+function buildComparisonMetricStrip(reportModel: ReportModel): string {
   const metrics = ['Revenue', 'Net Income', 'Free Cash Flow', 'Debt-to-Equity'];
-  return metrics.map(label => {
+  return `
+    <section class="module metric-strip">
+      ${metrics.map(label => {
     const lines = reportModel.companies.map(company => {
       const value = company.metricsByLabel.get(label)?.currentDisplay
         || company.allMetricsByLabel.get(label)?.currentDisplay
         || 'Not reported';
-      return `${company.ticker}: ${normalizeDisplayCell(value)}`;
+      return { ticker: company.ticker, value: normalizeDisplayCell(value) };
     });
     return `
-      <article class="kpi-card">
-        <div class="kpi-label">${escapeHTML(label)}</div>
-        <div class="kpi-value">${escapeHTML(lines[0] || '')}</div>
-        <div class="kpi-note">${escapeHTML(lines.slice(1).join(' | '))}</div>
+      <article class="metric-strip-item">
+        <div class="metric-strip-label">${escapeHTML(label)}</div>
+        <div class="metric-strip-compare">
+          ${lines.map(line => `
+            <div class="metric-strip-compare-line">
+              <span>${escapeHTML(line.ticker)}</span>
+              <strong>${escapeHTML(line.value)}</strong>
+            </div>
+          `).join('')}
+        </div>
       </article>
     `;
-  }).join('\n');
+  }).join('\n')}
+    </section>
+  `;
 }
 
 function formatKpiNote(kpi: MetricRow): string {
@@ -165,33 +234,6 @@ function metricRowsFromCompany(company: CompanyReportModel): MetricRow[] {
   }));
 }
 
-
-function buildExecutivePage(
-  report: Report,
-  sections: Record<string, ReportSection>,
-  metricRows: MetricRow[],
-  reportModel: ReportModel | null = null,
-): string {
-  const byMetric = new Map(metricRows.map(r => [r.metric, r]));
-  const executiveSection = sections['executive_summary']?.content || '';
-  const executiveBody = isSectionSummaryUsable(executiveSection)
-    ? renderNarrativeParagraphs(executiveSection.trim(), 5)
-    : '<p class="thesis">See dashboard and commentary sections for detailed analysis.</p>';
-  const executiveSupport = report.type === 'comparison'
-    ? buildComparisonExecutiveScorecard(reportModel)
-    : `${buildExecutiveScorecard(byMetric)}${buildExecutiveStrip(byMetric)}`;
-
-  return `
-    <section class="report-page page-executive">
-      <div class="page-header"><h2>Executive Summary</h2></div>
-      ${PERIOD_BANNER_SLOT}
-      <div class="module executive-copy">
-        ${executiveBody}
-      </div>
-      ${executiveSupport}
-    </section>
-  `;
-}
 
 function renderNarrativeParagraphs(markdown: string, maxParagraphs: number): string {
   const paragraphs = markdown
@@ -251,37 +293,6 @@ function isSectionSummaryUsable(markdown: string): boolean {
 }
 
 
-function buildExecutiveStrip(byMetric: Map<string, MetricRow>): string {
-  const picks: Array<[string, string]> = [
-    ['Revenue', 'Revenue'],
-    ['Net Income', 'Net Income'],
-    ['Operating Margin', 'Operating Margin'],
-    ['Free Cash Flow', 'Free Cash Flow'],
-  ];
-  const cards = picks
-    .map(([metric, label]) => {
-      const row = byMetric.get(metric);
-      if (!row) return null;
-      const current = normalizeDisplayCell(row.current);
-      if (isUnavailableDisplay(current)) return null;
-      return { label, value: current };
-    })
-    .filter((v): v is { label: string; value: string } => !!v)
-    .slice(0, 4);
-
-  if (cards.length === 0) return '';
-  return `
-    <section class="module executive-strip">
-      ${cards.map(card => `
-        <article class="mini-kpi">
-          <h4>${escapeHTML(card.label)}</h4>
-          <p>${escapeHTML(card.value)}</p>
-        </article>
-      `).join('\n')}
-    </section>
-  `;
-}
-
 function buildExecutiveScorecard(byMetric: Map<string, MetricRow>): string {
   const defs = [
     'Revenue',
@@ -306,14 +317,9 @@ function buildExecutiveScorecard(byMetric: Map<string, MetricRow>): string {
     })
     .filter((r): r is string[] => !!r);
 
-  if (rows.length < 3) return '';
+  if (rows.length < 3) return '<p>No scorecard metrics available.</p>';
   const headers = ['Metric', 'Current', 'Prior', 'Change'];
-  return `
-    <section class="module executive-scorecard">
-      <h3>Snapshot Scorecard</h3>
-      ${renderTable(headers, rows)}
-    </section>
-  `;
+  return renderTable(headers, rows);
 }
 
 interface VisualItem {
@@ -324,9 +330,13 @@ interface VisualItem {
 }
 
 function buildVisualPages(
+  report: Report,
   chartSet: CanonicalReportPackage['charts'],
   reportModel: ReportModel,
 ): string[] {
+  const identifier = report.type === 'comparison'
+    ? report.tickers.join(' vs ')
+    : (reportModel.companies[0]?.companyName || report.tickers[0] || 'N/A');
   const visuals: VisualItem[] = [];
 
   if (chartSet.revenueMarginChart) visuals.push({
@@ -346,7 +356,7 @@ function buildVisualPages(
 
   return [`
     <section class="report-page page-visual">
-      <div class="page-header"><h2>Visual Highlights</h2></div>
+      ${renderPageHeader('Visual Highlights', 'Charts', identifier)}
       ${PERIOD_BANNER_SLOT}
       <div class="visual-grid ${visuals.length === 1 ? 'single' : ''}">
         ${visuals.map(card => `
@@ -364,8 +374,12 @@ function buildVisualPages(
 }
 
 function buildDashboardPages(
+  report: Report,
   reportModel: ReportModel,
 ): string[] {
+  const identifier = report.type === 'comparison'
+    ? report.tickers.join(' vs ')
+    : (reportModel.companies[0]?.companyName || report.tickers[0] || 'N/A');
   const parsed = dashboardGroupsFromReportModel(reportModel)
     .filter(g => g.rows.length > 0);
   const groups = splitLargeDashboardGroups(parsed, PDF_RENDER_RULES.tables.maxFrontRows);
@@ -373,7 +387,7 @@ function buildDashboardPages(
   if (groups.length === 0) {
     return [`
       <section class="report-page page-dashboard">
-        <div class="page-header"><h2>Key Metrics Dashboard</h2></div>
+        ${renderPageHeader('Key Metrics Dashboard', 'Dashboard', identifier)}
         ${PERIOD_BANNER_SLOT}
         <div class="module metrics-module"><p>No key metrics available.</p></div>
       </section>
@@ -388,7 +402,7 @@ function buildDashboardPages(
     const title = i === 0 ? 'Key Metrics Dashboard' : `Key Metrics Dashboard (Cont.)`;
     pages.push(`
       <section class="report-page page-dashboard">
-        <div class="page-header"><h2>${title}</h2></div>
+        ${renderPageHeader(title, 'Dashboard', identifier)}
         ${PERIOD_BANNER_SLOT}
         <div class="metrics-grid stacked">
           ${chunk.map(group => renderTableGroup(group)).join('\n')}
@@ -491,7 +505,13 @@ function buildCommentaryPage(
 
   return `
     <section class="report-page page-commentary">
-      <div class="page-header"><h2>Commentary</h2></div>
+      ${renderPageHeader(
+        'Commentary',
+        'Analysis',
+        report.type === 'comparison'
+          ? report.tickers.join(' vs ')
+          : (reportModel?.companies[0]?.companyName || report.tickers[0] || 'N/A'),
+      )}
       ${PERIOD_BANNER_SLOT}
       ${blocks}
       ${buildCommentaryChecklist(
@@ -578,13 +598,13 @@ function buildCommentaryChecklist(
 ): string {
   if (report.type === 'comparison') {
     const basis = reportModel?.comparisonBasis;
-    const checklist: string[] = [];
-    if (basis?.note) checklist.push(basis.note);
+    const notes: string[] = [];
+    if (basis?.note) notes.push(basis.note);
     const peerPeriods = basis
       ? Object.entries(basis.peer_periods)
         .map(([ticker, binding]) => `${ticker}: ${binding.current_period || 'N/A'} current / ${binding.prior_period || 'N/A'} prior`)
       : [];
-    if (peerPeriods.length > 0) checklist.push(`Locked peer periods: ${peerPeriods.join('; ')}.`);
+    if (peerPeriods.length > 0) notes.push(`Peer reporting periods used in this note: ${peerPeriods.join('; ')}.`);
     const unavailable = (reportModel?.companies || [])
       .map(company => ({
         ticker: company.ticker,
@@ -592,13 +612,13 @@ function buildCommentaryChecklist(
       }))
       .filter(item => item.count > 0);
     if (unavailable.length > 0) {
-      checklist.push(`Current peer-metric gaps remain for ${unavailable.map(item => `${item.ticker} (${item.count})`).join(', ')}.`);
+      notes.push(`Certain peer metrics remain absent where the underlying filings do not disclose them on a comparable basis.`);
     }
-    if (checklist.length === 0) return '';
+    if (notes.length === 0) return '';
     return `
       <section class="module checklist-block">
-        <h3>Comparison Checklist</h3>
-        <ul>${clipBullets(checklist, 4).map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>
+        <h3>Comparison Notes</h3>
+        ${clipBullets(notes, 3).map(item => `<p>${escapeHTML(item)}</p>`).join('')}
       </section>
     `;
   }
@@ -606,6 +626,7 @@ function buildCommentaryChecklist(
 }
 
 function buildAppendixPages(
+  report: Report,
   canonicalPackage: CanonicalReportPackage,
 ): string[] {
   const { context, reportModel: model } = requireCanonicalReportPackage(canonicalPackage, 'buildAppendixPages');
@@ -634,7 +655,13 @@ function buildAppendixPages(
   if (modules.length === 0) {
     return [`
       <section class="report-page page-appendix">
-        <div class="page-header"><h2>Appendix</h2></div>
+        ${renderPageHeader(
+          'Appendix',
+          'Appendix',
+          report.type === 'comparison'
+            ? report.tickers.join(' vs ')
+            : (model.companies[0]?.companyName || report.tickers[0] || 'N/A'),
+        )}
         ${PERIOD_BANNER_SLOT}
         <div class="module appendix-module"><p>Financial statements unavailable for this report run.</p></div>
       </section>
@@ -649,16 +676,20 @@ function buildAppendixPages(
     const title = i === 0 ? 'Appendix' : 'Appendix (Cont.)';
     pages.push(`
       <section class="report-page page-appendix">
-        <div class="page-header"><h2>${title}</h2></div>
+        ${renderPageHeader(
+          title,
+          'Appendix',
+          report.type === 'comparison'
+            ? report.tickers.join(' vs ')
+            : (model.companies[0]?.companyName || report.tickers[0] || 'N/A'),
+        )}
         ${PERIOD_BANNER_SLOT}
-        <div class="module appendix-module">
-          ${chunk.map(mod => `
-            <section class="appendix-section">
-              <h3>${escapeHTML(mod.title)}</h3>
-              ${renderTable(mod.headers, mod.rows)}
-            </section>
-          `).join('\n')}
-        </div>
+        ${chunk.map(mod => `
+          <section class="appendix-section">
+            <h3>${escapeHTML(mod.title)}</h3>
+            ${renderTable(mod.headers, mod.rows)}
+          </section>
+        `).join('\n')}
       </section>
     `);
   }
@@ -677,7 +708,7 @@ function buildSourcesPage(
   report: Report,
   canonicalPackage: CanonicalReportPackage,
 ): string {
-  requireCanonicalReportPackage(canonicalPackage, 'buildSourcesPage');
+  const pkg = requireCanonicalReportPackage(canonicalPackage, 'buildSourcesPage');
   const sourceRows = buildCanonicalSourceRows(canonicalPackage);
   const sourceTable = sourceRows.length > 0
     ? `
@@ -699,29 +730,38 @@ function buildSourcesPage(
         </tbody>
       </table>
     `
-    : '<p>Extraction failure: no filing references were captured in the sealed canonical package.</p>';
+    : '<p>No filing references were captured for this run.</p>';
 
   const runDate = escapeHTML(report.generated_at.slice(0, 10));
   const comparisonMethodNote = report.type === 'comparison'
     ? (report.comparison_basis?.note
       || 'Comparisons reflect each issuer’s latest annual filing period unless otherwise noted.')
-    : 'Standalone metrics are locked to the selected annual current/prior basis for the issuer.';
+    : 'Standalone metrics use the selected current and prior annual periods for the issuer.';
+  const exclusions = pkg.context.comparison_exclusions || [];
+  const exclusionNote = exclusions.length > 0
+    ? `<p>Excluded issuers: ${escapeHTML(exclusions.map(item => `${item.ticker} — ${item.reason}`).join(' | '))}</p>`
+    : '';
 
   return `
     <section class="report-page page-sources">
-      <div class="page-header"><h2>Data Sources & Notes</h2></div>
+      ${renderPageHeader(
+        'Data Sources & Notes',
+        'Sources',
+        report.type === 'comparison'
+          ? report.tickers.join(' vs ')
+          : (pkg.reportModel.companies[0]?.companyName || report.tickers[0] || 'N/A'),
+      )}
       <div class="module sources-module">
         ${sourceTable}
       </div>
       <div class="module methodology-module">
         <h3>Method Notes</h3>
-        <ul>
-          <li>Financial values are sourced from SEC EDGAR filings and normalized into statement-level metrics.</li>
-          <li>${escapeHTML(comparisonMethodNote)}</li>
-          <li>Narrative text is descriptive only and does not alter deterministic calculations.</li>
-        </ul>
-        <p>Report date: ${runDate}.</p>
-        <p>Disclaimer: For research use only; not investment advice.</p>
+        <p>Financial values are sourced from SEC EDGAR filings and normalized into statement-level metrics.</p>
+        <p>${escapeHTML(comparisonMethodNote)}</p>
+        <p>The narrative summarizes the filing-backed figures shown elsewhere in the report and does not alter the calculations.</p>
+        <p class="source-note">Report date: ${runDate}.</p>
+        ${exclusionNote}
+        <p class="source-note">Disclaimer: For research use only; not investment advice.</p>
       </div>
     </section>
   `;

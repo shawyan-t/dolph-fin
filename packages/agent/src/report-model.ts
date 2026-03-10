@@ -570,11 +570,11 @@ function buildAppendixSupportNotes(company: CompanyReportModel): string[] {
 
   const notes = [
     periods
-      ? `Locked annual appendix basis uses ${periods}.`
-      : 'Locked annual appendix basis is applied uniformly to the reported current and prior periods.',
-    'Appendix rows are limited to the central statement mapping catalog on the locked annual periods; raw statement extras are never surfaced directly.',
-    'Cash-family concepts preserve the filing labels directly, and the cash-flow ending balance remains a separate concept unless the filing reports the same cash-family line on the balance sheet.',
-    'Cells marked "Not reported" mean the locked filing basis did not report the value and no governed derivation was approved for display.',
+      ? `Appendix figures use ${periods}.`
+      : 'Appendix figures use the same current and prior annual periods shown in the main report.',
+    'Appendix rows follow the standard statement line set used throughout the report.',
+    'Cash-family labels follow the filing directly, and the cash-flow ending balance remains separate unless the filing presents the same concept on the balance sheet.',
+    'Cells marked "Not reported" mean the filing did not disclose the value for the periods shown and the report does not estimate it.',
     ...basisNotes,
     `Primary filing anchor: ${company.alignedFiling?.form || 'annual filing'}${company.alignedFiling?.filed ? ` filed ${company.alignedFiling.filed}` : ''}.`,
   ];
@@ -719,6 +719,8 @@ function formatMetricUnavailable(reason: MetricAvailabilityReasonCode): string {
     case 'comparability_policy':
     case 'policy_disallowed':
       return 'N/A';
+    case 'intentionally_suppressed':
+      return 'Extraction failure';
     case 'basis_conflict':
       return 'Extraction failure';
     case 'sanity_excluded':
@@ -746,6 +748,9 @@ function formatMetricChangeDisplay(metric: LedgerMetric): string {
   const priorReason = metric.availability.prior;
   if (currentReason === 'comparability_policy' || priorReason === 'comparability_policy') {
     return 'N/A';
+  }
+  if (currentReason === 'intentionally_suppressed' || priorReason === 'intentionally_suppressed') {
+    return 'Extraction failure';
   }
   if (currentReason === 'basis_conflict' || priorReason === 'basis_conflict') {
     return 'Extraction failure';

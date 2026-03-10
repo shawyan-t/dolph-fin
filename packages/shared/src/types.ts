@@ -175,6 +175,7 @@ export type ShareBasisKind =
 export type MetricAvailabilityReasonCode =
   | 'reported'
   | 'derived'
+  | 'intentionally_suppressed'
   | 'ratio_fallback'
   | 'missing_inputs'
   | 'policy_disallowed'
@@ -183,6 +184,32 @@ export type MetricAvailabilityReasonCode =
   | 'comparability_policy'
   | 'source_unavailable'
   | 'statement_gap';
+
+export type IssuerCoverageState = 'full_annual' | 'partial_filing' | 'unsupported';
+export type ConceptReliabilityState = 'high_confidence' | 'suppressed_conflict' | 'insufficient_data';
+
+export interface IssuerSupportStatus {
+  ticker: string;
+  coverage: IssuerCoverageState;
+  reason: string;
+  facts_count: number;
+  annual_filings_count: number;
+  annual_statement_periods: {
+    income: number;
+    balance_sheet: number;
+    cash_flow: number;
+  };
+  debt_reliability: ConceptReliabilityState;
+  liquidity_reliability: ConceptReliabilityState;
+  safe_for_standalone: boolean;
+  safe_for_comparison: boolean;
+}
+
+export interface ExcludedIssuerSummary {
+  ticker: string;
+  coverage: IssuerCoverageState;
+  reason: string;
+}
 
 export interface ReportingPolicy {
   mode: ReportingMode;
@@ -292,6 +319,8 @@ export interface AnalysisContext {
   type: AnalysisType;
   policy?: ReportingPolicy;
   comparison_basis?: ComparisonBasisResolution | null;
+  issuer_support?: Record<string, IssuerSupportStatus>;
+  comparison_exclusions?: ExcludedIssuerSummary[];
   plan: AgentPlan;
   results: StepResult[];
   filings: Record<string, Filing[]>;
@@ -359,6 +388,9 @@ export interface Report {
     llm_calls: number;
     total_duration_ms: number;
     data_points_used: number;
+    report_state?: 'full' | 'limited_coverage' | 'unsupported_coverage';
+    requested_tickers?: string[];
+    excluded_tickers?: ExcludedIssuerSummary[];
     /** Snapshot ID for reproducibility (set if snapshot_date was provided) */
     snapshot_id?: string;
     policy_mode?: ReportingMode;

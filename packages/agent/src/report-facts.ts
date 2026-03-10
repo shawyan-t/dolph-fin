@@ -131,6 +131,11 @@ export function applyDerivedPeriodValues(
   const longTermDebt = finite(values['long_term_debt']);
   const shortTermDebt = finite(values['short_term_debt']);
   const totalDebt = finite(values['total_debt']);
+  const conflictingComponent = totalDebt !== null
+    && (
+      (longTermDebt !== null && materiallyDiffers(totalDebt, Math.max(totalDebt, longTermDebt), 0.02, 1_000_000) && totalDebt < longTermDebt)
+      || (shortTermDebt !== null && materiallyDiffers(totalDebt, Math.max(totalDebt, shortTermDebt), 0.02, 1_000_000) && totalDebt < shortTermDebt)
+    );
 
   if (longTermDebt !== null && shortTermDebt !== null) {
     const standardizedTotalDebt = longTermDebt + shortTermDebt;
@@ -150,6 +155,20 @@ export function applyDerivedPeriodValues(
             : 'Standardized as long_term_debt + short_term_debt because the reported total debt concept did not reconcile to the reported debt components.',
         };
       }
+    }
+  } else if (conflictingComponent) {
+    delete values['total_debt'];
+    if (sources) {
+      sources['total_debt'] = {
+        kind: 'unknown',
+        ticker,
+        metric: 'total_debt',
+        period,
+        reportedLabel: 'Total Debt',
+        reportedUnit: 'USD',
+        reportedValue: totalDebt ?? undefined,
+        detail: 'Suppressed because the reported total debt concept was lower than a reported debt component and could not be reconciled from the available component set.',
+      };
     }
   } else if (totalDebt === null && (longTermDebt !== null || shortTermDebt !== null)) {
     // Derive total_debt from whichever component(s) are available.
@@ -191,6 +210,37 @@ export function applyDerivedPeriodValues(
   // Derive gross_profit when not directly reported
   const revenue = finite(values['revenue']);
   const costOfRevenue = finite(values['cost_of_revenue']);
+  const existingGrossProfit = finite(values['gross_profit']);
+  const operatingIncome = finite(values['operating_income']);
+  if (
+    revenue !== null
+    && costOfRevenue !== null
+    && existingGrossProfit !== null
+    && operatingIncome !== null
+    && existingGrossProfit < operatingIncome
+  ) {
+    const recomputedGrossProfit = revenue - costOfRevenue;
+    if (
+      isFinite(recomputedGrossProfit)
+      && recomputedGrossProfit >= operatingIncome
+      && recomputedGrossProfit <= Math.max(revenue, operatingIncome)
+    ) {
+      values['gross_profit'] = recomputedGrossProfit;
+      if (sources) {
+        sources['gross_profit'] = {
+          kind: 'adjusted',
+          ticker,
+          metric: 'gross_profit',
+          period,
+          reportedLabel: 'Gross Profit',
+          reportedUnit: 'USD',
+          reportedValue: existingGrossProfit,
+          detail: 'Recomputed as revenue - cost_of_revenue because the reported gross_profit concept failed the operating-income sanity check.',
+        };
+      }
+    }
+  }
+
   if (revenue !== null && costOfRevenue !== null && values['gross_profit'] === undefined) {
     values['gross_profit'] = revenue - costOfRevenue;
     if (sources) {

@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [],
+  "recomputedMetrics": {
+    "BA": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "BA": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31"
+    }
+  }
+}

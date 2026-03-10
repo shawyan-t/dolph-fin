@@ -1,0 +1,59 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [],
+  "mappingFixes": [],
+  "recomputedMetrics": {
+    "MSFT": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "META": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "AMC": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "GLE": [
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "AMG": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "MSFT": {
+      "current": "2025-06-30",
+      "prior": "2024-06-30",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "META": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "AMC": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "GLE": {
+      "current": "2025-06-30",
+      "prior": "2024-06-30",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "AMG": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    }
+  }
+}

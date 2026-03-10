@@ -38,7 +38,7 @@ export interface PipelineCallbacks {
 export interface PipelineResult {
   report: Report;
   context: AnalysisContext;
-  canonicalPackage: CanonicalReportPackage;
+  canonicalPackage?: CanonicalReportPackage;
   llmCallsCount: number;
   totalDurationMs: number;
 }

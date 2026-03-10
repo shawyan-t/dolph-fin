@@ -1,0 +1,127 @@
+{
+  "mode": "deterministic",
+  "sections": [
+    {
+      "id": "executive_summary",
+      "title": "Executive Summary",
+      "rendered_content": "This comparison of WPC and NVDA uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.\n\nWPC reports $1.72B of revenue (8.4% YoY) and $466M of net income in 2025-12-31. WPC's profile is further defined by net margin of 27.2%.\n\nNVDA reports $216B of revenue (65.5% YoY) and $120B of net income in 2026-01-25. NVDA's profile is further defined by net margin of 55.6%, debt-to-equity of 0.06x, free cash flow of $96.7B. NVDA is the larger company on reported annual revenue.",
+      "paragraphs": [
+        {
+          "text": "This comparison of WPC and NVDA uses each company's most recent annual filing and should be read as a comparison of financial profiles rather than as a claim that each company is economically identical.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "WPC reports $1.72B of revenue (8.4% YoY) and $466M of net income in 2025-12-31. WPC's profile is further defined by net margin of 27.2%.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "NVDA reports $216B of revenue (65.5% YoY) and $120B of net income in 2026-01-25. NVDA's profile is further defined by net margin of 55.6%, debt-to-equity of 0.06x, free cash flow of $96.7B. NVDA is the larger company on reported annual revenue.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "net_margin",
+            "de",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relative_strengths",
+      "title": "Relative Strengths",
+      "rendered_content": "WPC does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.\n\nFor NVDA, the most favorable feature in the current figures is straightforward: Gross margin of 71.1% leaves a large share of revenue available to absorb operating costs and support profitability. ROE of 101.5% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $96.7B and debt-to-equity of 0.06x, which helps show how profitability is balanced against financing risk.",
+      "paragraphs": [
+        {
+          "text": "WPC does not show one clear numerical advantage over the rest of the group, so the comparison depends more on the balance among growth, margins, leverage, and cash generation than on any one ratio.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For NVDA, the most favorable feature in the current figures is straightforward: Gross margin of 71.1% leaves a large share of revenue available to absorb operating costs and support profitability. ROE of 101.5% points to very strong earnings generation relative to book equity. That picture sits alongside free cash flow of $96.7B and debt-to-equity of 0.06x, which helps show how profitability is balanced against financing risk.",
+          "fact_ids": [
+            "gross_margin",
+            "roe"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "risk_factors",
+      "title": "Risk Comparison",
+      "rendered_content": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.\n\nWPC does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.\n\nFor NVDA, the main areas of financial pressure in the reporting period are as follows. The current period does not separately disclose Marketable Securities, even though that item appears in the prior period.",
+      "paragraphs": [
+        {
+          "text": "The risk discussion is limited to what each annual filing supports directly, and missing peer metrics are left blank rather than forced into a misleading side-by-side comparison.",
+          "fact_ids": [
+            "revenue",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "WPC does not present one dominant area of financial pressure in the reporting period used here, although that should not be mistaken for a risk-free profile.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "For NVDA, the main areas of financial pressure in the reporting period are as follows. The current period does not separately disclose Marketable Securities, even though that item appears in the prior period.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "analyst_notes",
+      "title": "Analyst Notes",
+      "rendered_content": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.\n\nWPC enters the comparison without one overwhelming positive or negative feature, so the overall profile has to be judged by how the main statements fit together.\n\nNVDA enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. Gross margin of 71.1% leaves a large share of revenue available to absorb operating costs and support profitability. The current period does not separately disclose Marketable Securities, even though that item appears in the prior period.",
+      "paragraphs": [
+        {
+          "text": "All peer figures are drawn from annual filings. Missing metrics remain blank, so the note should be read as a comparison of what each filing supports rather than as a fully normalized screen.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        },
+        {
+          "text": "WPC enters the comparison without one overwhelming positive or negative feature, so the overall profile has to be judged by how the main statements fit together.",
+          "fact_ids": [
+            "revenue",
+            "net_income"
+          ]
+        },
+        {
+          "text": "NVDA enters the comparison with clear areas of support in the numbers and at least one area that deserves caution. Gross margin of 71.1% leaves a large share of revenue available to absorb operating costs and support profitability. The current period does not separately disclose Marketable Securities, even though that item appears in the prior period.",
+          "fact_ids": [
+            "revenue",
+            "net_income",
+            "de",
+            "fcf"
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

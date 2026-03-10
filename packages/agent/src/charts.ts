@@ -9,18 +9,19 @@
 
 import { formatCompactCurrency } from '@dolph/shared';
 import type { CompanyReportModel, ReportModel } from './report-model.js';
+import { PDF_THEME } from './pdf-theme.js';
 
 // ── Color palette ─────────────────────────────────────────────
 
 const COLORS = {
-  primary: '#4B3A2E',     // Burnt umber
-  secondary: '#B08D57',   // Brass
-  accent: '#5B6448',      // Forest olive
-  warning: '#A06A4B',     // Muted copper
-  danger: '#6A3B32',      // Burgundy
-  gray: '#6D6258',        // Muted text
-  gridLine: '#D8CCBD',    // Stone beige grid
-  background: '#FFFFFF',  // Crisp chart canvas
+  primary: PDF_THEME.colors.accentInk,
+  secondary: '#5E748A',
+  accent: PDF_THEME.colors.positive,
+  warning: PDF_THEME.colors.caution,
+  danger: PDF_THEME.colors.negative,
+  gray: PDF_THEME.colors.mutedText,
+  gridLine: PDF_THEME.colors.rule,
+  background: PDF_THEME.colors.page,
 };
 
 

@@ -1,0 +1,49 @@
+{
+  "status": "pass",
+  "pass": true,
+  "failures": [
+    {
+      "gate": "data.mapping_confidence",
+      "severity": "warning",
+      "source": "LMT:income_statement",
+      "message": "Gross profit was suppressed from reader-facing profitability metrics because the filing-backed concept fell below operating income and could not be trusted as a clean gross-profit measure."
+    }
+  ],
+  "mappingFixes": [
+    "LMT: Gross profit mapping check failed — Gross profit ($7.62B) is below operating income ($7.73B). Gross-margin metrics were excluded."
+  ],
+  "recomputedMetrics": {
+    "RTX": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "LMT": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ],
+    "NG": [
+      "Free Cash Flow (prior)",
+      "Diluted EPS (prior)",
+      "Book Value Per Share (prior)"
+    ]
+  },
+  "periodBasis": {
+    "RTX": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "LMT": {
+      "current": "2025-12-31",
+      "prior": "2024-12-31",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    },
+    "NG": {
+      "current": "2025-11-30",
+      "prior": "2024-11-30",
+      "note": "Peer figures use each company’s latest annual filing with prominent disclosure that fiscal periods can differ across peers."
+    }
+  }
+}

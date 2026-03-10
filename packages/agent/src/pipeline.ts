@@ -23,6 +23,7 @@ import { createPlan } from './planner.js';
 import { executePlan } from './executor.js';
 import { generateExecutiveSummaryOnly } from './narrator.js';
 import { generateDeterministicNarrative } from './deterministic-narrative.js';
+import { applyNarrativeQualityPass } from './narrative-quality.js';
 import { runDeterministicQAGates, writeQAFailureReport } from './deterministic-qa.js';
 import { buildFinancialStatementsSection } from './statements-builder.js';
 import { buildKeyMetricsSection } from './metrics-builder.js';
@@ -36,6 +37,8 @@ import { resolveAlignedFilingForTicker } from './report-model.js';
 import { writeAuditArtifacts } from './audit-artifacts.js';
 import { defaultReportsDir } from './report-paths.js';
 import { resolvePeriodAnchors, type PeriodBasis } from './analyzer.js';
+import { classifyAllIssuerSupport, summarizeExcludedIssuers } from './issuer-support.js';
+import { buildGracefulQAFallbackReport, buildLimitedCoverageReport } from './limited-coverage-report.js';
 
 /**
  * Run the full analysis pipeline for given tickers.
@@ -48,6 +51,7 @@ export async function runPipeline(
   const startTime = Date.now();
   let totalLLMCalls = 0;
   const signal = config.abortSignal;
+  const requestedTickers = [...config.tickers];
 
   try {
     throwIfAborted(signal);
@@ -78,46 +82,85 @@ export async function runPipeline(
       throw new Error(`Cannot generate report: all data fetches failed. Errors: ${errors}`);
     }
 
-    // Check data availability — comparison gracefully excludes tickers without
-    // XBRL data (ETFs, closed-end funds, etc.), single requires ANY
-    if (config.type === 'comparison') {
-      const missingTickers = config.tickers.filter(t => {
-        const facts = context.facts[t];
-        return !facts || facts.facts.length === 0;
-      });
-
-      if (missingTickers.length > 0) {
-        const remaining = config.tickers.filter(t => !missingTickers.includes(t));
-        if (remaining.length < 2) {
-          callbacks?.onStep?.('Gathering SEC data', 'error', `Missing data for: ${missingTickers.join(', ')}`);
-          throw new Error(
-            `Cannot generate comparison report: no financial facts for ${missingTickers.join(', ')}. ` +
-            `Only ${remaining.length} ticker(s) have data; comparison requires at least 2.`,
-          );
-        }
-        // Exclude tickers without XBRL data and proceed with remaining peers
-        callbacks?.onStep?.('Gathering SEC data', 'running',
-          `Excluding ${missingTickers.join(', ')} (no XBRL data); proceeding with ${remaining.join(', ')}`);
-        config.tickers = remaining;
-        context.tickers = remaining;
-      }
-    } else {
-      const hasFactsForAnyTicker = config.tickers.some(t => {
-        const facts = context.facts[t];
-        return facts && facts.facts.length > 0;
-      });
-
-      if (!hasFactsForAnyTicker) {
-        callbacks?.onStep?.('Gathering SEC data', 'error', 'No financial data retrieved');
-        throw new Error(
-          `Cannot generate report: no financial facts retrieved for ${config.tickers.join(', ')}. ` +
-          'The company may not have XBRL data available.',
-        );
-      }
-    }
-
     callbacks?.onStep?.('Gathering SEC data', 'complete',
       `${successCount}/${context.results.length} tools succeeded`);
+
+    // ── Step 2b: COVERAGE PREFLIGHT ──────────────────────────
+    callbacks?.onStep?.('Assessing issuer coverage', 'running');
+    const issuerSupport = classifyAllIssuerSupport(context);
+    context.issuer_support = issuerSupport;
+
+    if (config.type === 'comparison') {
+      const supportedTickers = requestedTickers.filter(ticker => issuerSupport[ticker]?.safe_for_comparison);
+      const exclusions = summarizeExcludedIssuers(issuerSupport, requestedTickers, supportedTickers);
+      context.comparison_exclusions = exclusions;
+
+      if (supportedTickers.length < 2) {
+        const limitedReport = buildLimitedCoverageReport({
+          id: config.snapshotDate ? generateSnapshotId(requestedTickers, config.snapshotDate) : generateId(),
+          generatedAt: config.snapshotDate ? `${config.snapshotDate}T00:00:00.000Z` : new Date().toISOString(),
+          requestedTickers,
+          supportedTickers,
+          exclusions,
+          context,
+          issuerSupport,
+          reason: exclusions.length > 0
+            ? exclusions.map(item => `${item.ticker}: ${item.reason}`).join(' ')
+            : 'Fewer than two issuers cleared the annual-coverage requirement for comparison.',
+        });
+        limitedReport.metadata.total_duration_ms = Date.now() - startTime;
+        limitedReport.metadata.data_points_used = countDataPoints(context);
+        callbacks?.onStep?.('Assessing issuer coverage', 'complete', 'Limited coverage result');
+        for (const section of limitedReport.sections) {
+          callbacks?.onPartialReport?.(section.id, section.content);
+        }
+        await callbacks?.onComplete?.(limitedReport, context, undefined);
+        return {
+          report: limitedReport,
+          context,
+          llmCallsCount: totalLLMCalls,
+          totalDurationMs: limitedReport.metadata.total_duration_ms,
+        };
+      }
+
+      if (exclusions.length > 0) {
+        callbacks?.onStep?.(
+          'Assessing issuer coverage',
+          'complete',
+          `Excluding ${exclusions.map(item => item.ticker).join(', ')}; proceeding with ${supportedTickers.join(', ')}`,
+        );
+        config.tickers = supportedTickers;
+        context.tickers = supportedTickers;
+      } else {
+        callbacks?.onStep?.('Assessing issuer coverage', 'complete', 'All issuers support full annual comparison');
+      }
+    } else {
+      const singleStatus = issuerSupport[requestedTickers[0]!];
+      if (!singleStatus?.safe_for_standalone) {
+        const limitedReport = buildLimitedCoverageReport({
+          id: config.snapshotDate ? generateSnapshotId(requestedTickers, config.snapshotDate) : generateId(),
+          generatedAt: config.snapshotDate ? `${config.snapshotDate}T00:00:00.000Z` : new Date().toISOString(),
+          requestedTickers,
+          context,
+          issuerSupport,
+          reason: singleStatus?.reason,
+        });
+        limitedReport.metadata.total_duration_ms = Date.now() - startTime;
+        limitedReport.metadata.data_points_used = countDataPoints(context);
+        callbacks?.onStep?.('Assessing issuer coverage', 'complete', 'Limited coverage result');
+        for (const section of limitedReport.sections) {
+          callbacks?.onPartialReport?.(section.id, section.content);
+        }
+        await callbacks?.onComplete?.(limitedReport, context, undefined);
+        return {
+          report: limitedReport,
+          context,
+          llmCallsCount: totalLLMCalls,
+          totalDurationMs: limitedReport.metadata.total_duration_ms,
+        };
+      }
+      callbacks?.onStep?.('Assessing issuer coverage', 'complete', 'Full annual coverage confirmed');
+    }
 
     // ── Step 3: ANALYZE (deterministic) ──────────────────────
     throwIfAborted(signal);
@@ -172,6 +215,11 @@ export async function runPipeline(
     // ── Step 4b: Fill deterministic sections ──────────────────
     sections = fillDeterministicSections(sections, canonicalPackage);
 
+    // ── Step 4c: Final narrative quality pass ─────────────────
+    const polishedNarrative = applyNarrativeQualityPass(sections, structuredNarrative);
+    sections = polishedNarrative.sections;
+    structuredNarrative = polishedNarrative.narrative;
+
     // ── Step 5: SEAL REPORT PACKAGE ─────────────────────────────
     throwIfAborted(signal);
     callbacks?.onStep?.('Validating report quality', 'running');
@@ -205,6 +253,9 @@ export async function runPipeline(
         llm_calls: totalLLMCalls,
         total_duration_ms: Date.now() - startTime,
         data_points_used: countDataPoints(context),
+        report_state: 'full',
+        requested_tickers: requestedTickers,
+        excluded_tickers: context.comparison_exclusions || [],
         snapshot_id: snapshotId,
         policy_mode: policy.mode,
         comparison_basis_mode: context.comparison_basis?.effective_mode || policy.comparisonBasisMode,
@@ -214,10 +265,36 @@ export async function runPipeline(
     };
 
     const auditOutputDir = config.auditOutputDir || defaultReportsDir();
-    const finalizedReport = await finalizeGovernedReport(report, context, canonicalPackage, {
-      auditOutputDir,
-      persistAuditArtifacts: policy.persistAuditArtifacts,
-    });
+    let finalizedReport: Report;
+    try {
+      finalizedReport = await finalizeGovernedReport(report, context, canonicalPackage, {
+        auditOutputDir,
+        persistAuditArtifacts: policy.persistAuditArtifacts,
+      });
+    } catch (err) {
+      const qaPath = err instanceof Error && 'qaPath' in err ? String((err as { qaPath?: string }).qaPath || '') : '';
+      const qa = err instanceof Error && 'qa' in err ? (err as { qa?: import('./deterministic-qa.js').DeterministicQAResult }).qa : undefined;
+      const summary = buildUserFacingQASummary(qa, context);
+      const gracefulReport = buildGracefulQAFallbackReport({
+        baseReport: report,
+        context,
+        qaPath,
+        summary,
+      });
+      gracefulReport.metadata.total_duration_ms = Date.now() - startTime;
+      gracefulReport.metadata.data_points_used = countDataPoints(context);
+      callbacks?.onStep?.('Validating report quality', 'complete', 'Limited coverage result');
+      for (const section of gracefulReport.sections) {
+        callbacks?.onPartialReport?.(section.id, section.content);
+      }
+      await callbacks?.onComplete?.(gracefulReport, context, undefined);
+      return {
+        report: gracefulReport,
+        context,
+        llmCallsCount: totalLLMCalls,
+        totalDurationMs: gracefulReport.metadata.total_duration_ms,
+      };
+    }
     callbacks?.onStep?.('Validating report quality', 'complete', 'All checks passed');
 
     for (const section of finalizedReport.sections) {
@@ -256,16 +333,12 @@ export async function finalizeGovernedReport(
   let finalReport: Report = report;
   const qa = runDeterministicQAGates(finalReport, context, canonicalPackage);
 
-  // Log warnings (non-fatal) to console
-  const warnings = qa.failures.filter(f => f.severity === 'warning');
-  if (warnings.length > 0) {
-    console.warn(`[QA] ${warnings.length} warning(s):`);
-    for (const w of warnings) console.warn(`  - [${w.gate}] ${w.source}: ${w.message}`);
-  }
-
   if (!qa.pass) {
     const qaPath = await writeQAFailureReport(finalReport, qa, options.auditOutputDir);
-    throw new Error(`Report failed deterministic QA: ${qaPath}`);
+    const error = new Error(`Report failed deterministic QA: ${qaPath}`) as Error & { qaPath?: string; qa?: typeof qa };
+    error.qaPath = qaPath;
+    error.qa = qa;
+    throw error;
   }
 
   finalReport = {
@@ -435,6 +508,60 @@ function countDataPoints(context: AnalysisContext): number {
   }
 
   return count;
+}
+
+function buildUserFacingQASummary(
+  qa: import('./deterministic-qa.js').DeterministicQAResult | undefined,
+  context: AnalysisContext,
+): string {
+  const failures = (qa?.failures || []).filter(failure => failure.severity === 'error');
+  if (failures.length === 0) {
+    const debtConflicts = context.tickers.filter(ticker => context.issuer_support?.[ticker]?.debt_reliability === 'suppressed_conflict');
+    if (debtConflicts.length > 0) {
+      return `${debtConflicts.join(', ')} contained contradictory debt concepts in the filing data, so the full annual report was withheld.`;
+    }
+    return 'The report was downgraded because final validation identified a material consistency issue in the filing-backed output.';
+  }
+
+  const debtConflicts = new Set<string>();
+  const profitabilityAmbiguities = new Set<string>();
+  const unresolvedMetrics = new Set<string>();
+  const accountingBreaks = new Set<string>();
+
+  for (const failure of failures) {
+    const source = failure.source;
+    const message = failure.message.toLowerCase();
+    const ticker = source.split(':').find(part => context.tickers.includes(part)) || null;
+
+    if (/debt/.test(source) || /debt/.test(message)) {
+      if (ticker) debtConflicts.add(ticker);
+      continue;
+    }
+    if (/gross profit|gross margin|operating margin|net margin/.test(message) || /gross_profit|gross_margin|operating_margin|net_margin/.test(source)) {
+      if (ticker) profitabilityAmbiguities.add(ticker);
+      continue;
+    }
+    if (/assets do not reconcile|cash flow|fcf does not reconcile|sign/i.test(message)) {
+      if (ticker) accountingBreaks.add(ticker);
+      continue;
+    }
+    if (ticker) unresolvedMetrics.add(ticker);
+  }
+
+  if (debtConflicts.size > 0) {
+    return `${Array.from(debtConflicts).join(', ')} contained contradictory debt concepts in the filing data, so the full annual report was withheld.`;
+  }
+  if (profitabilityAmbiguities.size > 0) {
+    return `${Array.from(profitabilityAmbiguities).join(', ')} contained profitability concepts that could not be resolved cleanly from the filing data, so the full report was downgraded to limited coverage.`;
+  }
+  if (accountingBreaks.size > 0) {
+    return `${Array.from(accountingBreaks).join(', ')} failed one or more core accounting consistency checks, so the full report was withheld.`;
+  }
+  if (unresolvedMetrics.size > 0) {
+    return `${Array.from(unresolvedMetrics).join(', ')} had unresolved filing-backed metric conflicts after final validation, so the full report was downgraded to limited coverage.`;
+  }
+
+  return 'The report was downgraded because final validation identified a material consistency issue in the filing-backed output.';
 }
 
 function throwIfAborted(signal?: AbortSignal): void {

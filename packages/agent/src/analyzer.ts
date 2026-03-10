@@ -11,7 +11,7 @@ import type {
   MetricBasisUsage,
   ReportingPolicy,
 } from '@dolph/shared';
-import { formatMetricChange, getMappingByName, crossValidatedShareCount, shareCountDiverges } from '@dolph/shared';
+import { formatCompactCurrency, formatMetricChange, getMappingByName, crossValidatedShareCount, shareCountDiverges } from '@dolph/shared';
 import {
   hasCashPresentationAlternative,
   buildCanonicalAnnualPeriodMap,
@@ -31,6 +31,11 @@ interface KeyMetricValue {
   change: number | null;
   unit: MetricUnit;
   notes?: string[];
+}
+
+interface MetricSuppressionState {
+  scope: 'current' | 'all';
+  reason: string;
 }
 
 export interface PeriodBasis {
@@ -380,6 +385,7 @@ export function analyzeData(
     const basis = periodBases[ticker] || selectPeriodBasis(periodMap, facts);
     const ledger = computeLedgerMetrics(periodMap, sourceMap, basis.current, basis.prior, policy);
     const sanityFlags = runSanityChecks(ledger, periodMap, basis.current);
+    applyMetricSuppressions(ledger.metrics, sanityFlags.suppressedMetrics);
     const keyMetrics = toKeyMetricsMap(ledger.metrics, sanityFlags.excludedMetricKeys);
 
     const redFlags = dedupeFlags([
@@ -601,7 +607,7 @@ function resolveExactDateOverlap(
     comparable_prior_key: prior,
     max_current_spread_days: 0,
     max_prior_spread_days: prior ? 0 : null,
-    note: `Peer metrics are overlap-normalized to ${current}${prior ? ` with ${prior} as the shared prior period` : ''}.`,
+    note: `Peer metrics use ${current} as the shared current period${prior ? ` and ${prior} as the shared prior period` : ''}.`,
     fallback_reason: null,
     peer_periods: Object.fromEntries(
       tickers.map(ticker => [ticker, { current_period: current, prior_period: prior }]),
@@ -661,7 +667,7 @@ function resolveFiscalCohortOverlap(
     comparable_prior_key: priorKey,
     max_current_spread_days: currentSpread,
     max_prior_spread_days: priorSpread,
-    note: `Peer metrics are normalized to shared fiscal cohorts ${currentKey}${priorKey ? ` and ${priorKey}` : ''}; fiscal year-ends differ by up to ${currentSpread} days in the current cohort.`,
+    note: `Peer metrics use the shared fiscal-year cohorts ${currentKey}${priorKey ? ` and ${priorKey}` : ''}; fiscal year-ends differ by up to ${currentSpread} days in the current period shown.`,
     fallback_reason: null,
     peer_periods: Object.fromEntries(
       tickers.map(ticker => [
@@ -992,19 +998,29 @@ function runSanityChecks(
 ): {
   flags: AnalysisInsights['redFlags'];
   excludedMetricKeys: Set<string>;
+  suppressedMetrics: Map<string, MetricSuppressionState>;
 } {
   const flags: AnalysisInsights['redFlags'] = [];
   const excludedMetricKeys = new Set<string>();
+  const suppressedMetrics = new Map<string, MetricSuppressionState>();
   const byKey = new Map(ledger.metrics.map(m => [m.key, m]));
   const currentValues = snapshotPeriod ? periodMap.get(snapshotPeriod)?.values || {} : {};
 
   const grossProfit = finiteOrNull(currentValues['gross_profit']);
   const operatingIncome = finiteOrNull(currentValues['operating_income']);
   if (grossProfit !== null && operatingIncome !== null && grossProfit < operatingIncome) {
-    flags.push({
-      flag: 'Gross profit mapping check failed',
-      severity: 'high',
-      detail: `Gross profit (${roundSig(grossProfit)}) is below operating income (${roundSig(operatingIncome)}). Gross-margin metrics were excluded.`,
+      flags.push({
+        flag: 'Gross profit mapping check failed',
+        severity: 'high',
+        detail: `Gross profit (${roundSigCurrency(grossProfit)}) is below operating income (${roundSigCurrency(operatingIncome)}). Gross-margin metrics were excluded.`,
+      });
+    suppressedMetrics.set('gross_profit', {
+      scope: 'current',
+      reason: 'Suppressed because the current gross profit concept failed the operating-income sanity check.',
+    });
+    suppressedMetrics.set('gross_margin', {
+      scope: 'current',
+      reason: 'Suppressed because gross margin depends on a current gross profit concept that failed the operating-income sanity check.',
     });
     excludedMetricKeys.add('gross_margin');
   }
@@ -1017,9 +1033,9 @@ function runSanityChecks(
     const tolerance = Math.max(Math.abs(assets) * 0.05, 1e6);
     if (diff > tolerance) {
       flags.push({
-        flag: 'Balance sheet reconciliation gap',
+        flag: 'Balance sheet presentation nuance',
         severity: 'medium',
-        detail: `Assets do not reconcile with liabilities + equity within tolerance (gap ${roundSig(diff)}).`,
+        detail: `The balance sheet does not tie perfectly on the reported lines, with an unexplained gap of ${roundSigCurrency(diff)} between assets and liabilities plus equity.`,
       });
     }
   }
@@ -1033,9 +1049,9 @@ function runSanityChecks(
     const identityTolerance = Math.max(Math.abs(expectedPretax) * 0.05, 1_000_000);
     if (identityGap > identityTolerance) {
       flags.push({
-        flag: 'Pretax income identity gap',
+        flag: 'Income statement presentation nuance',
         severity: 'medium',
-        detail: `Pretax income (${roundSig(pretaxIncome)}) does not reconcile with net_income + income_tax_expense (${roundSig(expectedPretax)}).`,
+        detail: `Reported pretax income of ${roundSigCurrency(pretaxIncome)} does not line up cleanly with net income and tax expense, so the tax bridge should be interpreted with caution.`,
       });
     }
   }
@@ -1057,17 +1073,41 @@ function runSanityChecks(
     .filter(m => !(m.key === 'short_term_investments' && hasCashPresentationAlternative(currentValues, 'short_term_investments')))
     .map(m => m.displayName);
   if (periodLockFailures.length > 0) {
+    const missingList = periodLockFailures.slice(0, 4);
+    const missingText = missingList.join(', ');
+    const plural = missingList.length > 1;
     flags.push({
       flag: 'Current-period completeness gap',
       severity: 'low',
-      detail: `Current period is missing ${periodLockFailures.slice(0, 4).join(', ')} while prior exists.`,
+      detail: plural
+        ? `The current period does not separately disclose ${missingText}, even though those items appear in the prior period.`
+        : `The current period does not separately disclose ${missingText}, even though that item appears in the prior period.`,
     });
   }
 
   return {
     flags,
     excludedMetricKeys,
+    suppressedMetrics,
   };
+}
+
+function applyMetricSuppressions(
+  metrics: LedgerMetric[],
+  suppressedMetrics: Map<string, MetricSuppressionState>,
+): void {
+  for (const metric of metrics) {
+    const suppression = suppressedMetrics.get(metric.key);
+    if (!suppression) continue;
+    metric.current = null;
+    metric.change = null;
+    metric.availability.current = 'intentionally_suppressed';
+    if (suppression.scope === 'all') {
+      metric.prior = null;
+      metric.availability.prior = 'intentionally_suppressed';
+    }
+    metric.note = [metric.note, suppression.reason].filter(Boolean).join('; ') || suppression.reason;
+  }
 }
 
 function resolveAvailabilityReason(
@@ -1079,9 +1119,9 @@ function resolveAvailabilityReason(
   hasLockedPeriod: boolean,
 ): MetricAvailabilityReasonCode {
   if (!hasLockedPeriod) return 'comparability_policy';
+  const sourceMetric = sources[def.key];
   if (finalValue !== null) {
     if (computedValue !== null) {
-      const sourceMetric = sources[def.key];
       if (sourceMetric?.kind === 'derived') return 'derived';
       if (sourceMetric?.kind === 'adjusted') return 'derived';
       if (sourceMetric?.kind === 'xbrl' || sourceMetric?.kind === 'statement') return 'reported';
@@ -1090,6 +1130,18 @@ function resolveAvailabilityReason(
       return 'derived';
     }
     return 'reported';
+  }
+  if (sourceMetric?.kind === 'unknown') {
+    if (/suppressed/i.test(sourceMetric.detail || '')) {
+      return 'intentionally_suppressed';
+    }
+    return 'basis_conflict';
+  }
+  if (def.dependencies.some(dep => sources[dep]?.kind === 'unknown' && /suppressed/i.test(sources[dep]?.detail || ''))) {
+    return 'intentionally_suppressed';
+  }
+  if (def.dependencies.some(dep => sources[dep]?.kind === 'unknown')) {
+    return 'basis_conflict';
   }
   if (def.dependencies.some(dep => values[dep] === undefined || !isFinite(values[dep]!))) {
     return 'missing_inputs';
@@ -1244,8 +1296,8 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
   if (grossMargin && isFinite(grossMargin.current) && grossMargin.current > 0.5) {
     const pct = (grossMargin.current * 100).toFixed(1);
     const detail = grossMargin.current > 0.7
-      ? `Gross margin of ${pct}% reflects significant value capture, consistent with asset-light or IP-intensive business models.`
-      : `Gross margin of ${pct}% supports healthy unit economics and room for operating-expense absorption.`;
+      ? `Gross margin of ${pct}% leaves a large share of revenue available to absorb operating costs and support profitability.`
+      : `Gross margin of ${pct}% leaves the company with a reasonable buffer to absorb operating expenses.`;
     strengths.push({ metric: 'gross_margin', detail });
   }
 
@@ -1254,8 +1306,8 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
   if (roe && isFinite(roe.current) && roe.current > 0.15 && (!equity || equity.current > 0)) {
     const pct = (roe.current * 100).toFixed(1);
     const detail = roe.current > 0.30
-      ? `ROE of ${pct}% is well above the 15% institutional threshold, suggesting strong capital allocation.`
-      : `ROE of ${pct}% exceeds the 15% institutional threshold, reflecting productive deployment of book equity.`;
+      ? `ROE of ${pct}% points to very strong earnings generation relative to book equity.`
+      : `ROE of ${pct}% points to solid earnings generation relative to book equity.`;
     strengths.push({ metric: 'roe', detail });
   }
 
@@ -1272,8 +1324,8 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
     && revenueChangeDisplay !== 'NM'
   ) {
     const detail = revenue.change > 0.25
-      ? `Revenue surged ${revenueChangeDisplay} year over year, indicating a step-change in demand or market expansion.`
-      : `Revenue grew ${revenueChangeDisplay} year over year, outpacing a typical low-single-digit baseline.`;
+      ? `Revenue rose ${revenueChangeDisplay} year over year, marking a meaningful step-up in scale.`
+      : `Revenue grew ${revenueChangeDisplay} year over year, providing a clear top-line tailwind.`;
     strengths.push({ metric: 'revenue_growth', detail });
   }
 
@@ -1286,8 +1338,8 @@ function identifyStrengths(metrics: Record<string, KeyMetricValue>): AnalysisIns
   );
   if (currentRatio && isFinite(currentRatio.current) && currentRatio.current > 1.5 && !hasCashStress) {
     const detail = currentRatio.current > 2.5
-      ? `Current ratio of ${currentRatio.current.toFixed(2)}x provides a wide liquidity cushion relative to near-term obligations.`
-      : `Current ratio of ${currentRatio.current.toFixed(2)}x is above the 1.5x threshold, indicating adequate near-term coverage.`;
+      ? `Current ratio of ${currentRatio.current.toFixed(2)}x provides a wide cushion against near-term obligations.`
+      : `Current ratio of ${currentRatio.current.toFixed(2)}x points to adequate near-term coverage.`;
     strengths.push({ metric: 'current_ratio', detail });
   }
 
@@ -1321,7 +1373,7 @@ function crossValidatedShares(v: Record<string, number>): { value: number | null
         displayName: 'Shares Outstanding',
         basis: 'period_end_shares',
         note: 'Period-end shares were unavailable.',
-        disclosureText: 'Period-end shares were unavailable in the locked annual basis.',
+        disclosureText: 'Period-end shares were unavailable for the period shown in this note.',
         alternativesConsidered: ['weighted_average_diluted'],
       },
     };
@@ -1338,7 +1390,7 @@ function crossValidatedShares(v: Record<string, number>): { value: number | null
         displayName: 'Book Value Per Share',
         basis: 'cross_validated_fallback',
         fallbackUsed: true,
-        note: 'Period-end shares diverged materially from EPS-implied diluted shares; BVPS uses diluted weighted-average shares as a governed fallback.',
+        note: 'Period-end shares diverged materially from EPS-implied diluted shares; BVPS uses diluted weighted-average shares as the fallback basis.',
         disclosureText: 'Book Value Per Share uses diluted weighted-average shares because reported period-end shares diverged materially from EPS-implied diluted shares.',
         alternativesConsidered: ['period_end_shares', 'weighted_average_diluted'],
       },
@@ -1352,7 +1404,7 @@ function crossValidatedShares(v: Record<string, number>): { value: number | null
       displayName: 'Book Value Per Share',
       basis: 'period_end_shares',
       note: 'BVPS uses period-end shares outstanding.',
-      disclosureText: 'Book Value Per Share uses period-end shares outstanding.',
+        disclosureText: 'Book Value Per Share uses period-end shares outstanding.',
       alternativesConsidered: ['weighted_average_diluted'],
     },
   };
@@ -1398,8 +1450,8 @@ function metricBasisUsage(
           ? 'ROE uses average equity.'
           : 'ROE uses ending equity.',
         disclosureText: policy.returnMetricBasisMode === 'average_balance'
-          ? 'Return on Equity uses average equity in the locked current and prior annual periods.'
-          : 'Return on Equity uses ending equity in the locked annual period.',
+          ? 'Return on Equity uses average equity across the current and prior annual periods shown in this note.'
+          : 'Return on Equity uses ending equity in the period shown in this note.',
         alternativesConsidered: ['average_balance', 'ending_balance'],
       };
     case 'roa':
@@ -1411,8 +1463,8 @@ function metricBasisUsage(
           ? 'ROA uses average assets.'
           : 'ROA uses ending assets.',
         disclosureText: policy.returnMetricBasisMode === 'average_balance'
-          ? 'Return on Assets uses average assets in the locked current and prior annual periods.'
-          : 'Return on Assets uses ending assets in the locked annual period.',
+          ? 'Return on Assets uses average assets across the current and prior annual periods shown in this note.'
+          : 'Return on Assets uses ending assets in the period shown in this note.',
         alternativesConsidered: ['average_balance', 'ending_balance'],
       };
     case 'asset_turnover':
@@ -1421,7 +1473,7 @@ function metricBasisUsage(
         displayName: 'Asset Turnover',
         basis: 'average_balance',
         note: 'Asset turnover uses average assets.',
-        disclosureText: 'Asset Turnover uses average assets across the locked annual comparison window.',
+        disclosureText: 'Asset Turnover uses average assets across the annual periods shown in this note.',
         alternativesConsidered: ['average_balance'],
       };
     default:
@@ -1479,4 +1531,8 @@ function roundSig(value: number): string {
   if (abs >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
   if (abs >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
   return value.toFixed(2);
+}
+
+function roundSigCurrency(value: number): string {
+  return formatCompactCurrency(value, { smallDecimals: 1, smartDecimals: true });
 }

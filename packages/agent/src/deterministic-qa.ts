@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import type {
   AnalysisContext,
   AnalysisType,
+  MetricAvailabilityReasonCode,
   Report,
   ReportSection,
 } from '@dolph/shared';
@@ -31,9 +32,11 @@ type GateId =
   | 'data.cross_section_equality'
   | 'data.period_coherence'
   | 'data.sanity'
+  | 'data.mapping_confidence'
   | 'data.units'
   | 'data.no_fake_na'
   | 'narrative.threshold_alignment'
+  | 'narrative.style_quality'
   | 'narrative.templated_repetition'
   | 'layout.truncation'
   | 'layout.orphan_headers'
@@ -55,9 +58,11 @@ const GATE_SEVERITY: Record<GateId, QASeverity> = {
   'data.cross_section_equality': 'error',
   'data.period_coherence': 'error',
   'data.sanity': 'error',
+  'data.mapping_confidence': 'warning',
   'data.units': 'warning',
   'data.no_fake_na': 'error',
   'narrative.threshold_alignment': 'error',
+  'narrative.style_quality': 'error',
   'narrative.templated_repetition': 'warning',
   'layout.truncation': 'warning',
   'layout.orphan_headers': 'warning',
@@ -324,13 +329,14 @@ function runSingleReportCrossSectionGates(
   for (const [metricName, deps] of Object.entries(METRIC_DEPENDENCIES)) {
     const m = insight.keyMetrics[metricName];
     const currentBucket = periodValues.get(current) || {};
-    if (hasDependencies(currentBucket, deps) && !m) {
+    const canonicalMetric = company.allMetricsByLabel.get(metricName) || company.metricsByLabel.get(metricName);
+    if (!m && shouldRequireMetricPresence(metricName, canonicalMetric?.availability.current, currentBucket, deps)) {
       pushFailure(failures, 'data.no_fake_na', `metric:${metricName}`, 'Metric missing despite all current-period inputs existing.');
     }
 
     if (!prior) continue;
     const priorBucket = periodValues.get(prior) || {};
-    if (hasDependencies(priorBucket, deps) && m && m.prior === null) {
+    if (m && m.prior === null && shouldRequireMetricPresence(metricName, canonicalMetric?.availability.prior, priorBucket, deps)) {
       pushFailure(failures, 'data.no_fake_na', `metric:${metricName}`, 'Prior metric value is missing despite all prior-period inputs existing.');
     }
   }
@@ -401,7 +407,8 @@ function runComparisonReportCrossSectionGates(
     const currentBucket = periodValues.get(current) || {};
     for (const [metricName, deps] of Object.entries(METRIC_DEPENDENCIES)) {
       const m = insight.keyMetrics[metricName];
-      if (hasDependencies(currentBucket, deps) && !m) {
+      const canonicalMetric = company.allMetricsByLabel.get(metricName) || company.metricsByLabel.get(metricName);
+      if (!m && shouldRequireMetricPresence(metricName, canonicalMetric?.availability.current, currentBucket, deps)) {
         pushFailure(failures, 'data.no_fake_na', `comparison:${ticker}:${metricName}`, 'Metric missing despite all current-period inputs existing.');
       }
     }
@@ -446,7 +453,12 @@ function runSanityGatesForTicker(
   const gp = finite(current['gross_profit']);
   const op = finite(current['operating_income']);
   if (gp !== null && op !== null && gp < op) {
-    pushFailure(failures, 'data.sanity', `${ticker}:income_statement`, 'Gross profit is below operating income.');
+    pushFailure(
+      failures,
+      'data.mapping_confidence',
+      `${ticker}:income_statement`,
+      'Gross profit was suppressed from reader-facing profitability metrics because the filing-backed concept fell below operating income and could not be trusted as a clean gross-profit measure.',
+    );
   }
 
   const dna = finite(current['depreciation_and_amortization']);
@@ -463,7 +475,11 @@ function runSanityGatesForTicker(
   const longTermDebt = finite(current['long_term_debt']);
   const shortTermDebt = finite(current['short_term_debt']);
   const totalDebt = finite(current['total_debt']);
-  if ((longTermDebt !== null || shortTermDebt !== null) && totalDebt === null) {
+  const totalDebtSource = currentSources['total_debt'];
+  const debtConflictSuppressed = totalDebt === null
+    && totalDebtSource?.kind === 'unknown'
+    && /suppressed/i.test(totalDebtSource.detail || '');
+  if ((longTermDebt !== null || shortTermDebt !== null) && totalDebt === null && !debtConflictSuppressed) {
     pushFailure(failures, 'data.no_fake_na', `${ticker}:total_debt`, 'Total Debt is missing even though long-term or short-term debt is present.');
   }
   if (
@@ -548,9 +564,19 @@ function runNarrativeGates(
   canonicalPackage: CanonicalReportPackage,
   failures: QAFailure[],
 ): void {
+  const fillerPatterns = [
+    /\btop-line momentum\b/i,
+    /\bbroad-based operational momentum\b/i,
+    /\bhas trended upward\b/i,
+    /\bhas trended downward\b/i,
+    /\bindicates pricing power\b/i,
+    /\b[a-z]+(?:_[a-z0-9]+)+\b/,
+  ];
+
   if (report.narrative?.sections) {
     const validFactIds = new Set<string>();
     const sectionContentById = new Map(report.sections.map(section => [section.id, section.content.trim()]));
+    const seenParagraphs = new Set<string>();
     for (const insight of Object.values(insights)) {
       for (const factId of Object.keys(insight.canonicalFacts || {})) validFactIds.add(factId);
     }
@@ -573,6 +599,18 @@ function runNarrativeGates(
           pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative contains an empty paragraph.');
           continue;
         }
+        if (/^#{1,6}\s|^[-*]\s|^\d+\.\s/.test(paragraph.text.trim())) {
+          pushFailure(failures, 'narrative.style_quality', `narrative:${section.id}`, 'Structured narrative paragraph is still formatted like a heading or bullet rather than prose.');
+        }
+        if (paragraph.text.trim().length < 40) {
+          pushFailure(failures, 'narrative.style_quality', `narrative:${section.id}`, 'Structured narrative paragraph is too short to read like analyst prose.');
+        }
+        if (!/[.!?]$/.test(paragraph.text.trim())) {
+          pushFailure(failures, 'narrative.style_quality', `narrative:${section.id}`, 'Structured narrative paragraph is not written as a complete sentence.');
+        }
+        if (fillerPatterns.some(pattern => pattern.test(paragraph.text))) {
+          pushFailure(failures, 'narrative.style_quality', `narrative:${section.id}`, 'Structured narrative contains filler language rather than specific analytical prose.');
+        }
         if (paragraph.fact_ids.length === 0) {
           pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, 'Structured narrative paragraph has no fact bindings.');
           continue;
@@ -580,6 +618,12 @@ function runNarrativeGates(
         const invalid = paragraph.fact_ids.filter(factId => !validFactIds.has(factId));
         if (invalid.length > 0) {
           pushFailure(failures, 'narrative.threshold_alignment', `narrative:${section.id}`, `Structured narrative references unsupported fact ids: ${invalid.join(', ')}.`);
+        }
+        const paragraphKey = paragraph.text.trim().toLowerCase().replace(/\s+/g, ' ');
+        if (seenParagraphs.has(paragraphKey)) {
+          pushFailure(failures, 'narrative.style_quality', `narrative:${section.id}`, 'Structured narrative repeats the same paragraph content across sections.');
+        } else {
+          seenParagraphs.add(paragraphKey);
         }
       }
     }
@@ -657,6 +701,82 @@ function buildPeriodValueMap(
 
 function hasDependencies(values: Record<string, number>, deps: string[]): boolean {
   return deps.every(dep => values[dep] !== undefined && isFinite(values[dep]!));
+}
+
+function shouldRequireMetricPresence(
+  metricName: string,
+  availability: MetricAvailabilityReasonCode | undefined,
+  values: Record<string, number>,
+  deps: string[],
+): boolean {
+  if (availabilityRequiresRenderedValue(availability)) {
+    return true;
+  }
+  if (availability && availabilityDoesNotRequireValue(availability)) {
+    return false;
+  }
+  return hasDependencies(values, deps) && metricFormulaIsDefined(metricName, values);
+}
+
+function availabilityRequiresRenderedValue(
+  availability: MetricAvailabilityReasonCode | undefined,
+): boolean {
+  return availability === 'reported' || availability === 'derived';
+}
+
+function availabilityDoesNotRequireValue(
+  availability: MetricAvailabilityReasonCode,
+): boolean {
+  switch (availability) {
+    case 'intentionally_suppressed':
+    case 'ratio_fallback':
+    case 'missing_inputs':
+    case 'policy_disallowed':
+    case 'sanity_excluded':
+    case 'basis_conflict':
+    case 'comparability_policy':
+    case 'source_unavailable':
+    case 'statement_gap':
+      return true;
+    case 'reported':
+    case 'derived':
+    default:
+      return false;
+  }
+}
+
+function metricFormulaIsDefined(
+  metricName: string,
+  values: Record<string, number>,
+): boolean {
+  const revenue = finite(values['revenue']);
+  const equity = finite(values['stockholders_equity']);
+  const assets = finite(values['total_assets']);
+  const currentLiabilities = finite(values['current_liabilities']);
+  const dilutedShares = finite(values['weighted_avg_shares_diluted']) ?? finite(values['shares_outstanding']);
+
+  switch (metricName) {
+    case 'Gross Margin':
+    case 'Operating Margin':
+    case 'Net Margin':
+      return revenue !== null && revenue !== 0;
+    case 'Debt-to-Equity':
+      return equity !== null && equity !== 0;
+    case 'Current Ratio':
+      return currentLiabilities !== null && currentLiabilities !== 0;
+    case 'Quick Ratio':
+      return currentLiabilities !== null && currentLiabilities !== 0 && finite(values['inventory']) !== null;
+    case 'Earnings Per Share (Diluted)':
+    case 'Book Value Per Share':
+      return dilutedShares !== null && dilutedShares !== 0;
+    case 'Return on Equity':
+      return equity !== null && equity !== 0;
+    case 'Return on Assets':
+    case 'Asset Turnover':
+      return assets !== null && assets !== 0;
+    default:
+      return true;
+  }
 }
 
 

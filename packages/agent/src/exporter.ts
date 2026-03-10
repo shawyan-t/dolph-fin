@@ -41,68 +41,69 @@ export async function generatePDF(
   await rm(outputPath, { force: true });
 
   const policy = finalReport.policy || context?.policy;
-  const pkg = context ? requireCanonicalReportPackage(canonicalPackage, 'generatePDF') : undefined;
-  const preRenderQA = context && pkg
-    ? runDeterministicQAGates(finalReport, context, pkg)
-    : {
-      pass: false,
-      failures: [{
-        gate: 'data.period_coherence' as const,
-        severity: 'error' as const,
-        source: 'exporter',
-        message: 'Analysis context is required for fail-closed deterministic QA.',
-      }],
-      periodBasis: {},
-      mappingFixes: [],
-      recomputedMetrics: {},
-    };
+  const isLimitedReport = finalReport.metadata.report_state === 'limited_coverage'
+    || finalReport.metadata.report_state === 'unsupported_coverage';
+  const pkg = context && !isLimitedReport
+    ? requireCanonicalReportPackage(canonicalPackage, 'generatePDF')
+    : undefined;
 
-  if (!preRenderQA.pass) {
-    const qaPath = await writeQAFailureReport(finalReport, preRenderQA, dir);
-    throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
-  }
+  let fullHTML: string;
+  let preRenderQA:
+    | ReturnType<typeof runDeterministicQAGates>
+    | null = null;
 
-  const periodBanner = buildPeriodBanner(finalReport, preRenderQA.periodBasis);
-  if (!periodBanner.ok) {
-    const combined = {
-      ...preRenderQA,
-      pass: false,
-      failures: [
-        ...preRenderQA.failures,
-        {
-          gate: 'data.period_coherence' as const,
-          severity: 'error' as const,
-          source: 'period_banner',
-          message: periodBanner.error,
-        },
-      ],
-    };
-    const qaPath = await writeQAFailureReport(finalReport, combined, dir);
-    throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
-  }
+  if (context && pkg) {
+    preRenderQA = runDeterministicQAGates(finalReport, context, pkg);
 
-  const requiredPackage = requireCanonicalReportPackage(pkg, 'generatePDF');
-  const { bodyHTML } = buildPdfPages(finalReport, requiredPackage);
-  const expectedBannerCount = countNonCoverSourcesPages(bodyHTML);
-  const slotCount = countToken(bodyHTML, PERIOD_BANNER_SLOT);
-  if (slotCount !== expectedBannerCount) {
-    const combined = {
-      ...preRenderQA,
-      pass: false,
-      failures: [
-        ...preRenderQA.failures,
-        {
-          gate: 'data.period_coherence' as const,
-          severity: 'error' as const,
-          source: 'period_banner',
-          message: `Period banner slots mismatch (${slotCount} found; ${expectedBannerCount} expected).`,
-        },
-      ],
-    };
-    const qaPath = await writeQAFailureReport(finalReport, combined, dir);
-    throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
+    if (!preRenderQA.pass) {
+      const qaPath = await writeQAFailureReport(finalReport, preRenderQA, dir);
+      throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
+    }
+
+    const periodBanner = buildPeriodBanner(finalReport, preRenderQA.periodBasis);
+    if (!periodBanner.ok) {
+      const combined = {
+        ...preRenderQA,
+        pass: false,
+        failures: [
+          ...preRenderQA.failures,
+          {
+            gate: 'data.period_coherence' as const,
+            severity: 'error' as const,
+            source: 'period_banner',
+            message: periodBanner.error,
+          },
+        ],
+      };
+      const qaPath = await writeQAFailureReport(finalReport, combined, dir);
+      throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
+    }
+
+    const requiredPackage = requireCanonicalReportPackage(pkg, 'generatePDF');
+    const { bodyHTML } = buildPdfPages(finalReport, requiredPackage);
+    const expectedBannerCount = countNonCoverSourcesPages(bodyHTML);
+    const slotCount = countToken(bodyHTML, PERIOD_BANNER_SLOT);
+    if (slotCount !== expectedBannerCount) {
+      const combined = {
+        ...preRenderQA,
+        pass: false,
+        failures: [
+          ...preRenderQA.failures,
+          {
+            gate: 'data.period_coherence' as const,
+            severity: 'error' as const,
+            source: 'period_banner',
+            message: `Period banner slots mismatch (${slotCount} found; ${expectedBannerCount} expected).`,
+          },
+        ],
+      };
+      const qaPath = await writeQAFailureReport(finalReport, combined, dir);
+      throw new Error(`PDF generation blocked by deterministic QA gates. Failure report: ${qaPath}`);
+    }
+    fullHTML = buildReportHTML(finalReport, bodyHTML.split(PERIOD_BANNER_SLOT).join(periodBanner.html));
+  } else {
+    fullHTML = buildReportHTML(finalReport, buildLimitedBodyHTML(finalReport));
   }
-  const fullHTML = buildReportHTML(finalReport, bodyHTML.split(PERIOD_BANNER_SLOT).join(periodBanner.html));
 
   const platformDefaultChrome = process.platform === 'darwin'
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -163,12 +164,12 @@ export async function generatePDF(
       `,
     });
 
-    if (context && policy?.persistAuditArtifacts && pkg) {
+    if (context && policy?.persistAuditArtifacts && pkg && preRenderQA) {
       finalReport.audit = await writeAuditArtifacts({
         report: finalReport,
         context,
-        insights: requiredPackage.insights,
-        reportModel: requiredPackage.reportModel,
+        insights: pkg.insights,
+        reportModel: pkg.reportModel,
         qa: preRenderQA,
         outputDir: dir,
         pdfPath: outputPath,
@@ -181,6 +182,49 @@ export async function generatePDF(
   return outputPath;
 }
 
+function buildLimitedBodyHTML(report: Report): string {
+  const pages: string[] = [];
+  pages.push(`
+    <section class="report-page page-cover">
+      <div class="cover-top">
+        <div class="cover-brand">Dolph Research</div>
+        <div class="cover-family">${escapeHTML(report.type === 'comparison' ? 'Coverage Result' : 'Coverage Result')}</div>
+        <div class="cover-date">${escapeHTML(formatDate(report.generated_at))}</div>
+      </div>
+      <div class="cover-hero">
+        <h1>${escapeHTML(report.tickers.join(report.type === 'comparison' ? ' vs ' : ''))}</h1>
+      </div>
+      <div class="cover-thesis">This result provides a clean reader-facing explanation when a full annual financial note cannot be published through the current SEC/XBRL path.</div>
+    </section>
+  `);
+
+  for (const section of report.sections) {
+    pages.push(`
+      <section class="report-page">
+        <div class="page-header"><h2>${escapeHTML(section.title)}</h2></div>
+        <div class="module">${renderLimitedSection(section.content)}</div>
+      </section>
+    `);
+  }
+
+  return pages.join('\n');
+}
+
+function renderLimitedSection(content: string): string {
+  const blocks = content.split(/\n{2,}/).map(block => block.trim()).filter(Boolean);
+  return blocks.map(block => {
+    const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
+    if (lines.every(line => line.startsWith('- '))) {
+      return `<ul>${lines.map(line => `<li>${escapeHTML(cleanLimitedText(line.slice(2)))}</li>`).join('')}</ul>`;
+    }
+    return lines.map(line => `<p>${escapeHTML(cleanLimitedText(line))}</p>`).join('');
+  }).join('\n');
+}
+
+function cleanLimitedText(value: string): string {
+  return value.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '$1 — $2');
+}
+
 function escapeHTML(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -188,6 +232,12 @@ function escapeHTML(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function formatDate(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) return isoDate;
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function buildPeriodBanner(
