@@ -1,0 +1,763 @@
+[
+  {
+    "key": "revenue_comparison",
+    "title": "Revenue Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Revenue"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "88.6"
+      ],
+      [
+        "LMT",
+        "75.0"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "Xtjt8",
+    "exportDiagnostics": [
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/Xtjt8/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/Xtjt8",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/Xtjt8/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/Xtjt8/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "Xtjt8",
+        "chartTitle": "Revenue Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/Xtjt8/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "profitability_comparison",
+    "title": "Profitability Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Gross Margin",
+      "Operating Margin",
+      "Net Margin"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "",
+        "10.496258591695542",
+        "7.597936864440256"
+      ],
+      [
+        "LMT",
+        "",
+        "10.301407099456346",
+        "6.685054898198486"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "q7umQ",
+    "exportDiagnostics": [
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/q7umQ/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/q7umQ",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/q7umQ/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/q7umQ/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "q7umQ",
+        "chartTitle": "Profitability Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/q7umQ/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "cash_generation_comparison",
+    "title": "Cash Generation Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Operating Cash Flow",
+      "Free Cash Flow"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "10.6",
+        "7.9"
+      ],
+      [
+        "LMT",
+        "8.6",
+        "6.9"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "cFE1p",
+    "exportDiagnostics": [
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/cFE1p/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/cFE1p",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/cFE1p/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/cFE1p/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "cFE1p",
+        "chartTitle": "Cash Generation Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/cFE1p/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "liquidity_leverage_comparison",
+    "title": "Liquidity and Leverage Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Current Ratio",
+      "Quick Ratio",
+      "Debt-to-Equity"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "1.0263336962438758",
+        "0.7989929232444203",
+        "0.5140234270215492"
+      ],
+      [
+        "LMT",
+        "1.0868652239125778",
+        "0.9358474394686094",
+        "3.409314090165154"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "8Sd1X",
+    "exportDiagnostics": [
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/8Sd1X/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/8Sd1X",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/8Sd1X/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/8Sd1X/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "8Sd1X",
+        "chartTitle": "Liquidity and Leverage Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/8Sd1X/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "return_comparison",
+    "title": "Return Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Return on Equity",
+      "Return on Assets"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "10.435186979267584",
+        "4.031862011139726"
+      ],
+      [
+        "LMT",
+        "76.86532863490118",
+        "8.690681379214773"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "s0H5z",
+    "exportDiagnostics": [
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/s0H5z/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/s0H5z",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/s0H5z/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/s0H5z/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "s0H5z",
+        "chartTitle": "Return Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/s0H5z/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "balance_sheet_strength_comparison",
+    "title": "Balance Sheet Strength Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Total Assets",
+      "Total Liabilities",
+      "Stockholders' Equity",
+      "Total Debt",
+      "Cash & Equivalents"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "171",
+        "104",
+        "67",
+        "34",
+        "7"
+      ],
+      [
+        "LMT",
+        "60",
+        "53",
+        "7",
+        "23",
+        "4"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "kgPFk",
+    "exportDiagnostics": [
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/kgPFk/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/kgPFk",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/kgPFk/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/kgPFk/export/svg?plain=true&unit=px&width=1040&height=270",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "kgPFk",
+        "chartTitle": "Balance Sheet Strength Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/kgPFk/export/png?plain=true&unit=px&width=1040&height=270",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  },
+  {
+    "key": "per_share_comparison",
+    "title": "Per-Share Comparison",
+    "datasetShape": "comparison",
+    "datasetHeaders": [
+      "Company",
+      "Diluted EPS",
+      "Book Value Per Share"
+    ],
+    "datasetPreviewRows": [
+      [
+        "RTX",
+        "5",
+        "39"
+      ],
+      [
+        "LMT",
+        "21",
+        "29"
+      ]
+    ],
+    "renderStatus": "rendered",
+    "assetType": "png",
+    "mimeType": "image/png",
+    "fallbackUsed": true,
+    "datawrapperChartId": "oU2RH",
+    "exportDiagnostics": [
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "create",
+        "exportFormat": null,
+        "endpoint": "/charts",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "create succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "upload",
+        "exportFormat": null,
+        "endpoint": "/charts/oU2RH/data",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "upload succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "metadata",
+        "exportFormat": null,
+        "endpoint": "/charts/oU2RH",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "metadata succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "publish",
+        "exportFormat": null,
+        "endpoint": "/charts/oU2RH/publish",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "publish succeeded.",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "pending"
+      },
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "export",
+        "exportFormat": "svg",
+        "endpoint": "/charts/oU2RH/export/svg?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 401,
+        "ok": false,
+        "message": "{\"statusCode\":401,\"error\":\"Unauthorized\",\"message\":\"Unauthorized\"}",
+        "fallbackTriggered": false,
+        "finalAssetType": null,
+        "finalRenderResult": "failed"
+      },
+      {
+        "chartId": "oU2RH",
+        "chartTitle": "Per-Share Comparison",
+        "stage": "export",
+        "exportFormat": "png",
+        "endpoint": "/charts/oU2RH/export/png?plain=true&unit=px&width=980&height=250",
+        "httpStatus": 200,
+        "ok": true,
+        "message": "PNG export succeeded.",
+        "fallbackTriggered": true,
+        "finalAssetType": "png",
+        "finalRenderResult": "rendered"
+      }
+    ]
+  }
+]

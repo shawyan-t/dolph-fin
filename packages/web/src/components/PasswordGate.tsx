@@ -24,15 +24,14 @@ export function PasswordGate() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-grid-mask" />
         <div className="absolute left-[-8rem] top-1/4 h-96 w-96 rounded-full bg-primary/12 blur-3xl" />
         <div className="absolute right-[-8rem] bottom-1/4 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-10 animate-fade-in">
-          <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 to-primary/5 shadow-[0_0_30px_rgba(56,189,248,0.16)]">
-            <span className="text-4xl font-bold bg-gradient-to-br from-white to-primary bg-clip-text text-transparent">D</span>
+          <div className="inline-flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-primary/30 bg-background/60 shadow-[0_0_30px_rgba(56,189,248,0.16)]">
+            <img src="/dolph-icon.png" alt="Dolph" className="h-full w-full object-cover" />
           </div>
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-foreground">Dolph</h1>
           <p className="mt-2 text-base text-muted-foreground">SEC EDGAR Research Platform</p>

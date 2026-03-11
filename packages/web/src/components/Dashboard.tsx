@@ -1189,7 +1189,6 @@ export function Dashboard() {
   return (
     <div data-theme={theme} className="min-h-screen bg-background text-foreground relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-grid-mask" />
         <div className="absolute left-[-8rem] top-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute right-[-8rem] bottom-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
       </div>
