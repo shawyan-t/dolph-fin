@@ -3,7 +3,7 @@ import type {
   StructuredNarrativeParagraph,
   StructuredNarrativePayload,
   StructuredNarrativeSection,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 
 const FILLER_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bhas trended upward\b/gi, 'is above the prior-period level'],

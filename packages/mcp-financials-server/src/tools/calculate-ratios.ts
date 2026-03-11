@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import type { Ratio, RatioName } from '@dolph/shared';
-import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
+import type { Ratio, RatioName } from '@shawyan/shared';
+import { getCompanyFacts } from '@shawyan/mcp-sec-server/tools/get-company-facts.js';
 import { calculateRatios } from '../math/ratios.js';
 
 export const CalculateRatiosInput = z.object({

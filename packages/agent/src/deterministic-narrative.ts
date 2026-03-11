@@ -4,12 +4,12 @@ import type {
   StructuredNarrativeParagraph,
   StructuredNarrativePayload,
   StructuredNarrativeSection,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import type { AnalysisInsights } from './analyzer.js';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
 import type { CompanyReportModel, ReportModel } from './report-model.js';
 import { SINGLE_REPORT_SECTIONS, COMPARISON_REPORT_SECTIONS } from './prompts/narrative.js';
-import { classifyChangeMeaning, formatCompactCurrency, formatCompactShares } from '@dolph/shared';
+import { classifyChangeMeaning, formatCompactCurrency, formatCompactShares } from '@shawyan/shared';
 
 interface MetricPoint {
   current: number;

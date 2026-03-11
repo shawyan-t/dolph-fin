@@ -7,7 +7,7 @@ services:
     autoDeploy: true
     healthCheckPath: /
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm -r build
-    startCommand: pnpm --filter @dolph/web exec next start -H 0.0.0.0 -p $PORT
+    startCommand: pnpm --filter @shawyan/web exec next start -H 0.0.0.0 -p $PORT
     envVars:
       - key: NODE_VERSION
         value: "20"

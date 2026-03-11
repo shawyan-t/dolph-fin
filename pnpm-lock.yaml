@@ -10,21 +10,21 @@ importers:
 
   packages/agent:
     dependencies:
-      '@dolph/bootup':
-        specifier: ^0.1.3
-        version: link:../bootup
-      '@dolph/mcp-financials-server':
-        specifier: ^0.1.3
-        version: link:../mcp-financials-server
-      '@dolph/mcp-sec-server':
-        specifier: ^0.1.3
-        version: link:../mcp-sec-server
-      '@dolph/shared':
-        specifier: ^0.1.3
-        version: link:../shared
       '@inquirer/prompts':
         specifier: ^7.0.0
         version: 7.10.1(@types/node@22.19.13)
+      '@shawyan/bootup':
+        specifier: ^0.1.3
+        version: link:../bootup
+      '@shawyan/mcp-financials-server':
+        specifier: ^0.1.3
+        version: link:../mcp-financials-server
+      '@shawyan/mcp-sec-server':
+        specifier: ^0.1.3
+        version: link:../mcp-sec-server
+      '@shawyan/shared':
+        specifier: ^0.1.3
+        version: link:../shared
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
@@ -78,15 +78,15 @@ importers:
 
   packages/mcp-financials-server:
     dependencies:
-      '@dolph/mcp-sec-server':
-        specifier: ^0.1.3
-        version: link:../mcp-sec-server
-      '@dolph/shared':
-        specifier: ^0.1.3
-        version: link:../shared
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.27.1(zod@3.25.76)
+      '@shawyan/mcp-sec-server':
+        specifier: ^0.1.3
+        version: link:../mcp-sec-server
+      '@shawyan/shared':
+        specifier: ^0.1.3
+        version: link:../shared
       zod:
         specifier: ^3.24.0
         version: 3.25.76
@@ -103,12 +103,12 @@ importers:
 
   packages/mcp-sec-server:
     dependencies:
-      '@dolph/shared':
-        specifier: ^0.1.3
-        version: link:../shared
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.27.1(zod@3.25.76)
+      '@shawyan/shared':
+        specifier: ^0.1.3
+        version: link:../shared
       cheerio:
         specifier: ^1.0.0
         version: 1.2.0
@@ -137,13 +137,13 @@ importers:
 
   packages/web:
     dependencies:
-      '@dolph/agent':
+      '@shawyan/agent':
         specifier: workspace:*
         version: link:../agent
-      '@dolph/mcp-sec-server':
+      '@shawyan/mcp-sec-server':
         specifier: workspace:*
         version: link:../mcp-sec-server
-      '@dolph/shared':
+      '@shawyan/shared':
         specifier: workspace:*
         version: link:../shared
       nanoid:

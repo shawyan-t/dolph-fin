@@ -15,7 +15,7 @@
  * Cache: 24 hours via file cache
  */
 
-import { CACHE_TTL_FX_RATES } from '@dolph/shared';
+import { CACHE_TTL_FX_RATES } from '@shawyan/shared';
 import { fileCache } from '../cache/file-cache.js';
 
 const FX_LATEST_API_URL = 'https://open.er-api.com/v6/latest/USD';

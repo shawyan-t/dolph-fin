@@ -6,11 +6,11 @@ import type {
   MetricAvailabilityReasonCode,
   Report,
   ReportSection,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import {
   REQUIRED_COMPARISON_SECTIONS,
   REQUIRED_SINGLE_SECTIONS,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import type { AnalysisInsights } from './analyzer.js';
 import { isUnavailableDisplay, normalizeMissingDataMarkdown } from './pdf-render-rules.js';
 import { buildKeyMetricsSection } from './metrics-builder.js';

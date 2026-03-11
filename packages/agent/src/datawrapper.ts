@@ -1,4 +1,4 @@
-import type { Report } from '@dolph/shared';
+import type { Report } from '@shawyan/shared';
 import type {
   ChartAssetType,
   ChartRenderDiagnostic,

@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import { resolve } from "node:path";
-import type { Report } from "@dolph/shared";
+import type { Report } from "@shawyan/shared";
 
 export interface StoredCharts {
   revenueMarginChart: string | null;

@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { registerArtifact } from '@/lib/artifact-store';
 import { loadDolphEnv } from '@/lib/dolph-env';
-import { buildFilingBundleZip } from '@dolph/mcp-sec-server/edgar/filing-directory.js';
+import { buildFilingBundleZip } from '@shawyan/mcp-sec-server/edgar/filing-directory.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

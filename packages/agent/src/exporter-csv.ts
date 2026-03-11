@@ -4,7 +4,7 @@
 
 import { writeFile, mkdir, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import type { Report, AnalysisContext } from '@dolph/shared';
+import type { Report, AnalysisContext } from '@shawyan/shared';
 import type { ReportModel } from './report-model.js';
 import { buildReportDataRows } from './report-data-rows.js';
 import {

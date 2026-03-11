@@ -6,8 +6,8 @@
  * only has 2023-12-31, they are NOT mixed — the ratio for that period is skipped.
  */
 
-import type { CompanyFacts, Ratio, RatioName, ProvenanceReceipt } from '@dolph/shared';
-import { crossValidatedShareCount } from '@dolph/shared';
+import type { CompanyFacts, Ratio, RatioName, ProvenanceReceipt } from '@shawyan/shared';
+import { crossValidatedShareCount } from '@shawyan/shared';
 
 /** Annual filing forms in priority order */
 const ANNUAL_FORMS = new Set(['10-K', '20-F', '40-F']);

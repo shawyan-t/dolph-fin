@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import type { AnalysisContext, CompanyFacts, FinancialStatement, Report } from '@dolph/shared';
+import type { AnalysisContext, CompanyFacts, FinancialStatement, Report } from '@shawyan/shared';
 import { runDeterministicQAGates } from './deterministic-qa.js';
 import { buildCanonicalReportPackage } from './canonical-report-package.js';
 

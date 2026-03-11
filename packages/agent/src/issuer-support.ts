@@ -3,7 +3,7 @@ import type {
   ExcludedIssuerSummary,
   FinancialStatement,
   IssuerSupportStatus,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import { buildCanonicalAnnualPeriodMap, buildCanonicalAnnualSourceMap } from './report-facts.js';
 
 const ANNUAL_FORMS = new Set(['10-K', '20-F', '40-F']);

@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import type { CompanyComparison, RatioName } from '@dolph/shared';
-import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
+import type { CompanyComparison, RatioName } from '@shawyan/shared';
+import { getCompanyFacts } from '@shawyan/mcp-sec-server/tools/get-company-facts.js';
 import { getLatestValue } from '../xbrl/normalizer.js';
 import { calculateRatios } from '../math/ratios.js';
 

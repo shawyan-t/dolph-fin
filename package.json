@@ -10,8 +10,8 @@
     "analyze": "pnpm --filter agent start",
     "start": "pnpm --filter agent start",
     "test": "pnpm -r --if-present test",
-    "release:pack-cli": "./scripts/publish-cli.sh --dry-run",
-    "release:publish-cli": "./scripts/publish-cli.sh"
+    "release:pack-cli": "./scripts/publish-cli.sh --dry-run --skip-install",
+    "release:publish-cli": "./scripts/publish-cli.sh --skip-install"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["puppeteer"]

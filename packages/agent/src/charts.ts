@@ -1,4 +1,4 @@
-import type { AnalysisContext } from '@dolph/shared';
+import type { AnalysisContext } from '@shawyan/shared';
 import type { CompanyReportModel, ReportModel } from './report-model.js';
 import {
   buildReportDataRows,

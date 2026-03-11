@@ -5,7 +5,7 @@
  * This is a lookup table, not a creative decision.
  */
 
-import type { AgentPlan, AgentStep, ReportingPolicy } from '@dolph/shared';
+import type { AgentPlan, AgentStep, ReportingPolicy } from '@shawyan/shared';
 
 const DEFAULT_TREND_METRICS = [
   'revenue', 'net_income', 'operating_income', 'gross_profit',

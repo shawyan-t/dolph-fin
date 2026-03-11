@@ -15,18 +15,18 @@ import { spawn } from 'node:child_process';
 dotenv.config({ path: resolve(import.meta.dirname, '../../../.env') });
 
 import { select, input } from '@inquirer/prompts';
-import { runBootup } from '@dolph/bootup';
+import { runBootup } from '@shawyan/bootup';
 import { runPipeline } from './pipeline.js';
 import { createLLMProvider, getLLMConfig } from './llm/provider.js';
 import { generatePDF } from './exporter.js';
 import { exportCSV } from './exporter-csv.js';
 
-import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
-import { listPreviewableFilingFiles, previewFilingFile, saveFilingBundleZip } from '@dolph/mcp-sec-server/edgar/filing-directory.js';
-import { resolveTickerWithConfidence } from '@dolph/mcp-sec-server/edgar/cik-lookup.js';
+import { searchFilings } from '@shawyan/mcp-sec-server/tools/search-filings.js';
+import { listPreviewableFilingFiles, previewFilingFile, saveFilingBundleZip } from '@shawyan/mcp-sec-server/edgar/filing-directory.js';
+import { resolveTickerWithConfidence } from '@shawyan/mcp-sec-server/edgar/cik-lookup.js';
 import type { PipelineConfig, PipelineCallbacks } from './types.js';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
-import type { Report, AnalysisContext, ReportingPolicy } from '@dolph/shared';
+import type { Report, AnalysisContext, ReportingPolicy } from '@shawyan/shared';
 import { defaultFilingsDir, defaultReportsDir } from './report-paths.js';
 
 // ── ANSI helpers ──────────────────────────────────────────────

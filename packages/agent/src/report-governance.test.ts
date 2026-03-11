@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { AnalysisContext, CompanyFacts, FinancialStatement, Report } from '@dolph/shared';
+import type { AnalysisContext, CompanyFacts, FinancialStatement, Report } from '@shawyan/shared';
 import { applyDerivedPeriodValues } from './report-facts.js';
 import { buildCanonicalAnnualPeriodMap } from './report-facts.js';
 import { resolveReportingPolicy } from './report-policy.js';

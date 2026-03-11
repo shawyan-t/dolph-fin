@@ -6,7 +6,7 @@
  * the bucket from going negative under load.
  */
 
-import { SEC_MAX_REQUESTS_PER_SECOND } from '@dolph/shared';
+import { SEC_MAX_REQUESTS_PER_SECOND } from '@shawyan/shared';
 
 export class RateLimiter {
   private tokens: number;

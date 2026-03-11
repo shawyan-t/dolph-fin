@@ -19,7 +19,7 @@ import type {
   ReportSection,
   LLMProvider,
   AnalysisContext,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import { createPlan } from './planner.js';
 import { executePlan } from './executor.js';
 import { generateExecutiveSummaryOnly } from './narrator.js';
@@ -30,7 +30,7 @@ import { buildFinancialStatementsSection } from './statements-builder.js';
 import { buildKeyMetricsSection } from './metrics-builder.js';
 import { buildDataSourcesSection } from './sources-builder.js';
 import type { PipelineConfig, PipelineCallbacks, PipelineResult } from './types.js';
-import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
+import { getFilingContent } from '@shawyan/mcp-sec-server/tools/get-filing-content.js';
 import { resolveReportingPolicy } from './report-policy.js';
 import { buildCanonicalReportPackage, type CanonicalReportPackage } from './canonical-report-package.js';
 import type { ReportModel } from './report-model.js';
@@ -229,7 +229,7 @@ export async function runPipeline(
     callbacks?.onStep?.('Validating report quality', 'running');
     // Real QA validation happens in finalizeGovernedReport below.
     // This placeholder is replaced with the actual result after QA runs.
-    const validation: import('@dolph/shared').ValidationResult = {
+    const validation: import('@shawyan/shared').ValidationResult = {
       pass: false,
       issues: [],
       checked_at: new Date().toISOString(),
@@ -461,8 +461,8 @@ function extractSources(model: ReportModel) {
  * Collect provenance receipts from all data sources into a flat manifest.
  * Keys are "TICKER:metric:period" for traceability.
  */
-function collectProvenance(context: AnalysisContext): Record<string, import('@dolph/shared').ProvenanceReceipt> | undefined {
-  const manifest: Record<string, import('@dolph/shared').ProvenanceReceipt> = {};
+function collectProvenance(context: AnalysisContext): Record<string, import('@shawyan/shared').ProvenanceReceipt> | undefined {
+  const manifest: Record<string, import('@shawyan/shared').ProvenanceReceipt> = {};
   let hasAny = false;
 
   for (const ticker of context.tickers) {

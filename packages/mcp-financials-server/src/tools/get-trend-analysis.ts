@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import type { TrendData } from '@dolph/shared';
-import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
+import type { TrendData } from '@shawyan/shared';
+import { getCompanyFacts } from '@shawyan/mcp-sec-server/tools/get-company-facts.js';
 import { analyzeTrends } from '../math/trends.js';
 
 export const GetTrendAnalysisInput = z.object({

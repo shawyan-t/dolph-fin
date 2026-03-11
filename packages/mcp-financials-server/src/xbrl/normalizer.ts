@@ -5,8 +5,8 @@
  * Supports both domestic filers (10-K/10-Q) and foreign filers (20-F/6-K/40-F).
  */
 
-import type { CompanyFacts, FinancialStatement, StatementType, Period } from '@dolph/shared';
-import { getMappingsForStatement, getMappingByName } from '@dolph/shared';
+import type { CompanyFacts, FinancialStatement, StatementType, Period } from '@shawyan/shared';
+import { getMappingsForStatement, getMappingByName } from '@shawyan/shared';
 
 /**
  * Annual filing form types in priority order.

@@ -14,17 +14,17 @@ import type {
   Ratio,
   TrendData,
   CompanyComparison,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 
 // Direct imports of tool implementations (no MCP protocol overhead)
-import { getCompanyFilings } from '@dolph/mcp-sec-server/tools/get-company-filings.js';
-import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
-import { getFilingContent } from '@dolph/mcp-sec-server/tools/get-filing-content.js';
-import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
-import { getFinancialStatements } from '@dolph/mcp-financials-server/tools/get-financial-statements.js';
-import { calculateRatiosTool } from '@dolph/mcp-financials-server/tools/calculate-ratios.js';
-import { getTrendAnalysis } from '@dolph/mcp-financials-server/tools/get-trend-analysis.js';
-import { compareCompanies } from '@dolph/mcp-financials-server/tools/compare-companies.js';
+import { getCompanyFilings } from '@shawyan/mcp-sec-server/tools/get-company-filings.js';
+import { getCompanyFacts } from '@shawyan/mcp-sec-server/tools/get-company-facts.js';
+import { getFilingContent } from '@shawyan/mcp-sec-server/tools/get-filing-content.js';
+import { searchFilings } from '@shawyan/mcp-sec-server/tools/search-filings.js';
+import { getFinancialStatements } from '@shawyan/mcp-financials-server/tools/get-financial-statements.js';
+import { calculateRatiosTool } from '@shawyan/mcp-financials-server/tools/calculate-ratios.js';
+import { getTrendAnalysis } from '@shawyan/mcp-financials-server/tools/get-trend-analysis.js';
+import { compareCompanies } from '@shawyan/mcp-financials-server/tools/compare-companies.js';
 
 import type { PipelineCallbacks } from './types.js';
 

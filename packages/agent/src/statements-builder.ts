@@ -6,7 +6,7 @@
  * "Financial Statements" section to ensure consistent table formatting.
  */
 
-import type { ReportSection } from '@dolph/shared';
+import type { ReportSection } from '@shawyan/shared';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
 import type { CanonicalStatementTable } from './report-model.js';
 

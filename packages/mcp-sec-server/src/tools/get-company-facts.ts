@@ -12,14 +12,14 @@ import type {
   FinancialFact,
   ConceptSelectionPolicy,
   RevenueConceptScope,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import {
   SEC_XBRL_COMPANY_FACTS_URL,
   CACHE_TTL_COMPANY_FACTS,
   XBRL_MAPPINGS,
   XBRL_CONCEPT_SELECTION_VERSION,
   getGovernedTagProfile,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import { resolveCik, getCompanyName } from '../edgar/cik-lookup.js';
 import { edgarFetchJson } from '../edgar/client.js';
 import { fileCache } from '../cache/file-cache.js';

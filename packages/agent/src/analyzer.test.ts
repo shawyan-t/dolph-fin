@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import type { AnalysisContext, CompanyFacts, FinancialStatement } from '@dolph/shared';
+import type { AnalysisContext, CompanyFacts, FinancialStatement } from '@shawyan/shared';
 import { analyzeData } from './analyzer.js';
 
 function makeFacts(ticker: string, metricsByPeriod: Record<string, Record<string, number>>): CompanyFacts {

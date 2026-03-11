@@ -1,4 +1,4 @@
-import type { ReportSection } from '@dolph/shared';
+import type { ReportSection } from '@shawyan/shared';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
 import { requireCanonicalReportPackage } from './canonical-report-package.js';
 

@@ -4,13 +4,13 @@
  */
 
 import { z } from 'zod';
-import type { Filing, FilingType } from '@dolph/shared';
+import type { Filing, FilingType } from '@shawyan/shared';
 import {
   SEC_SUBMISSIONS_URL,
   SEC_EDGAR_ARCHIVES_URL,
   CACHE_TTL_FILINGS_LIST,
   DEFAULT_FILINGS_LIMIT,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import { resolveCik } from '../edgar/cik-lookup.js';
 import { edgarFetchJson } from '../edgar/client.js';
 import { fileCache } from '../cache/file-cache.js';

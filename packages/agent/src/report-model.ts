@@ -5,7 +5,7 @@ import type {
   MetricAvailabilityReasonCode,
   MetricBasisUsage,
   ReportingPolicy,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import {
   formatCompactCurrency,
   formatCompactShares,
@@ -13,7 +13,7 @@ import {
   formatMetricChange,
   getMappingByName,
   getMappingsForStatement,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import type { AnalysisInsights, LedgerMetric } from './analyzer.js';
 import {
   buildCanonicalAnnualPeriodMap,

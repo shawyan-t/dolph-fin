@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { searchFilings } from '@dolph/mcp-sec-server/tools/search-filings.js';
+import { searchFilings } from '@shawyan/mcp-sec-server/tools/search-filings.js';
 import { loadDolphEnv } from '@/lib/dolph-env';
 
 export const runtime = 'nodejs';

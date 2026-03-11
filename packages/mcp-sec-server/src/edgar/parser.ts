@@ -3,7 +3,7 @@
  */
 
 import * as cheerio from 'cheerio';
-import { FILING_10K_SECTIONS } from '@dolph/shared';
+import { FILING_10K_SECTIONS } from '@shawyan/shared';
 
 export interface ParsedSection {
   title: string;

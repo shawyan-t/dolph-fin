@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { resolveTickerWithConfidence } from '@dolph/mcp-sec-server/resolver';
+import { resolveTickerWithConfidence } from '@shawyan/mcp-sec-server/resolver';
 import { loadDolphEnv } from '@/lib/dolph-env';
 
 export const runtime = 'nodejs';

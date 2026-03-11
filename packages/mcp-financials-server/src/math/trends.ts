@@ -3,7 +3,7 @@
  * All deterministic computation, no LLM.
  */
 
-import type { CompanyFacts, TrendData, Period } from '@dolph/shared';
+import type { CompanyFacts, TrendData, Period } from '@shawyan/shared';
 import { getMetricTimeSeries } from '../xbrl/normalizer.js';
 
 /**

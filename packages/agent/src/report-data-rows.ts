@@ -1,5 +1,5 @@
-import type { AnalysisContext, MetricAvailabilityReasonCode } from '@dolph/shared';
-import { getMappingByName } from '@dolph/shared';
+import type { AnalysisContext, MetricAvailabilityReasonCode } from '@shawyan/shared';
+import { getMappingByName } from '@shawyan/shared';
 import type { ReportModel } from './report-model.js';
 
 export interface FactDataRow {

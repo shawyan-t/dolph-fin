@@ -6,7 +6,7 @@
  * infinite hangs under provider outage.
  */
 
-import type { LLMProvider, LLMProviderName, LLMConfig, LLMResponse } from '@dolph/shared';
+import type { LLMProvider, LLMProviderName, LLMConfig, LLMResponse } from '@shawyan/shared';
 
 /** Hard timeout for any single LLM call (60 seconds) */
 const LLM_TIMEOUT_MS = 60_000;

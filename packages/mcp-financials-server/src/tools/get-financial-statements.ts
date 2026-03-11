@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import type { FinancialStatement } from '@dolph/shared';
-import { getCompanyFacts } from '@dolph/mcp-sec-server/tools/get-company-facts.js';
+import type { FinancialStatement } from '@shawyan/shared';
+import { getCompanyFacts } from '@shawyan/mcp-sec-server/tools/get-company-facts.js';
 import { normalizeToStatements } from '../xbrl/normalizer.js';
 
 export const GetFinancialStatementsInput = z.object({

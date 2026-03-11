@@ -1,4 +1,4 @@
-import type { Report } from '@dolph/shared';
+import type { Report } from '@shawyan/shared';
 import { PDF_THEME } from './pdf-theme.js';
 
 const C = PDF_THEME.colors;

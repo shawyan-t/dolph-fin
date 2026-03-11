@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { calculateRatios } from './ratios.js';
-import type { CompanyFacts, RatioName } from '@dolph/shared';
+import type { CompanyFacts, RatioName } from '@shawyan/shared';
 
 /** Helper: build a minimal CompanyFacts fixture with period-coherent data */
 function makeFacts(metrics: Record<string, number>, period = '2024-12-31'): CompanyFacts {

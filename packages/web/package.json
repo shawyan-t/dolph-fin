@@ -1,5 +1,5 @@
 {
-  "name": "@dolph/web",
+  "name": "@shawyan/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@dolph/agent": "workspace:*",
-    "@dolph/mcp-sec-server": "workspace:*",
-    "@dolph/shared": "workspace:*",
+    "@shawyan/agent": "workspace:*",
+    "@shawyan/mcp-sec-server": "workspace:*",
+    "@shawyan/shared": "workspace:*",
     "nanoid": "^5.0.0",
     "next": "14.2.35",
     "react": "^18",

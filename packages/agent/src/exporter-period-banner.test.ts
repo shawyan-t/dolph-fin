@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import type { Report } from '@dolph/shared';
+import type { Report } from '@shawyan/shared';
 import { __test as exporterTest } from './exporter.js';
 import { PERIOD_BANNER_SLOT } from './pdf-page-templates.js';
 

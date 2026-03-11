@@ -2,7 +2,7 @@
  * Agent-specific types that extend shared types.
  */
 
-import type { AnalysisContext, Report, ReportingPolicy, SSEEvent } from '@dolph/shared';
+import type { AnalysisContext, Report, ReportingPolicy, SSEEvent } from '@shawyan/shared';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
 
 export interface PipelineConfig {

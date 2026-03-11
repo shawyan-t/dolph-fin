@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { listPreviewableFilingFiles, previewFilingFile } from '@dolph/mcp-sec-server/edgar/filing-directory.js';
+import { listPreviewableFilingFiles, previewFilingFile } from '@shawyan/mcp-sec-server/edgar/filing-directory.js';
 import { loadDolphEnv } from '@/lib/dolph-env';
 
 export const runtime = 'nodejs';

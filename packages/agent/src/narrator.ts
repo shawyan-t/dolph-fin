@@ -17,7 +17,7 @@ import type {
   ReportingPolicy,
   StructuredNarrativePayload,
   StructuredNarrativeSection,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import type { AnalysisInsights } from './analyzer.js';
 import type { ReportModel } from './report-model.js';
 import {

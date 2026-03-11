@@ -10,8 +10,8 @@ import type {
   MetricAvailabilityReasonCode,
   MetricBasisUsage,
   ReportingPolicy,
-} from '@dolph/shared';
-import { formatCompactCurrency, formatMetricChange, getMappingByName, crossValidatedShareCount, shareCountDiverges } from '@dolph/shared';
+} from '@shawyan/shared';
+import { formatCompactCurrency, formatMetricChange, getMappingByName, crossValidatedShareCount, shareCountDiverges } from '@shawyan/shared';
 import {
   hasCashPresentationAlternative,
   buildCanonicalAnnualPeriodMap,

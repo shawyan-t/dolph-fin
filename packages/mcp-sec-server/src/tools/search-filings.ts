@@ -12,13 +12,13 @@
  */
 
 import { z } from 'zod';
-import type { FilingSearchResult } from '@dolph/shared';
+import type { FilingSearchResult } from '@shawyan/shared';
 import {
   CACHE_TTL_SEARCH,
   SEC_EDGAR_ARCHIVES_URL,
   SEC_FULL_TEXT_SEARCH_URL,
   SUPPORTED_FILING_FORMS_CSV,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import { edgarFetchJson } from '../edgar/client.js';
 import { fileCache } from '../cache/file-cache.js';
 import { getEntityByCik, resolveCik } from '../edgar/cik-lookup.js';

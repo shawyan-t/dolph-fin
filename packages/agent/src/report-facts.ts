@@ -1,4 +1,4 @@
-import { getMappingByName, type AnalysisContext, type FinancialStatement, type ProvenanceReceipt } from '@dolph/shared';
+import { getMappingByName, type AnalysisContext, type FinancialStatement, type ProvenanceReceipt } from '@shawyan/shared';
 
 const ANNUAL_FORMS = new Set(['10-K', '20-F', '40-F']);
 

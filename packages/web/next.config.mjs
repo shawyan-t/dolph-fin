@@ -1,8 +1,8 @@
 const serverPackages = [
-  "@dolph/agent",
-  "@dolph/shared",
-  "@dolph/mcp-sec-server",
-  "@dolph/mcp-financials-server",
+  "@shawyan/agent",
+  "@shawyan/shared",
+  "@shawyan/mcp-sec-server",
+  "@shawyan/mcp-financials-server",
   "openai",
   "cheerio",
   "puppeteer",

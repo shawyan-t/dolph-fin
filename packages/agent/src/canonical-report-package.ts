@@ -1,4 +1,4 @@
-import type { AnalysisContext } from '@dolph/shared';
+import type { AnalysisContext } from '@shawyan/shared';
 import type { AnalysisInsights } from './analyzer.js';
 import { analyzeData } from './analyzer.js';
 import { buildReportModel, type ReportModel } from './report-model.js';

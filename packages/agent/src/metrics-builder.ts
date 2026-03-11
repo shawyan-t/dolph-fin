@@ -5,7 +5,7 @@
  * NO LLM involved — pure code.
  */
 
-import type { ReportSection } from '@dolph/shared';
+import type { ReportSection } from '@shawyan/shared';
 import type { CanonicalReportPackage } from './canonical-report-package.js';
 import {
   collectMetricBasisDisclosures,

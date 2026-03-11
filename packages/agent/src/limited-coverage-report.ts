@@ -4,7 +4,7 @@ import type {
   IssuerSupportStatus,
   Report,
   ReportSection,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 
 function extractReportDate(generatedAt: string): string {
   return generatedAt.slice(0, 10);

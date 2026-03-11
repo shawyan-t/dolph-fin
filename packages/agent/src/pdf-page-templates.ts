@@ -1,8 +1,8 @@
-import type { Report, ReportSection } from '@dolph/shared';
+import type { Report, ReportSection } from '@shawyan/shared';
 import {
   formatCompactCurrency,
   formatCompactShares,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import {
   PDF_RENDER_RULES,
   clipBullets,

@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 import type {
   AuditArtifactManifest,
   Report,
-} from '@dolph/shared';
-import type { AnalysisContext } from '@dolph/shared';
+} from '@shawyan/shared';
+import type { AnalysisContext } from '@shawyan/shared';
 import type { AnalysisInsights } from './analyzer.js';
 import type { DeterministicQAResult } from './deterministic-qa.js';
 import type { ReportModel } from './report-model.js';

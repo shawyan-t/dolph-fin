@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import type { FilingContent } from '@dolph/shared';
-import { CACHE_TTL_FILING_CONTENT } from '@dolph/shared';
+import type { FilingContent } from '@shawyan/shared';
+import { CACHE_TTL_FILING_CONTENT } from '@shawyan/shared';
 import { edgarFetchHtml, edgarFetchJson } from '../edgar/client.js';
 import { parseFilingHtml } from '../edgar/parser.js';
 import { fileCache } from '../cache/file-cache.js';

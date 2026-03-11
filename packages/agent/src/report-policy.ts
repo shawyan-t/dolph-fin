@@ -2,7 +2,7 @@ import type {
   NarrativeGovernanceMode,
   ReportingMode,
   ReportingPolicy,
-} from '@dolph/shared';
+} from '@shawyan/shared';
 import type { PipelineConfig } from './types.js';
 
 export const INSTITUTIONAL_DEFAULTS: ReportingPolicy = {

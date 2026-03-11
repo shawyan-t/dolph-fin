@@ -40,11 +40,11 @@ else
 fi
 
 echo "[2/4] Building workspace..."
-pnpm --filter @dolph/shared \
-  --filter @dolph/mcp-sec-server \
-  --filter @dolph/mcp-financials-server \
-  --filter @dolph/bootup \
-  --filter @dolph/agent \
+pnpm --filter @shawyan/shared \
+  --filter @shawyan/mcp-sec-server \
+  --filter @shawyan/mcp-financials-server \
+  --filter @shawyan/bootup \
+  --filter @shawyan/agent \
   build
 
 echo "[3/4] Verifying publish payloads..."
@@ -58,7 +58,7 @@ done
 
 if [[ "${DRY_RUN}" == "true" ]]; then
   echo "[4/4] Dry run complete. No packages were published."
-  echo "Install command users should run: npm i -g @dolph/agent"
+  echo "Install command users should run: npm i -g @shawyan/agent"
   exit 0
 fi
 
@@ -72,4 +72,4 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 echo "Publish complete."
-echo "Install command users should run: npm i -g @dolph/agent"
+echo "Install command users should run: npm i -g @shawyan/agent"

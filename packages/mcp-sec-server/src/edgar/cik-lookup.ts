@@ -9,7 +9,7 @@
  * 5. Fail with helpful error message including suggestions
  */
 
-import { SEC_COMPANY_TICKERS_URL, CACHE_TTL_TICKERS } from '@dolph/shared';
+import { SEC_COMPANY_TICKERS_URL, CACHE_TTL_TICKERS } from '@shawyan/shared';
 import { fileCache } from '../cache/file-cache.js';
 import { edgarFetchJson } from './client.js';
 

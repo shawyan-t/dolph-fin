@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatMetricChange } from '@dolph/shared';
+import { formatMetricChange } from '@shawyan/shared';
 import { stripMarkdown } from './pdf-render-rules.js';
 import { applyDerivedPeriodValues } from './report-facts.js';
 
