@@ -82,7 +82,9 @@ export async function generatePDF(
     }
 
     const requiredPackage = requireCanonicalReportPackage(pkg, 'generatePDF');
-    renderedCharts = await renderChartSetWithDatawrapper(requiredPackage.charts, finalReport);
+    renderedCharts = hasResolvedChartAssets(requiredPackage.charts)
+      ? requiredPackage.charts
+      : await renderChartSetWithDatawrapper(requiredPackage.charts, finalReport);
     const { bodyHTML } = buildPdfPages(finalReport, {
       ...requiredPackage,
       charts: renderedCharts,
@@ -187,6 +189,11 @@ export async function generatePDF(
   }
 
   return outputPath;
+}
+
+function hasResolvedChartAssets(chartSet: CanonicalReportPackage['charts'] | undefined): boolean {
+  if (!chartSet?.items?.length) return false;
+  return chartSet.items.every((item) => item.renderStatus !== 'pending');
 }
 
 function buildLimitedBodyHTML(report: Report): string {

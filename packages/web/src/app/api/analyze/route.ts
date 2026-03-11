@@ -1,18 +1,108 @@
-import { NextRequest } from "next/server";
-import { z } from "zod";
-import { loadAnalysisRecord, saveAnalysisRecord, type StoredCharts } from "@/lib/history-store";
+import { NextRequest } from 'next/server';
+import { readFile } from 'node:fs/promises';
+import { basename } from 'node:path';
+import { resolve } from 'node:path';
+import { homedir } from 'node:os';
+import { z } from 'zod';
+import { loadAnalysisRecord, saveAnalysisRecord } from '@/lib/history-store';
+import { registerArtifact } from '@/lib/artifact-store';
+import type { Report } from '@dolph/shared';
+import type { CanonicalReportPackage } from '@dolph/agent/dist/canonical-report-package.js';
+import type { AnalysisContext } from '@dolph/shared';
+import type { ChartSet } from '@dolph/agent/dist/charts.js';
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.DOLPH_WEB_RATE_LIMIT_MAX || "10", 10);
+const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.DOLPH_WEB_RATE_LIMIT_MAX || '10', 10);
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
+interface DownloadArtifact {
+  token: string;
+  filename: string;
+}
+
+interface FinalReportPayload extends Report {
+  artifacts?: {
+    pdf?: DownloadArtifact | null;
+    csv?: DownloadArtifact | null;
+  };
+  charts?: RenderedChartPayload[];
+}
+
+interface RenderedChartPayload {
+  key: string;
+  title: string;
+  caption: string;
+  assetType: 'svg' | 'png';
+  mimeType: string;
+  content: string;
+}
+
+async function getPipelineModule() {
+  return import('@dolph/agent/pipeline');
+}
+
+async function getExporterModule() {
+  return import('@dolph/agent/dist/exporter.js');
+}
+
+async function getCsvExporterModule() {
+  return import('@dolph/agent/dist/exporter-csv.js');
+}
+
+async function getReportPathsModule() {
+  return import('@dolph/agent/dist/report-paths.js');
+}
+
+async function getResolverModule() {
+  return import('@dolph/mcp-sec-server/resolver');
+}
+
+async function getDatawrapperModule() {
+  return import('@dolph/agent/dist/datawrapper.js');
+}
+
+async function loadDolphEnv() {
+  await applyEnvFile(resolve(process.cwd(), '.env'), false);
+  await applyEnvFile(resolve(homedir(), '.dolph/.env'), true);
+}
+
+async function applyEnvFile(filePath: string, override: boolean) {
+  try {
+    const raw = await readFile(filePath, 'utf8');
+    for (const line of raw.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf('=');
+      if (idx === -1) continue;
+      const key = trimmed.slice(0, idx).trim();
+      let value = trimmed.slice(idx + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      if (!override && process.env[key] !== undefined) continue;
+      process.env[key] = value;
+    }
+  } catch {
+    // Missing env file is fine.
+  }
+}
+
+const AnalyzeRequestSchema = z.object({
+  analysis_id: z.string().regex(/^[A-Za-z0-9_-]{3,80}$/).optional(),
+  tickers: z.array(z.string().min(1).max(120)).min(1).max(5),
+  type: z.enum(['single', 'comparison']),
+  snapshot_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  narrative_mode: z.enum(['llm', 'deterministic']).optional(),
+  output_format: z.enum(['terminal', 'pdf', 'both']).optional(),
+});
+
 function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim();
-  return request.headers.get("x-real-ip") || "unknown";
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0]!.trim();
+  return request.headers.get('x-real-ip') || 'unknown';
 }
 
 function isRateLimited(ip: string): boolean {
@@ -36,47 +126,139 @@ function cleanupRateLimitStore(): void {
 function unauthorized(message: string): Response {
   return new Response(JSON.stringify({ error: message }), {
     status: 401,
-    headers: { "Content-Type": "application/json" },
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
-/** Request body schema — validated before pipeline runs */
-const AnalyzeRequestSchema = z.object({
-  analysis_id: z.string().regex(/^[A-Za-z0-9_-]{3,80}$/).optional(),
-  tickers: z
-    .array(z.string().min(1).max(10).regex(/^[A-Za-z0-9][A-Za-z0-9.\-]{0,9}$/))
-    .min(1)
-    .max(5),
-  type: z.enum(["single", "comparison"]),
-  snapshot_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  narrative_mode: z.enum(["llm", "deterministic"]).optional(),
-});
+function buildHeaders(): HeadersInit {
+  return {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+  };
+}
+
+function preparePdfRuntimeEnv() {
+  void loadDolphEnv();
+  process.env['WS_NO_BUFFER_UTIL'] = '1';
+  process.env['WS_NO_UTF_8_VALIDATE'] = '1';
+}
+
+function serializeRenderedCharts(chartSet?: ChartSet): RenderedChartPayload[] {
+  if (!chartSet?.items?.length) return [];
+  return chartSet.items
+    .filter((item) => item.renderStatus === 'rendered' && item.asset)
+    .map((item) => ({
+      key: item.key,
+      title: item.title,
+      caption: item.caption,
+      assetType: item.asset!.assetType,
+      mimeType: item.asset!.mimeType,
+      content: item.asset!.content,
+    }));
+}
+
+async function buildArtifacts(args: {
+  report: Report;
+  context?: AnalysisContext;
+  canonicalPackage?: CanonicalReportPackage;
+  outputFormat: 'terminal' | 'pdf' | 'both';
+  sendStep: (step: string, status: 'running' | 'complete' | 'error', detail?: string) => void;
+}): Promise<FinalReportPayload['artifacts']> {
+  const { report, context, canonicalPackage, outputFormat, sendStep } = args;
+  const { defaultReportsDir } = await getReportPathsModule();
+  const reportsDir = defaultReportsDir();
+  const artifacts: NonNullable<FinalReportPayload['artifacts']> = {};
+
+  if (outputFormat === 'pdf' || outputFormat === 'both') {
+    try {
+      sendStep('Preparing PDF', 'running');
+      preparePdfRuntimeEnv();
+      const { generatePDF } = await getExporterModule();
+      const pdfPath = await generatePDF(report, reportsDir, context, canonicalPackage);
+      artifacts.pdf = await registerArtifact(pdfPath, basename(pdfPath), 'application/pdf');
+      sendStep('Preparing PDF', 'complete', basename(pdfPath));
+    } catch (error) {
+      sendStep('Preparing PDF', 'error', error instanceof Error ? error.message : 'PDF generation failed');
+      artifacts.pdf = null;
+    }
+  }
+
+  if (context && canonicalPackage) {
+    try {
+      sendStep('Preparing CSV export', 'running');
+      const { exportCSV } = await getCsvExporterModule();
+      const csv = await exportCSV(report, context, canonicalPackage.reportModel, reportsDir);
+      artifacts.csv = await registerArtifact(csv.combinedPath, basename(csv.combinedPath), 'text/csv; charset=utf-8');
+      sendStep('Preparing CSV export', 'complete', basename(csv.combinedPath));
+    } catch (error) {
+      sendStep('Preparing CSV export', 'error', error instanceof Error ? error.message : 'CSV export failed');
+      artifacts.csv = null;
+    }
+  }
+
+  return artifacts;
+}
+
+async function resolveTickers(rawTickers: string[]) {
+  const resolvedTickers: string[] = [];
+  const { resolveTickerWithConfidence } = await getResolverModule();
+  for (const raw of rawTickers) {
+    const resolved = await resolveTickerWithConfidence(raw);
+    if (!resolved) {
+      return {
+        error: new Response(JSON.stringify({ error: `Could not resolve ticker \"${raw}\"` }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      };
+    }
+
+    if (resolved.confidence < 0.7) {
+      return {
+        error: new Response(JSON.stringify({
+          error: `Ticker \"${raw}\" is ambiguous`,
+          best_match: resolved.ticker,
+          alternatives: resolved.alternatives.map(option => option.ticker),
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      };
+    }
+
+    resolvedTickers.push(resolved.ticker);
+  }
+
+  return { tickers: resolvedTickers };
+}
 
 export async function POST(request: NextRequest) {
+  await loadDolphEnv();
   cleanupRateLimitStore();
 
   const apiKey = process.env.DOLPH_WEB_API_KEY;
   if (apiKey) {
-    const provided = request.headers.get("x-api-key");
+    const provided = request.headers.get('x-api-key');
     if (!provided || provided !== apiKey) {
-      return unauthorized("Unauthorized");
+      return unauthorized('Unauthorized');
     }
   }
 
   const allowedOrigin = process.env.DOLPH_WEB_ALLOWED_ORIGIN;
-  const origin = request.headers.get("origin");
+  const origin = request.headers.get('origin');
   if (allowedOrigin && origin && origin !== allowedOrigin) {
-    return new Response(JSON.stringify({ error: "Origin not allowed" }), {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
       status: 403,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {
-    return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+    return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
       status: 429,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
@@ -84,64 +266,34 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   const parsed = AnalyzeRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return new Response(
-      JSON.stringify({
-        error: "Invalid request",
-        details: parsed.error.issues.map((i) => i.message),
-      }),
-      { status: 400, headers: { "Content-Type": "application/json" } },
-    );
+    return new Response(JSON.stringify({
+      error: 'Invalid request',
+      details: parsed.error.issues.map(issue => issue.message),
+    }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
-  const {
-    analysis_id,
-    tickers: rawTickers,
-    type,
-    snapshot_date,
-    narrative_mode,
-  } = parsed.data;
-  const { resolveTickerWithConfidence } = await import(
-    "@dolph/mcp-sec-server/resolver"
-  );
-
-  const tickers: string[] = [];
-  for (const raw of rawTickers) {
-    const resolved = await resolveTickerWithConfidence(raw);
-    if (!resolved) {
-      return new Response(JSON.stringify({
-        error: `Could not resolve ticker "${raw}"`,
-      }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    if (resolved.confidence < 0.7) {
-      return new Response(JSON.stringify({
-        error: `Ticker "${raw}" is ambiguous`,
-        best_match: resolved.ticker,
-        alternatives: resolved.alternatives.map(a => a.ticker),
-      }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    tickers.push(resolved.ticker);
-  }
+  const { analysis_id, tickers: rawTickers, type, snapshot_date, narrative_mode, output_format } = parsed.data;
+  const resolution = await resolveTickers(rawTickers);
+  if ('error' in resolution) return resolution.error;
+  const tickers = resolution.tickers;
 
   const existingRecord = analysis_id ? await loadAnalysisRecord(analysis_id) : null;
   const matchesExisting = existingRecord
     && existingRecord.type === type
     && existingRecord.snapshot_date === snapshot_date
     && existingRecord.tickers.length === tickers.length
-    && existingRecord.tickers.every((t, i) => t === tickers[i]);
+    && existingRecord.tickers.every((ticker, index) => ticker === tickers[index]);
 
   const encoder = new TextEncoder();
 
@@ -149,66 +301,29 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       let disconnected = false;
       const pipelineAbortController = new AbortController();
-      request.signal.addEventListener("abort", () => {
+      request.signal.addEventListener('abort', () => {
         disconnected = true;
         pipelineAbortController.abort();
       });
 
-      const ensureConnected = () => {
-        if (disconnected || request.signal.aborted) {
-          throw new Error("Client disconnected");
-        }
-      };
-
       const send = (eventType: string, data: unknown) => {
         if (disconnected) return;
-        try {
-          const payload = `data: ${JSON.stringify({ type: eventType, data })}\n\n`;
-          controller.enqueue(encoder.encode(payload));
-        } catch {
-          // Client disconnected — ignore enqueue errors
-        }
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: eventType, data })}\n\n`));
+      };
+
+      const sendStep = (step: string, status: 'running' | 'complete' | 'error', detail?: string) => {
+        send('step', { step, status, detail });
       };
 
       try {
         if (matchesExisting && existingRecord) {
-          send("step", {
-            step: "Loading analysis history",
-            status: "complete",
-            detail: "Loaded saved analysis",
-          });
-          if (existingRecord.charts) {
-            send("charts", existingRecord.charts);
-          }
-          send("final_report", existingRecord.report);
+          sendStep('Loading analysis history', 'complete', 'Loaded saved analysis');
+          send('final_report', existingRecord.report);
+          controller.close();
           return;
         }
 
-        const { runPipeline } = await import("@dolph/agent/pipeline");
-        const { createLLMProvider, getLLMConfig } = await import(
-          "@dolph/agent/llm/provider"
-        );
-
-        const selectedNarrativeMode = narrative_mode ?? "deterministic";
-        let effectiveNarrativeMode: "llm" | "deterministic" = selectedNarrativeMode;
-        let llm: ReturnType<typeof createLLMProvider> | undefined;
-
-        if (selectedNarrativeMode === "llm") {
-          try {
-            const llmConfig = getLLMConfig();
-            llm = createLLMProvider(llmConfig);
-          } catch {
-            effectiveNarrativeMode = "deterministic";
-            send("step", {
-              step: "LLM provider",
-              status: "error",
-              detail: "Unavailable; falling back to deterministic narrative mode",
-            });
-          }
-        }
-
-        let chartsForHistory: StoredCharts | undefined;
-
+        const { runPipeline } = await getPipelineModule();
         await runPipeline(
           {
             tickers,
@@ -216,40 +331,54 @@ export async function POST(request: NextRequest) {
             maxRetries: 2,
             maxValidationLoops: 2,
             snapshotDate: snapshot_date,
-            narrativeMode: effectiveNarrativeMode,
+            narrativeMode: narrative_mode || 'deterministic',
+            outputFormat: output_format || 'terminal',
             abortSignal: pipelineAbortController.signal,
           },
-          llm,
+          undefined,
           {
             onStep(step, status, detail) {
-              ensureConnected();
-              send("step", { step, status, detail });
+              sendStep(step, status, detail);
             },
             onPartialReport(sectionId, content) {
-              ensureConnected();
-              send("partial_report", { section: sectionId, content });
+              send('partial_report', { section: sectionId, content });
             },
-            async onComplete(report, context) {
-              ensureConnected();
-              // Send charts if context available
-              if (context) {
+            async onComplete(report, context, canonicalPackage) {
+              let packageForArtifacts = canonicalPackage;
+              let renderedCharts = canonicalPackage?.charts;
+
+              if (canonicalPackage && report.metadata?.report_state === 'full') {
                 try {
-                  const { generateCharts } = await import("@dolph/agent/dist/charts.js");
-                  const charts = generateCharts(context);
-                  chartsForHistory = {
-                    revenueMarginChart: charts.revenueMarginChart,
-                    fcfBridgeChart: charts.fcfBridgeChart,
-                    peerScorecardChart: charts.peerScorecardChart,
-                    returnLeverageChart: charts.returnLeverageChart,
-                    growthDurabilityChart: charts.growthDurabilityChart,
+                  sendStep('Rendering charts', 'running');
+                  const { renderChartSetWithDatawrapper } = await getDatawrapperModule();
+                  renderedCharts = await renderChartSetWithDatawrapper(canonicalPackage.charts, report);
+                  packageForArtifacts = {
+                    ...canonicalPackage,
+                    charts: renderedCharts,
                   };
-                  send("charts", chartsForHistory);
+                  const renderedCount = renderedCharts.items.filter((item) => item.renderStatus === 'rendered').length;
+                  sendStep('Rendering charts', 'complete', `${renderedCount} chart(s) prepared`);
                 } catch {
-                  // Chart generation failure is non-fatal
+                  renderedCharts = canonicalPackage.charts;
+                  sendStep('Rendering charts', 'error', 'Chart rendering failed');
                 }
               }
-              ensureConnected();
-              send("final_report", report);
+
+              const artifacts = await buildArtifacts({
+                report,
+                context,
+                canonicalPackage: packageForArtifacts,
+                outputFormat: output_format || 'terminal',
+                sendStep,
+              });
+
+              const finalPayload: FinalReportPayload = {
+                ...report,
+                artifacts,
+                charts: serializeRenderedCharts(renderedCharts),
+              };
+
+              send('final_report', finalPayload);
 
               if (analysis_id) {
                 try {
@@ -261,25 +390,19 @@ export async function POST(request: NextRequest) {
                     type,
                     snapshot_date,
                     report,
-                    charts: chartsForHistory,
                   });
                 } catch {
-                  // Persistence failure should not block delivering analysis.
+                  // Non-fatal for web delivery.
                 }
               }
             },
             onError(error) {
-              if (disconnected) return;
-              send("error", { message: error });
+              send('error', { message: error });
             },
           },
         );
-      } catch (err) {
-        if (!disconnected) {
-          send("error", {
-            message: err instanceof Error ? err.message : "Analysis failed",
-          });
-        }
+      } catch (error) {
+        send('error', { message: error instanceof Error ? error.message : 'Analysis failed' });
       } finally {
         if (!disconnected) {
           controller.close();
@@ -288,11 +411,5 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
-  });
+  return new Response(stream, { headers: buildHeaders() });
 }

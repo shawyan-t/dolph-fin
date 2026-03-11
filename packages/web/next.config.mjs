@@ -1,18 +1,21 @@
+const serverPackages = [
+  "@dolph/agent",
+  "@dolph/shared",
+  "@dolph/mcp-sec-server",
+  "@dolph/mcp-financials-server",
+  "openai",
+  "cheerio",
+  "puppeteer",
+  "puppeteer-core",
+  "ws",
+  "bufferutil",
+  "utf-8-validate",
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Allow importing from monorepo packages
-  transpilePackages: [
-    "@dolph/shared",
-    "@dolph/agent",
-    "@dolph/mcp-sec-server",
-    "@dolph/mcp-financials-server",
-  ],
-  // Enable server actions for SSE streaming
   experimental: {
-    serverComponentsExternalPackages: [
-      "openai",
-      "cheerio",
-    ],
+    serverComponentsExternalPackages: serverPackages,
   },
 };
 

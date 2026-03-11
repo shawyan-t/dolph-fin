@@ -2,8 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Dolph — AI-powered SEC Filing Analysis",
-  description: "Analyze SEC filings with AI. Get professional financial reports from public EDGAR data.",
+  title: "Dolph | SEC EDGAR Research Console",
+  description: "Institutional-grade SEC filing analysis, company comparison, and disclosure search built on Dolph’s deterministic finance engine.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/dolph-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -13,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="antialiased min-h-screen bg-[#0a0a0a]">
+      <body className="min-h-screen bg-background font-sans antialiased">
         {children}
       </body>
     </html>
