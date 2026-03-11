@@ -8,7 +8,7 @@ import { CLEAR_SCREEN, CURSOR_HOME, RESET_STYLE } from './constants.js';
 import { renderCenteredText } from './renderer.js';
 import { hslToRgb, fgRgb } from './colors.js';
 
-const TITLE_GRADIENT = gradient(['#00ffff', '#ff00ff', '#ffd700']);
+const TITLE_GRADIENT = gradient(['#b7f59e', '#8fe388', '#6dcc73']);
 const SUBTITLE_TEXT = 'AI-powered SEC filing analysis';
 const VERSION_TEXT = 'v0.1.0';
 

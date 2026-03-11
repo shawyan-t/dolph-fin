@@ -4,14 +4,13 @@
  * Dolph Terminal Bootup Animation
  *
  * A ~5 second splash screen featuring:
- * 1. 3D spinning diamond (octahedron) with gradient colors
- * 2. Orbiting star particles with twinkle effects
+ * 1. Blue dolphin swimming and leaping over water
+ * 2. Moving wave line and light splash effects
  * 3. Fade transition
  * 4. Figlet title reveal with typewriter effect
  */
 
-import { renderDiamond } from './diamond.js';
-import { ParticleSystem } from './particles.js';
+import { renderOceanScene } from './ocean.js';
 import { renderFrame } from './renderer.js';
 import { renderTitleReveal } from './title.js';
 import {
@@ -21,8 +20,6 @@ import {
   CURSOR_HOME,
   RESET_STYLE,
   FRAME_MS,
-  ROTATION_SPEED_A,
-  ROTATION_SPEED_B,
   ANIMATION_DURATION_MS,
   FADE_DURATION_MS,
 } from './constants.js';
@@ -48,13 +45,10 @@ export async function runBootup(): Promise<void> {
     process.exit(0);
   });
 
-  const particles = new ParticleSystem();
-  let angleA = 0;
-  let angleB = 0;
   let frameIndex = 0;
   const startTime = Date.now();
 
-  // Phase 1: Spinning diamond + particles
+  // Phase 1: Dolphin + water
   await new Promise<void>((resolve) => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -76,26 +70,12 @@ export async function runBootup(): Promise<void> {
         }
       }
 
-      // Render diamond
-      const { charBuffer, colorBuffer } = renderDiamond(
-        width,
-        height,
-        angleA,
-        angleB,
-        frameIndex,
-        brightness,
-      );
-
-      // Update and render particles
-      particles.update(Math.floor(width / 2), Math.floor(height / 2), spawnRate);
-      particles.render(charBuffer, colorBuffer, width, height, brightness);
+      const { charBuffer, colorBuffer } = renderOceanScene(width, height, frameIndex, brightness);
 
       // Output frame
       renderFrame(charBuffer, colorBuffer, width, height);
 
       // Advance animation state
-      angleA += ROTATION_SPEED_A * (180 / Math.PI);
-      angleB += ROTATION_SPEED_B * (180 / Math.PI);
       frameIndex++;
     }, FRAME_MS);
   });
