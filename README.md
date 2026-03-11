@@ -63,6 +63,54 @@ dolph/
 ├── package.json                # Root scripts
 ├── pnpm-workspace.yaml         # Workspace definition
 └── tsconfig.base.json          # Shared TypeScript config
+
+```
+## Application Structure
+
+```text
+                           ┌──────────────────────┐
+                           │      User Input      │
+                           │  CLI or Web Request  │
+                           └──────────┬───────────┘
+                                      │
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+          ┌─────────▼─────────┐               ┌─────────▼─────────┐
+          │   CLI Interface   │               │   Web Interface   │
+          │ packages/agent    │               │  packages/web     │
+          └─────────┬─────────┘               └─────────┬─────────┘
+                    │                                   │
+                    └─────────────────┬─────────────────┘
+                                      │
+                           ┌──────────▼──────────┐
+                           │  Analysis Pipeline  │
+                           │  packages/agent     │
+                           │  runPipeline()      │
+                           └──────────┬──────────┘
+                                      │
+                ┌─────────────────────┼─────────────────────┐
+                │                     │                     │
+      ┌─────────▼─────────┐ ┌────────▼────────┐ ┌─────────▼─────────┐
+      │   SEC Retrieval   │ │ Financial Math  │ │ Shared Contracts  │
+      │ mcp-sec-server    │ │ mcp-financials  │ │ shared            │
+      │ filings, facts,   │ │ ratios, trends, │ │ types, mappings,  │
+      │ XBRL, directories │ │ normalization   │ │ constants, format │
+      └─────────┬─────────┘ └────────┬────────┘ └─────────┬─────────┘
+                │                    │                    │
+                └────────────────────┴──────────────┬─────┘
+                                                   │
+                                      ┌────────────▼────────────┐
+                                      │ Canonical Report Model  │
+                                      │ metrics, sections,      │
+                                      │ statements, charts      │
+                                      └────────────┬────────────┘
+                                                   │
+                          ┌────────────────────────┼────────────────────────┐
+                          │                        │                        │
+                ┌─────────▼─────────┐    ┌────────▼────────┐    ┌─────────▼─────────┐
+                │   Terminal View   │    │   PDF / Charts  │    │    CSV Exports    │
+                │ CLI output        │    │ exporter + DW   │    │ data + chart_data │
+                └───────────────────┘    └─────────────────┘    └───────────────────┘
 ```
 
 ## How It Works
