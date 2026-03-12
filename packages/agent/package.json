@@ -51,7 +51,6 @@
     "dotenv": "^16.4.0",
     "marked": "^15.0.0",
     "openai": "^4.80.0",
-    "puppeteer": "^24.0.0",
     "puppeteer-core": "^24.39.0"
   },
   "devDependencies": {

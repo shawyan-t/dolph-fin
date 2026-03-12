@@ -7,9 +7,10 @@
  * 3) Render with Puppeteer to PDF
  */
 
-import { mkdir, rm } from 'node:fs/promises';
+import { access, mkdir, rm } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 import type { Report, AnalysisContext } from '@shawyan/shared';
@@ -25,8 +26,38 @@ function defaultReportsDir(): string {
   return resolve(dirname(fileURLToPath(import.meta.url)), '../reports');
 }
 
+const require = createRequire(import.meta.url);
+
 function defaultLaunchArgs(): string[] {
   return ['--no-sandbox', '--disable-setuid-sandbox'];
+}
+
+async function resolveChromiumExecutablePath(): Promise<string> {
+  const candidateBinDirs: string[] = [];
+
+  try {
+    const pkgJsonPath = require.resolve('@sparticuz/chromium/package.json');
+    candidateBinDirs.push(resolve(dirname(pkgJsonPath), 'bin'));
+  } catch {
+    // Fallback candidates below.
+  }
+
+  candidateBinDirs.push(
+    resolve(process.cwd(), 'node_modules/@sparticuz/chromium/bin'),
+    resolve(process.cwd(), '../../node_modules/@sparticuz/chromium/bin'),
+    '/var/task/node_modules/@sparticuz/chromium/bin',
+  );
+
+  for (const binDir of [...new Set(candidateBinDirs)]) {
+    try {
+      await access(binDir);
+      return await chromium.executablePath(binDir);
+    } catch {
+      // Try next candidate.
+    }
+  }
+
+  return await chromium.executablePath();
 }
 
 async function resolveBrowserExecutablePath(): Promise<{ executablePath?: string; args: string[] }> {
@@ -37,7 +68,7 @@ async function resolveBrowserExecutablePath(): Promise<{ executablePath?: string
 
   // Vercel/serverless Linux does not expose a system Chrome binary.
   if (process.platform === 'linux') {
-    const executablePath = await chromium.executablePath();
+    const executablePath = await resolveChromiumExecutablePath();
     const mergedArgs = [...new Set([...chromium.args, ...defaultLaunchArgs()])];
     return { executablePath, args: mergedArgs };
   }
