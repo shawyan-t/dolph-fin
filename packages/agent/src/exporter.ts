@@ -27,12 +27,19 @@ function defaultReportsDir(): string {
 }
 
 const require = createRequire(import.meta.url);
+const DEFAULT_CHROMIUM_PACK_VERSION = '143.0.4';
 
 function defaultLaunchArgs(): string[] {
   return ['--no-sandbox', '--disable-setuid-sandbox'];
 }
 
+function defaultChromiumPackUrl(): string {
+  const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+  return `https://github.com/Sparticuz/chromium/releases/download/v${DEFAULT_CHROMIUM_PACK_VERSION}/chromium-v${DEFAULT_CHROMIUM_PACK_VERSION}-pack.${arch}.tar`;
+}
+
 async function resolveChromiumExecutablePath(): Promise<string> {
+  const configuredPackUrl = process.env['DOLPH_CHROMIUM_PACK_URL']?.trim();
   const candidateBinDirs: string[] = [];
 
   try {
@@ -57,7 +64,7 @@ async function resolveChromiumExecutablePath(): Promise<string> {
     }
   }
 
-  return await chromium.executablePath();
+  return await chromium.executablePath(configuredPackUrl || defaultChromiumPackUrl());
 }
 
 async function resolveBrowserExecutablePath(): Promise<{ executablePath?: string; args: string[] }> {
