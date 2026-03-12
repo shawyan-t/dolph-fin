@@ -24,14 +24,14 @@ services:
       - key: DOLPH_WEB_ALLOWED_ORIGIN
         sync: false
       - key: DOLPH_WEB_API_KEY
-        generateValue: true
+        sync: false
       - key: DOLPH_SEC_USER_AGENT
         sync: false
       - key: DOLPH_OPENAI_API_KEY
         sync: false
       - key: DATAWRAPPER_API_KEY
         sync: false
-    disks:
-      - name: dolph-data
-        mountPath: /data
-        sizeGB: 10
+    disk:
+      name: dolph-data
+      mountPath: /data
+      sizeGB: 10
