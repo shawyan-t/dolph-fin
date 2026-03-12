@@ -15,16 +15,19 @@ importers:
         version: 7.10.1(@types/node@22.19.13)
       '@shawyan/bootup':
         specifier: ^0.1.3
-        version: link:../bootup
+        version: 0.1.3
       '@shawyan/mcp-financials-server':
         specifier: ^0.1.3
-        version: link:../mcp-financials-server
+        version: 0.1.3
       '@shawyan/mcp-sec-server':
         specifier: ^0.1.3
-        version: link:../mcp-sec-server
+        version: 0.1.3
       '@shawyan/shared':
         specifier: ^0.1.3
-        version: link:../shared
+        version: 0.1.3
+      '@sparticuz/chromium':
+        specifier: ^143.0.4
+        version: 143.0.4
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
@@ -37,6 +40,9 @@ importers:
       puppeteer:
         specifier: ^24.0.0
         version: 24.37.5(typescript@5.9.3)
+      puppeteer-core:
+        specifier: ^24.39.0
+        version: 24.39.0
     devDependencies:
       '@types/node':
         specifier: ^22.0.0
@@ -83,10 +89,10 @@ importers:
         version: 1.27.1(zod@3.25.76)
       '@shawyan/mcp-sec-server':
         specifier: ^0.1.3
-        version: link:../mcp-sec-server
+        version: 0.1.3
       '@shawyan/shared':
         specifier: ^0.1.3
-        version: link:../shared
+        version: 0.1.3
       zod:
         specifier: ^3.24.0
         version: 3.25.76
@@ -108,7 +114,7 @@ importers:
         version: 1.27.1(zod@3.25.76)
       '@shawyan/shared':
         specifier: ^0.1.3
-        version: link:../shared
+        version: 0.1.3
       cheerio:
         specifier: ^1.0.0
         version: 1.2.0
@@ -667,6 +673,25 @@ packages:
 
   '@rushstack/eslint-patch@1.16.1':
     resolution: {integrity: sha512-TvZbIpeKqGQQ7X0zSCvPH9riMSFQFSggnfBjFZ1mEoILW+UuXCKwOoPcgjMwiUtRqFZ8jWhPJc4um14vC6I4ag==}
+
+  '@shawyan/bootup@0.1.3':
+    resolution: {integrity: sha512-kPC+JGfAGhST5sVupyTdIRiXkveJ+COJegsNLQtGttYusYHvCxQYiCSvZST1cmvuMxF1w4nopQao6JCaeIwu7Q==}
+    hasBin: true
+
+  '@shawyan/mcp-financials-server@0.1.3':
+    resolution: {integrity: sha512-B/tgJl/dHXoLFdWHJsnDWfB0gwb/OONWwa4oECT006rabEDtMOFzOtiiJ8sdw/2Dnc+fHOGXUA7lOvD9hsdqDA==}
+    hasBin: true
+
+  '@shawyan/mcp-sec-server@0.1.3':
+    resolution: {integrity: sha512-ab1LU3/dXZpQqXy0/eYr1tV8k5G5BJNqZP1GsR7/+q7fP303RWRSc11iGt7lLP+M8psGarPu2CCfxp44QB+XRQ==}
+    hasBin: true
+
+  '@shawyan/shared@0.1.3':
+    resolution: {integrity: sha512-Uu3o3+NAl+94TdGmAtpIyD10W/tLgzawHJeyqZotXEBMQOfAZ/OEWdelUZCkIVCmvkX6X90OJhC+mXU42B9Oow==}
+
+  '@sparticuz/chromium@143.0.4':
+    resolution: {integrity: sha512-/6I7uQTRhRDD2/gGPQ1Gkf+Dqk0RYDACPJDZfSzz0OWk4JmUTonNHPXbrn6UIklOHlnDLf8xAAzkOZKB/cJpLA==}
+    engines: {node: '>=20.11.0'}
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -1425,6 +1450,9 @@ packages:
   devtools-protocol@0.0.1566079:
     resolution: {integrity: sha512-MJfAEA1UfVhSs7fbSQOG4czavUp1ajfg6prlAN0+cmfa2zNjaIbvq8VneP7do1WAQQIvgNJWSMeP6UyI90gIlQ==}
 
+  devtools-protocol@0.0.1581282:
+    resolution: {integrity: sha512-nv7iKtNZQshSW2hKzYNr46nM/Cfh5SEvE2oV0/SEGgc9XupIY5ggf84Cz8eJIkBce7S3bmTAauFD6aysMpnqsQ==}
+
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
 
@@ -1782,6 +1810,15 @@ packages:
 
   flatted@3.3.4:
     resolution: {integrity: sha512-3+mMldrTAPdta5kjX2G2J7iX4zxtnwpdA8Tr2ZSjkyPSanvbZAcy6flmtnXbEybHrDcU9641lxrMfFuUxVz9vA==}
+
+  follow-redirects@1.15.11:
+    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -2711,6 +2748,10 @@ packages:
 
   puppeteer-core@24.37.5:
     resolution: {integrity: sha512-ybL7iE78YPN4T6J+sPLO7r0lSByp/0NN6PvfBEql219cOnttoTFzCWKiBOjstXSqi/OKpwae623DWAsL7cn2MQ==}
+    engines: {node: '>=18'}
+
+  puppeteer-core@24.39.0:
+    resolution: {integrity: sha512-SzIxz76Kgu17HUIi57HOejPiN0JKa9VCd2GcPY1sAh6RA4BzGZarFQdOYIYrBdUVbtyH7CrDb9uhGEwVXK/YNA==}
     engines: {node: '>=18'}
 
   puppeteer@24.37.5:
@@ -3711,6 +3752,44 @@ snapshots:
 
   '@rushstack/eslint-patch@1.16.1': {}
 
+  '@shawyan/bootup@0.1.3':
+    dependencies:
+      chalk: 5.6.2
+      figlet: 1.10.0
+      gradient-string: 3.0.0
+
+  '@shawyan/mcp-financials-server@0.1.3':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
+      '@shawyan/mcp-sec-server': 0.1.3
+      '@shawyan/shared': 0.1.3
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  '@shawyan/mcp-sec-server@0.1.3':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.27.1(zod@3.25.76)
+      '@shawyan/shared': 0.1.3
+      cheerio: 1.2.0
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - supports-color
+
+  '@shawyan/shared@0.1.3': {}
+
+  '@sparticuz/chromium@143.0.4':
+    dependencies:
+      follow-redirects: 1.15.11
+      tar-fs: 3.1.1
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - debug
+      - react-native-b4a
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.5':
@@ -4284,6 +4363,12 @@ snapshots:
       mitt: 3.0.1
       zod: 3.25.76
 
+  chromium-bidi@14.0.0(devtools-protocol@0.0.1581282):
+    dependencies:
+      devtools-protocol: 0.0.1581282
+      mitt: 3.0.1
+      zod: 3.25.76
+
   cli-width@4.1.0: {}
 
   client-only@0.0.1: {}
@@ -4461,6 +4546,8 @@ snapshots:
       dequal: 2.0.3
 
   devtools-protocol@0.0.1566079: {}
+
+  devtools-protocol@0.0.1581282: {}
 
   didyoumean@1.2.2: {}
 
@@ -5017,6 +5104,8 @@ snapshots:
       rimraf: 3.0.2
 
   flatted@3.3.4: {}
+
+  follow-redirects@1.15.11: {}
 
   for-each@0.3.5:
     dependencies:
@@ -6099,6 +6188,23 @@ snapshots:
       chromium-bidi: 14.0.0(devtools-protocol@0.0.1566079)
       debug: 4.4.3
       devtools-protocol: 0.0.1566079
+      typed-query-selector: 2.12.1
+      webdriver-bidi-protocol: 0.4.1
+      ws: 8.19.0
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - bufferutil
+      - react-native-b4a
+      - supports-color
+      - utf-8-validate
+
+  puppeteer-core@24.39.0:
+    dependencies:
+      '@puppeteer/browsers': 2.13.0
+      chromium-bidi: 14.0.0(devtools-protocol@0.0.1581282)
+      debug: 4.4.3
+      devtools-protocol: 0.0.1581282
       typed-query-selector: 2.12.1
       webdriver-bidi-protocol: 0.4.1
       ws: 8.19.0

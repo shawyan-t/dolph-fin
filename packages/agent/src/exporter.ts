@@ -10,7 +10,8 @@
 import { mkdir, rm } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import puppeteer from 'puppeteer';
+import chromium from '@sparticuz/chromium';
+import puppeteer from 'puppeteer-core';
 import type { Report, AnalysisContext } from '@shawyan/shared';
 import { buildReportHTML } from './exporter-template.js';
 import { buildPdfPages, PERIOD_BANNER_SLOT } from './pdf-page-templates.js';
@@ -22,6 +23,29 @@ import { renderChartSetWithDatawrapper } from './datawrapper.js';
 
 function defaultReportsDir(): string {
   return resolve(dirname(fileURLToPath(import.meta.url)), '../reports');
+}
+
+function defaultLaunchArgs(): string[] {
+  return ['--no-sandbox', '--disable-setuid-sandbox'];
+}
+
+async function resolveBrowserExecutablePath(): Promise<{ executablePath?: string; args: string[] }> {
+  const configuredPath = process.env['PUPPETEER_EXECUTABLE_PATH']?.trim();
+  if (configuredPath) {
+    return { executablePath: configuredPath, args: defaultLaunchArgs() };
+  }
+
+  // Vercel/serverless Linux does not expose a system Chrome binary.
+  if (process.platform === 'linux') {
+    const executablePath = await chromium.executablePath();
+    const mergedArgs = [...new Set([...chromium.args, ...defaultLaunchArgs()])];
+    return { executablePath, args: mergedArgs };
+  }
+
+  const macChromePath = process.platform === 'darwin'
+    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    : undefined;
+  return { executablePath: macChromePath, args: defaultLaunchArgs() };
 }
 
 export async function generatePDF(
@@ -117,15 +141,12 @@ export async function generatePDF(
     fullHTML = buildReportHTML(finalReport, buildLimitedBodyHTML(finalReport));
   }
 
-  const platformDefaultChrome = process.platform === 'darwin'
-    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-    : undefined;
-  const executablePath = process.env['PUPPETEER_EXECUTABLE_PATH'] || platformDefaultChrome;
+  const { executablePath, args } = await resolveBrowserExecutablePath();
 
   const browser = await puppeteer.launch({
     headless: true,
     executablePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args,
   });
 
   try {

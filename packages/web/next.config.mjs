@@ -7,6 +7,7 @@ const serverPackages = [
   "cheerio",
   "puppeteer",
   "puppeteer-core",
+  "@sparticuz/chromium",
   "ws",
   "bufferutil",
   "utf-8-validate",
