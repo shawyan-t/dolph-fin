@@ -5,7 +5,7 @@
   "description": "AI-powered SEC filing analyzer",
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "pnpm -r build",
+    "build": "pnpm --filter @shawyan/shared build && pnpm --filter @shawyan/bootup build && pnpm --filter @shawyan/mcp-sec-server build && pnpm --filter @shawyan/mcp-financials-server build && pnpm --filter dolph-fin build && pnpm --filter @shawyan/web build",
     "bootup": "pnpm --filter bootup start",
     "analyze": "pnpm --filter agent start",
     "start": "pnpm --filter agent start",
